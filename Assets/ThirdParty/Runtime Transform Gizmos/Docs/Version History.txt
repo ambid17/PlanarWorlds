@@ -1,0 +1,90 @@
+Release 1.3:
+---------------------------------------------
+[New Feature] : implemented support for the new input system. This was done to solve
+				certain issues that appear when using RDC.
+
+Release 1.2.2:
+---------------------------------------------
+[New Feature] : implemented MeshVertexChunkCollectionDb.SetMeshDirty to allow vertex
+				snapping to work correctly after a mesh is modified.
+
+Release 1.2.1:
+---------------------------------------------
+[Improvement] : eliminated recursion from SphereTree;
+
+[Bug Fix]	  : fixed SphereTree.IntegrateNodeRecurse stack overflow exception;
+
+Release 1.2:
+---------------------------------------------
+[New Feature] : added support for URP - there is a limitation: the scene gizmo can not be used with URP;
+[New Feature] : added 'MinPositiveScale' and 'ScaleConstraintEnabled' properties to ObjectTransformGizmo;
+
+[Improvement] : Optimized the RTScene::Update_SystemCall function. The client code is now required to call 
+				RTScene.Get.OnGameObjectWillBeDestroyed whenever it destroys a game object and RTMeshDb.Get.OnMeshWillBeDestroyed 
+				if it ever destroys a mesh asset at runtime.
+
+[Removed]	  : removed unnecessary field from RTScene Inspector;
+
+Release 1.1.4:
+---------------------------------------------
+[New Feature] : added 'RemoveGizmo' function to the RTGizmosEngine class 
+				to allow the client code to remove gizmos when they are
+				no longer needed.
+
+[Bug Fix]	  : fixed gizmo hover state not updated correctly when moving the mouse cursor
+			    from the gizmo over the UI;
+
+Release 1.1.3:
+---------------------------------------------
+[Bug Fix]	  : fixed internal issues with 2D shape and sphere border rendering artifacts;
+
+Release 1.1.2:
+---------------------------------------------
+[New Feature] : it is now possible to change the scene gizmo screen size.
+
+Release 1.1.1:
+---------------------------------------------
+[Bug Fix]	  : fixed bug which was preventing gizmos from being dragged 
+			    for certain camera angles.
+
+Release 1.1:
+---------------------------------------------
+[New Feature] : added 'SetAxesLinesHoverable' function to the 'MoveGizmo' class;
+[New Feature] : added 'SetMidCapHoverable' function to the 'RotationGizmo' class;
+[New Feature] : added 'SetAxesLinesHoverable' function to the 'ScaleGizmo' class;
+[New Feature] : added 'SetMvAxesLinesHoverable' and 'SetRtMidCapHoverable' functions to the 'UniversalGizmo' class;
+
+[Bug Fix]     : fixed scale & universal gizmos scaling objects incorrectly;
+[Bug Fix]     : fixed scale snap step Inspector freeze for scale & universal gizmos;
+[Bug Fix]	  : fixed mid scale cap for universal gizmo not hiding when switching to 2D mode;
+[Bug Fix]	  : fixed bug in the 'OnHoverableStateChanged' function of the 'GizmoPlaneSlider3D' class;
+
+Release 1.0.5:
+---------------------------------------------
+[New Feature] : fixed incorrect mapping between Ids and gizmo handles (move, scale and universal);
+[New Feature] : added SetRootObjectIgnored to RTScene class;
+
+[Bug Fix]	  : fixed camera focus;
+[Bug Fix]	  : fixed warnings about PrefabType being obsolete;
+[Bug Fix]	  : fixed SphereTreeNode stack overflow bug;
+
+Release 1.0.4:
+---------------------------------------------
+[New Feature] : gizmo states such as enabling/disabling snapping can now correctly be activated/deactivated
+			    using the gizmo interface. Previously, this was not possible because these states would 
+			    always be overwritten by the hotkeys;
+[New Feature] : added 'Initialized' event for the RTGApp class;
+[New Feature] : added 'OffsetDragAxisModify' event to the 'Gizmo' class which allows the client code to
+				alter the drag axis produced while dragging gizmo offset/move handles;
+[New Feature] : it is now possible to control the visibility of the universal gizmo's mid cap. This
+			    is the shape (box by default) that is used to perform uniform scaling;
+
+Release 1.0.2
+---------------------------------------------
+[New Feature] : it is now possible to choose the type of rotation switch performed by the camera;
+
+Release 1.0.1
+---------------------------------------------
+[Bug Fix]: fixed bug which was causing buggy interaction with the gizmos for custom defined camera viewports;
+
+Release 1.0
