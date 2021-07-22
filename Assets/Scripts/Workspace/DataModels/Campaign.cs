@@ -5,23 +5,23 @@ using System.IO;
 using UnityEngine;
 
 [Serializable]
-public class Workspace
+public class Campaign
 {
     [SerializeField]
-    public string workspaceName;
+    public string campaignName;
     [SerializeField]
-    public List<WorkspacePrefab> prefabs;
+    public List<SerializedPrefab> prefabs;
 
-    public Workspace()
+    public Campaign()
     {
-        workspaceName = "testWorkspace";
-        prefabs = new List<WorkspacePrefab>();
+        campaignName = "testCampaign";
+        prefabs = new List<SerializedPrefab>();
     }
 
     public void UpdateName(string newName)
     {
         // If the file already exists, make sure to rename it
-        string currentFilePath = FilePathUtil.GetSaveFilePath(workspaceName);
+        string currentFilePath = FilePathUtil.GetSaveFilePath(campaignName);
         string newFilePath = FilePathUtil.GetSaveFilePath(newName);
         if (File.Exists(currentFilePath))
         {
@@ -35,14 +35,14 @@ public class Workspace
             }
         }
 
-        workspaceName = newName;
+        campaignName = newName;
         Save();
     }
 
     #region Serialization
     public void Save()
     {
-        string filePath = FilePathUtil.GetSaveFilePath(workspaceName);
+        string filePath = FilePathUtil.GetSaveFilePath(campaignName);
         string fileContents = JsonUtility.ToJson(this);
         try
         {
@@ -52,20 +52,20 @@ public class Workspace
         {
             Debug.LogError($"{e.Message}\n{e.StackTrace}");
         }
-        Debug.Log($"Finished Saving workspace {workspaceName} to {filePath}");
+        Debug.Log($"Finished Saving campaign {campaignName} to {filePath}");
     }
 
-    public static Workspace LoadFromName(string workspaceName)
+    public static Campaign LoadFromName(string campaignName)
     {
-        Workspace workspace = new Workspace();
+        Campaign campaign = new Campaign();
 
-        string filePath = FilePathUtil.GetSaveFilePath(workspaceName);
+        string filePath = FilePathUtil.GetSaveFilePath(campaignName);
         if (File.Exists(filePath))
         {
             try
             {
                 string fileContents = File.ReadAllText(filePath);
-                workspace = JsonUtility.FromJson<Workspace>(fileContents);
+                campaign = JsonUtility.FromJson<Campaign>(fileContents);
             }
             catch (Exception e)
             {
@@ -73,7 +73,7 @@ public class Workspace
             }
         }
 
-        return workspace;
+        return campaign;
     }
     #endregion
 }

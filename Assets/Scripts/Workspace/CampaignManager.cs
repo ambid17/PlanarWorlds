@@ -7,20 +7,19 @@ using System.IO;
 using System;
 using RTG;
 
-// This class manages the workspace and it's data
-public class WorkspaceManager : StaticMonoBehaviour<WorkspaceManager>
+public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {
     public GameObject documentPrefab;
     public Transform documentContainer;
 
-    private Workspace _workspace;
-    private WorkspaceHeader _workspaceHeader;
+    private Campaign _campaign;
+    private CampaignUiHeader _campaignHeader;
     private PrefabManager _prefabManager;
 
     protected override void Awake()
     {
         base.Awake();
-        _workspaceHeader = GetComponentInChildren<WorkspaceHeader>(true);
+        _campaignHeader = GetComponentInChildren<CampaignUiHeader>(true);
     }
 
     private void Start()
@@ -29,30 +28,30 @@ public class WorkspaceManager : StaticMonoBehaviour<WorkspaceManager>
     }
 
 
-    #region Workspace Utils
-    public void CreateWorkspace()
+    #region Campaign Utils
+    public void CreateCampaign()
     {
-        _workspace = new Workspace();
+        _campaign = new Campaign();
     }
 
-    public void UpdateWorkspaceName(string name)
+    public void UpdateCampaignName(string name)
     {
-        _workspace.UpdateName(name);
+        _campaign.UpdateName(name);
     }
 
-    public void LoadWorkspace(string name)
+    public void LoadCampaign(string name)
     {
-        _workspace = Workspace.LoadFromName(name);
+        _campaign = Campaign.LoadFromName(name);
 
-        _workspaceHeader.SetWorkspaceNameInput(_workspace.workspaceName);
+        _campaignHeader.SetCampaignNameInput(_campaign.campaignName);
 
         InitializePrefabs();
     }
 
-    public void SaveWorkspace()
+    public void SaveCampaign()
     {
         PopulatePrefabs();
-        _workspace.Save();
+        _campaign.Save();
     }
     #endregion
 
@@ -60,18 +59,18 @@ public class WorkspaceManager : StaticMonoBehaviour<WorkspaceManager>
     #region Prefab Utils
     private void InitializePrefabs()
     {
-        foreach (WorkspacePrefab workspacePrefab in _workspace.prefabs)
+        foreach (SerializedPrefab campaignPrefab in _campaign.prefabs)
         {
-            _prefabManager.LoadPrefabFromSave(workspacePrefab);
+            _prefabManager.LoadPrefabFromSave(campaignPrefab);
         }
     }
 
     public void PopulatePrefabs()
     {
-        _workspace.prefabs = new List<WorkspacePrefab>();
+        _campaign.prefabs = new List<SerializedPrefab>();
         foreach (Transform child in _prefabManager.prefabParent)
         {
-            WorkspacePrefab newPrefab = new WorkspacePrefab();
+            SerializedPrefab newPrefab = new SerializedPrefab();
 
             PrefabItemInstance prefabInstance = child.GetComponent<PrefabItemInstance>();
 
@@ -79,8 +78,7 @@ public class WorkspaceManager : StaticMonoBehaviour<WorkspaceManager>
             newPrefab.position = child.position;
             newPrefab.rotation = child.rotation.eulerAngles;
             newPrefab.scale = child.localScale;
-            newPrefab.prefabType = prefabInstance.prefabItem.prefabType;
-            _workspace.prefabs.Add(newPrefab);
+            _campaign.prefabs.Add(newPrefab);
         }
     }
     #endregion

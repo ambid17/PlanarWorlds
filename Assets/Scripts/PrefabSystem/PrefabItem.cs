@@ -12,18 +12,7 @@ public class PrefabItem : ScriptableObject
     [SerializeField]
     public GameObject prefab;
     [SerializeField]
-    public PrefabType prefabType;
-    [SerializeField]
     public Vector3 minimumScale;
     [SerializeField]
     public Vector3 defaultScale;
-}
-
-public enum PrefabType
-{
-    SlabImperial,
-    BeamImperial,
-    WallImperial,
-    CurbImperial,
-    SlabMetric
 }

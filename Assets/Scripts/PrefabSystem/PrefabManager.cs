@@ -66,19 +66,15 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             startPosition.y = 0;
             instance.transform.position = startPosition;
 
-            // Dont rotate slabs
-            if(prefabInstance.prefabItem.prefabType != PrefabType.SlabImperial)
-            {
-                Vector3 instanceYRotation = instance.transform.rotation.eulerAngles;
-                instanceYRotation.y = mainCamera.transform.rotation.eulerAngles.y;
-                //snap to nearest 15 degrees
-                instanceYRotation.y = Mathf.Round(instanceYRotation.y / 15) * 15;
-                instance.transform.rotation = Quaternion.Euler(instanceYRotation);
-            }
+            Vector3 instanceYRotation = instance.transform.rotation.eulerAngles;
+            instanceYRotation.y = mainCamera.transform.rotation.eulerAngles.y;
+            //snap to nearest 15 degrees
+            instanceYRotation.y = Mathf.Round(instanceYRotation.y / 15) * 15;
+            instance.transform.rotation = Quaternion.Euler(instanceYRotation);
         }
     }
 
-    public void LoadPrefabFromSave(WorkspacePrefab prefab)
+    public void LoadPrefabFromSave(SerializedPrefab prefab)
     {
         PrefabItem prefabItem = GetPrefabItem(prefab);
         GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
@@ -100,15 +96,15 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         }
     }
 
-    private PrefabItem GetPrefabItem(WorkspacePrefab prefab)
+    private PrefabItem GetPrefabItem(SerializedPrefab prefab)
     {
-        foreach(PrefabItem prefabItem in prefabItemContainer.prefabs)
-        {
-            if(prefabItem.prefabType == prefab.prefabType)
-            {
-                return prefabItem;
-            }
-        }
+        //foreach(PrefabItem prefabItem in prefabItemContainer.prefabs)
+        //{
+        //    if(prefabItem.prefabType == prefab.prefabType)
+        //    {
+        //        return prefabItem;
+        //    }
+        //}
 
         return prefabItemContainer.prefabs[0];
     }

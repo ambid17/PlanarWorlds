@@ -7,29 +7,29 @@ using System.Linq;
 
 public class FilePathUtil : MonoBehaviour
 {
-    public static string workspaceFolderName = "Workspaces";
+    public static string campaignFolderName = "Campaigns";
 
-    public static string GetWorkspaceFolder(string workspaceName)
+    public static string GetCampaignFolder(string campaignName)
     {
-        string workspaceParentFolder = Path.Combine(Application.persistentDataPath, workspaceFolderName);
-        EnsureDirectoryExists(workspaceParentFolder);
-        return workspaceParentFolder;
+        string campaignParentFolder = Path.Combine(Application.persistentDataPath, campaignFolderName);
+        EnsureDirectoryExists(campaignParentFolder);
+        return campaignParentFolder;
     }
 
-    public static string GetSaveFilePath(string workspaceName)
+    public static string GetSaveFilePath(string campaignName)
     {
-        string workspaceParentFolder = Path.Combine(Application.persistentDataPath, workspaceFolderName);
-        EnsureDirectoryExists(workspaceParentFolder);
-        string saveFilePath = Path.Combine(workspaceParentFolder, $"{workspaceName}.json");
+        string campaignParentFolder = Path.Combine(Application.persistentDataPath, campaignFolderName);
+        EnsureDirectoryExists(campaignParentFolder);
+        string saveFilePath = Path.Combine(campaignParentFolder, $"{campaignName}.json");
         return saveFilePath;
     }
 
-    public static List<string> GetWorkspaceNames()
+    public static List<string> GetCampaignNames()
     {
-        string workspaceParentFolder = Path.Combine(Application.persistentDataPath, workspaceFolderName);
-        EnsureDirectoryExists(workspaceParentFolder);
+        string campaignParentFolder = Path.Combine(Application.persistentDataPath, campaignFolderName);
+        EnsureDirectoryExists(campaignParentFolder);
 
-        List<string> filePaths = Directory.EnumerateFiles(workspaceParentFolder, "*.json", SearchOption.AllDirectories).ToList();
+        List<string> filePaths = Directory.EnumerateFiles(campaignParentFolder, "*.json", SearchOption.AllDirectories).ToList();
 
         List<string> fileNames = new List<string>();
         foreach(string path in filePaths)

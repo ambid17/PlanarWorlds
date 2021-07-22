@@ -4,10 +4,8 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class WorkspacePrefab
+public class SerializedPrefab
 {
-    [SerializeField]
-    public PrefabType prefabType;
     [SerializeField]
     public Vector3 position;
     [SerializeField]
