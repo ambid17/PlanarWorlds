@@ -46,8 +46,8 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             child.gameObject.layer = Constants.PrefabChildLayer;
         }
 
-        PlaceObjectInContext(instance);
         CreateObjectCollider(instance);
+        PlaceObjectInContext(instance);
         _prefabGizmoManager.OnTargetObjectChanged(instance);
     }
 
@@ -89,10 +89,17 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         if(_prefabGizmoManager.TargetObject != null)
         {
             GameObject snapTarget = _prefabGizmoManager.TargetObject;
-            // TODO: try and get snapping on placement to work
+            
+            BoxCollider snapCollider = snapTarget.GetComponent<BoxCollider>();
+            BoxCollider myCollider = instance.GetComponent<BoxCollider>();
+
             Vector3 startPosition = snapTarget.transform.position;
-            startPosition.y += instance.transform.localScale.y / 2; // add half of my height
-            startPosition.y += snapTarget.transform.localScale.y / 2; // add half of the snap target's height
+
+            if(snapCollider && myCollider)
+            {
+                startPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+                startPosition.y += snapCollider.bounds.size.y / 2; // add half of the snap target's height
+            }
 
             instance.transform.position = startPosition;
         }
