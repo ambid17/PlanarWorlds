@@ -21,6 +21,10 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     private void PopulatePrefabMenu()
     {
+        //foreach(GameObject go in )
+        //{
+
+        //}
         foreach (PrefabItem prefabItem in prefabItemContainer.prefabs)
         {
             GameObject prefabItemGO = Instantiate(listItemPrefab, scrollViewContainer);
