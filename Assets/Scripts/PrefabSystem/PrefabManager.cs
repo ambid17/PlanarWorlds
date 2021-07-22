@@ -6,6 +6,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 {
     public Transform prefabParent;
     public PrefabItemContainer prefabItemContainer;
+    public PrefabList prefabList;
     public GameObject listItemPrefab;
     public Transform scrollViewContainer;
 
@@ -21,27 +22,24 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     private void PopulatePrefabMenu()
     {
-        //foreach(GameObject go in )
-        //{
-
-        //}
-        foreach (PrefabItem prefabItem in prefabItemContainer.prefabs)
+        foreach (Prefab prefab in prefabList.prefabs)
         {
             GameObject prefabItemGO = Instantiate(listItemPrefab, scrollViewContainer);
-            prefabItemGO.name = prefabItem.objectName;
+            prefabItemGO.name = prefab.gameObject.name;
 
             PrefabListItem prefabListItem = prefabItemGO.GetComponent<PrefabListItem>();
+
             prefabListItem.button.onClick.RemoveAllListeners();
-            prefabListItem.button.onClick.AddListener(() => PrefabButtonClicked(prefabItem));
-            prefabListItem.image.sprite = prefabItem.previewImage;
-            prefabListItem.text.text = prefabItem.objectName;
+            prefabListItem.button.onClick.AddListener(() => PrefabButtonClicked(prefab));
+
+            prefabListItem.image.sprite = Sprite.Create(prefab.previewTexture, new Rect(0.0f, 0.0f, prefab.previewTexture.width, prefab.previewTexture.height), new Vector2(0.5f, 0.5f));
+            prefabListItem.text.text = prefab.gameObject.name;
         }
     }
 
-    private void PrefabButtonClicked(PrefabItem prefabItem)
+    private void PrefabButtonClicked(Prefab prefab)
     {
-        GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
-        instance.transform.localScale = prefabItem.defaultScale;
+        GameObject instance = Instantiate(prefab.gameObject, prefabParent);
         instance.layer = Constants.PrefabLayer;
 
         PlaceObjectInContext(instance);

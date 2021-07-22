@@ -1699,7 +1699,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744504455}
   m_HandleRect: {fileID: 1744504454}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -6166,6 +6166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabParent: {fileID: 500142831}
   prefabItemContainer: {fileID: 11400000, guid: f5f5e4c8641ea994abe8a95d4c12e7aa, type: 2}
+  prefabList: {fileID: 11400000, guid: e33288ae4f43702499019075e456fc1c, type: 2}
   listItemPrefab: {fileID: 2232271641298372288, guid: 9083c1f720626bf4aacf9b92aea4ba51, type: 3}
   scrollViewContainer: {fileID: 1400221371}
 --- !u!4 &797217220
@@ -12506,7 +12507,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 632836058}
   m_HandleRect: {fileID: 632836057}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -14003,7 +14004,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 30
   m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 218336930}
