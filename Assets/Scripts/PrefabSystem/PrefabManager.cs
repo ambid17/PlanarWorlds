@@ -40,7 +40,11 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     private void PrefabButtonClicked(Prefab prefab)
     {
         GameObject instance = Instantiate(prefab.gameObject, prefabParent);
-        instance.layer = Constants.PrefabLayer;
+        instance.layer = Constants.PrefabParentLayer;
+        foreach(Transform child in instance.transform)
+        {
+            child.gameObject.layer = Constants.PrefabChildLayer;
+        }
 
         PlaceObjectInContext(instance);
         _prefabGizmoManager.OnTargetObjectChanged(instance);

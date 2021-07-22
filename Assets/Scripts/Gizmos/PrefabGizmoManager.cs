@@ -97,6 +97,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             if (pickedObject != _targetObject)
             {
+                // Some of the assets might be made up of children meshes, if so, grab the parent
+                if(pickedObject && pickedObject.layer == Constants.PrefabChildLayer)
+                {
+                    pickedObject = pickedObject.transform.parent.gameObject;
+                }
                 OnTargetObjectChanged(pickedObject);
             }
         }
@@ -208,7 +213,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             duplicateObject.transform.position = _targetObject.transform.position;
             duplicateObject.transform.rotation = _targetObject.transform.rotation;
             duplicateObject.transform.localScale = _targetObject.transform.localScale;
-            duplicateObject.layer = Constants.PrefabLayer;
+            duplicateObject.layer = Constants.PrefabParentLayer;
+            duplicateObject.transform.parent = _targetObject.transform.parent;
 
             OnTargetObjectChanged(duplicateObject);
         }
