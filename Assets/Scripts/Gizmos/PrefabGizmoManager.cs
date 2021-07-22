@@ -122,7 +122,10 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             // Access the move gizmo behaviour and specify the vertex snap target objects
             MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
-            moveGizmo.SetVertexSnapTargetObjects(new List<GameObject>() { _targetObject });
+
+            // Vertex snapping won't function properly if the meshes are children of an empty parent
+            List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
+            moveGizmo.SetVertexSnapTargetObjects(snapTargets);
 
             ToggleOutlineRender(true);
         }
