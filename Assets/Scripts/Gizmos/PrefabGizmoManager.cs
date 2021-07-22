@@ -97,11 +97,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             if (pickedObject != _targetObject)
             {
-                // Some of the assets might be made up of children meshes, if so, grab the parent
-                if(pickedObject && pickedObject.layer == Constants.PrefabChildLayer)
-                {
-                    pickedObject = pickedObject.transform.parent.gameObject;
-                }
                 OnTargetObjectChanged(pickedObject);
             }
         }
