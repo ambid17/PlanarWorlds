@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1518d83ffa67eb34397f20dfabd8cfb1, type: 3}
   m_Name: PrefabItemContainer
   m_EditorClassIdentifier: 
-  prefabs: []
+  prefabs:
+  - {fileID: 11400000, guid: ebb0218aa7fda704fb8ff0351610e3cf, type: 2}

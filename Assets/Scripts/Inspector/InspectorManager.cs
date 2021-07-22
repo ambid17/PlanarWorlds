@@ -61,8 +61,8 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
                 zRotationInput.text = value.z.ToString("##0");
                 break;
             case TransformType.Scale:
-                xScaleInput.text = value.z.ToString("F");
-                yScaleInput.text = value.z.ToString("F");
+                xScaleInput.text = value.x.ToString("F");
+                yScaleInput.text = value.y.ToString("F");
                 zScaleInput.text = value.z.ToString("F");
                 break;
         }

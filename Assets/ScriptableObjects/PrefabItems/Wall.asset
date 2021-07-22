@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 819d4c3a9a556714e8f3552771a38943, type: 3}
   m_Name: Wall
   m_EditorClassIdentifier: 
-  objectName: 
-  previewImage: {fileID: 0}
-  prefab: {fileID: 0}
-  minimumScale: {x: 0, y: 0, z: 0}
-  defaultScale: {x: 0, y: 0, z: 0}
+  objectName: StoneWall
+  previewImage: {fileID: 21300000, guid: ca46ef38b206f174da804447cfef3575, type: 3}
+  prefab: {fileID: 919132149155446097, guid: 801d03f16fda7c142997c0640a3f2ef7, type: 3}
+  minimumScale: {x: 0.1, y: 0.1, z: 0.1}
+  defaultScale: {x: 1, y: 1, z: 1}

@@ -40,16 +40,12 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         instance.transform.localScale = prefabItem.defaultScale;
         instance.layer = Constants.PrefabLayer;
 
-        PrefabItemInstance prefabInstance = instance.GetComponent<PrefabItemInstance>();
-        prefabInstance.prefabItem = prefabItem;
-        PlaceObjectInContext(prefabInstance);
+        PlaceObjectInContext(instance);
         _prefabGizmoManager.OnTargetObjectChanged(instance);
     }
 
-    private void PlaceObjectInContext(PrefabItemInstance prefabInstance)
+    private void PlaceObjectInContext(GameObject instance)
     {
-        GameObject instance = prefabInstance.gameObject;
-
         if(_prefabGizmoManager.TargetObject != null)
         {
             GameObject snapTarget = _prefabGizmoManager.TargetObject;
@@ -76,37 +72,11 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     public void LoadPrefabFromSave(SerializedPrefab prefab)
     {
-        PrefabItem prefabItem = GetPrefabItem(prefab);
-        GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
-        instance.layer = Constants.PrefabLayer;
-        instance.transform.position = prefab.position;
-        instance.transform.rotation = Quaternion.Euler(prefab.rotation);
-        instance.transform.localScale = prefab.scale;
-
-        PrefabItemInstance prefabItemInstance = instance.GetComponent<PrefabItemInstance>();
-        prefabItemInstance.color = prefab.color;
-        prefabItemInstance.prefabItem = prefabItem;
-
-        Renderer objectRenderer = instance.GetComponent<Renderer>();
-
-        if (objectRenderer != null)
-        {
-            //objectRenderer.material = GetMaterialForPrefab(prefab);
-            objectRenderer.material.color = prefab.color;
-        }
+        //PrefabItem prefabItem = GetPrefabItem(prefab);
+        //GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
+        //instance.layer = Constants.PrefabLayer;
+        //instance.transform.position = prefab.position;
+        //instance.transform.rotation = Quaternion.Euler(prefab.rotation);
+        //instance.transform.localScale = prefab.scale;
     }
-
-    private PrefabItem GetPrefabItem(SerializedPrefab prefab)
-    {
-        //foreach(PrefabItem prefabItem in prefabItemContainer.prefabs)
-        //{
-        //    if(prefabItem.prefabType == prefab.prefabType)
-        //    {
-        //        return prefabItem;
-        //    }
-        //}
-
-        return prefabItemContainer.prefabs[0];
-    }
-
 }

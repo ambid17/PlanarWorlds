@@ -6,7 +6,7 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, PDF, None
+    Prefab, None
 }
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
@@ -30,15 +30,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private GameObject _targetObject;
     public GameObject TargetObject { get => _targetObject; }
 
-    private EditingType _currentEditType;
-
     private bool isHoldingControl;
 
     private TargetingType _currentTargetingType;
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
     #endregion
-
-    private enum EditingType { position, cropping }
 
     void Start()
     {
@@ -127,7 +123,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
 
         _inspectorManager.ShowUiForTarget(_currentTargetingType);
-        ToggleCroppingMode(false);
         ToggleGizmos();
         UpdateAllInputFields();
     }
@@ -137,7 +132,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if (_targetObject != null)
         {
             Renderer myRenderer = _targetObject.GetComponent<Renderer>();
-            myRenderer.material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 1f);
+
+            if (myRenderer)
+            {
+                myRenderer.material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 1f);
+            }
         }
     }
 
@@ -234,6 +233,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             RTFocusCamera.Get.Focus(new List<GameObject>() { _targetObject });
         }
     }
+
     void OnGizmoPostDragBegin(Gizmo gizmo, int handleId)
     {
         
@@ -268,21 +268,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private void ValidateScale()
     {
         Vector3 newScale = _targetObject.transform.localScale;
+        Vector3 minimumScale = new Vector3(0.1f, 0.1f, 0.1f);
 
-        PrefabItemInstance instance = _targetObject.GetComponent<PrefabItemInstance>();
-
-        Vector3 minimumScale = instance.prefabItem.minimumScale;
-
-        if (newScale.x <= minimumScale.x)
-            newScale.x = minimumScale.x;
-
-        if (newScale.y <= minimumScale.y)
-            newScale.y = minimumScale.y;
-
-        if (newScale.z <= minimumScale.z)
-            newScale.z = minimumScale.z;
-
-        _targetObject.transform.localScale = newScale;
+        _targetObject.transform.localScale = Vector3.Max(newScale, minimumScale);
     }
 
     private void UpdateAllInputFields()
@@ -343,11 +331,5 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.position = newPosition;
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
-    }
-
-    public void ToggleCroppingMode(bool isCropping)
-    {
-        _currentEditType = isCropping ? EditingType.cropping : EditingType.position;
-        positionGizmo.SetCanAffectPosition(!isCropping);
     }
 }

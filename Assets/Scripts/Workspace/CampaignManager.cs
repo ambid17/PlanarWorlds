@@ -72,9 +72,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         {
             SerializedPrefab newPrefab = new SerializedPrefab();
 
-            PrefabItemInstance prefabInstance = child.GetComponent<PrefabItemInstance>();
-
-            newPrefab.color = prefabInstance.color;
             newPrefab.position = child.position;
             newPrefab.rotation = child.rotation.eulerAngles;
             newPrefab.scale = child.localScale;
