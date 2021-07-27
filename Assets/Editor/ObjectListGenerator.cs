@@ -35,6 +35,7 @@ public class PrefabListGenerator : EditorWindow
             GameObject[] prefabs = GetAllPrefabs(foldersToGetAssetsFrom);
             List<Texture2D> previews = GetPreviews(prefabs);
             PopulatePrefabs(prefabs, previews);
+            EditorUtility.SetDirty(prefabList);
         }
     }
 
