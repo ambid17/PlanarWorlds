@@ -84,6 +84,8 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         }
     }
 
+    // If we have an object select, place the new object perfectly on top of it
+    // If not, spawn 10 units in front of the camera
     private void PlaceObjectInContext(GameObject instance)
     {
         if(_prefabGizmoManager.TargetObject != null)
@@ -105,15 +107,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         }
         else
         {
-            Vector3 startPosition = mainCamera.transform.position + (mainCamera.transform.forward * 10);
-            startPosition.y = 0;
-            instance.transform.position = startPosition;
-
-            Vector3 instanceYRotation = instance.transform.rotation.eulerAngles;
-            instanceYRotation.y = mainCamera.transform.rotation.eulerAngles.y;
-            //snap to nearest 15 degrees
-            instanceYRotation.y = Mathf.Round(instanceYRotation.y / 15) * 15;
-            instance.transform.rotation = Quaternion.Euler(instanceYRotation);
+            instance.transform.position = mainCamera.transform.position + (mainCamera.transform.forward * 10);
         }
     }
 

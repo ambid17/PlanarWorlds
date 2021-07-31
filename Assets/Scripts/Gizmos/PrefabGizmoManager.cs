@@ -34,10 +34,14 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private TargetingType _currentTargetingType;
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
+
+    private Camera mainCamera;
     #endregion
 
     void Start()
     {
+        mainCamera = Camera.main;
+
         _inspectorManager = InspectorManager.GetInstance();
         _prefabManager = PrefabManager.GetInstance();
 
@@ -86,7 +90,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             GameObject pickedObject = null;
 
             // Build a ray using the current mouse cursor position
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             
             // Check if the ray intersects a game object. If it does, return it
             if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, layerMask))
