@@ -28,6 +28,7 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public GameObject positionInputs;
     public GameObject rotationInputs;
     public GameObject scaleInputs;
+    public GameObject terrainMaterialSelector;
 
     public bool IsEditingText;
 
@@ -94,10 +95,11 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
     public void ShowUiForTarget(TargetingType targetingType)
     {
-        gizmoModeButtons.SetActive(targetingType == TargetingType.Prefab);
-        positionInputs.SetActive(targetingType == TargetingType.Prefab);
-        rotationInputs.SetActive(targetingType == TargetingType.Prefab);
-        scaleInputs.SetActive(targetingType == TargetingType.Prefab);
+        gizmoModeButtons.SetActive(targetingType != TargetingType.None);
+        positionInputs.SetActive(targetingType != TargetingType.None);
+        rotationInputs.SetActive(targetingType != TargetingType.None);
+        scaleInputs.SetActive(targetingType != TargetingType.None);
+        terrainMaterialSelector.SetActive(targetingType == TargetingType.Terrain);
     }
 
     private void InitInputFields()

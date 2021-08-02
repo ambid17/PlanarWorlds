@@ -6,7 +6,7 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, None
+    Prefab, Terrain, None
 }
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
@@ -115,7 +115,14 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (_targetObject != null)
         {
-            _currentTargetingType = TargetingType.Prefab;
+            if (_targetObject.layer == Constants.Terrain)
+            {
+                _currentTargetingType = TargetingType.Terrain;
+            }
+            else
+            {
+                _currentTargetingType = TargetingType.Prefab;
+            }
 
             activeGizmo.SetTargetObject(_targetObject);
 
@@ -215,7 +222,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             duplicateObject.transform.position = _targetObject.transform.position;
             duplicateObject.transform.rotation = _targetObject.transform.rotation;
             duplicateObject.transform.localScale = _targetObject.transform.localScale;
-            duplicateObject.layer = Constants.PrefabParentLayer;
+            duplicateObject.layer = _targetObject.layer;
             duplicateObject.transform.parent = _targetObject.transform.parent;
 
             OnTargetObjectChanged(duplicateObject);
@@ -339,5 +346,15 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.position = newPosition;
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
+    }
+
+
+    public void SetMaterialForCurrentObject(Material material)
+    {
+        if (_targetObject == null)
+            return;
+
+        Renderer myRenderer = _targetObject.GetComponent<Renderer>();
+        myRenderer.material = material;
     }
 }
