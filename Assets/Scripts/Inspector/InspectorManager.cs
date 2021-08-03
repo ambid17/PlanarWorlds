@@ -29,6 +29,9 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public GameObject rotationInputs;
     public GameObject scaleInputs;
     public GameObject terrainMaterialSelector;
+    public GameObject tilingInputs;
+
+    public TilingInput tilingInput;
 
     public bool IsEditingText;
 
@@ -69,6 +72,11 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
         }
     }
 
+    public void UpdateTerrainInputFields()
+	{
+        tilingInput.RefreshInputs();
+	}
+
     private void GizmoButtonClicked(TransformType transformType)
     {
         _prefabGizmoManager.ChangeGimzoMode(transformType);
@@ -100,6 +108,7 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
         rotationInputs.SetActive(targetingType != TargetingType.None);
         scaleInputs.SetActive(targetingType != TargetingType.None);
         terrainMaterialSelector.SetActive(targetingType == TargetingType.Terrain);
+        tilingInputs.SetActive(targetingType == TargetingType.Terrain);
     }
 
     private void InitInputFields()

@@ -36,6 +36,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
     private Camera mainCamera;
+
+    private Vector2 _currentMaterialScale;
+
     #endregion
 
     void Start()
@@ -301,6 +304,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         value = _targetObject.transform.localScale;
         _inspectorManager.UpdateInputFields(TransformType.Scale, value);
+
+        _inspectorManager.UpdateTerrainInputFields();
     }
 
     public void UpdateTargetTransform(float value, TransformType transformType, TransformAxis transformAxis)
@@ -356,5 +361,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         Renderer myRenderer = _targetObject.GetComponent<Renderer>();
         myRenderer.material = material;
+        myRenderer.material.mainTextureScale = _currentMaterialScale;
+    }
+
+    public void SetTilingForCurrentObject(float xscale, float yscale)
+    {
+        if (_targetObject == null)
+            return;
+
+        _currentMaterialScale = new Vector2(xscale, yscale);
+
+        Renderer myRenderer = _targetObject.GetComponent<Renderer>();
+        myRenderer.material.mainTextureScale = _currentMaterialScale;
     }
 }
