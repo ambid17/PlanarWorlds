@@ -13,10 +13,14 @@ public class TilingInput : MonoBehaviour
     private PrefabGizmoManager _prefabGizmoManager;
     private InspectorManager _inspectorManager;
 
-    void Start()
+    private void Awake()
     {
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         _inspectorManager = InspectorManager.GetInstance();
+    }
+
+    void Start()
+    {
         InitInputs();
     }
 
