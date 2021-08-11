@@ -89,7 +89,7 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
 
     public void PaintShadowTile(Vector3 hitPoint)
     {
-        if (!_currentTile)
+        if (!_currentTile || currentEditMode == TerrainEditMode.Erase)
             return;
 
         Vector3Int tilePos = tileMap.WorldToCell(hitPoint);
