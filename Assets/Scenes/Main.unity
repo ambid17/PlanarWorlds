@@ -9701,7 +9701,7 @@ MonoBehaviour:
       _text: Scale gizmo
     - _tooltip: Allows you to change universal gizmo settings.
       _text: Universal gizmo
-    _activeTabIndex: 0
+    _activeTabIndex: 2
   _settings:
     _canBeDisplayed: 1
     _isExpanded: 1
@@ -9928,12 +9928,12 @@ MonoBehaviour:
       _scaleSensitivity: 1
   _moveGizmoSettings3D:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _vertexSnapSettings:
       _canBeDisplayed: 1
       _isExpanded: 1
       _snapDestinationLayers: -1
-      _canSnapToGrid: 1
+      _canSnapToGrid: 0
       _canSnapToObjectVerts: 1
     _sglSliderSettings:
     - _lineHoverEps: 0.7

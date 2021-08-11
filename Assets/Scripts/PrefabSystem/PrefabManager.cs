@@ -13,6 +13,8 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     private Camera mainCamera;
     private PrefabGizmoManager _prefabGizmoManager;
 
+    private bool isPlacingObject;
+
     void Start()
     {
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
@@ -40,14 +42,9 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     private void PrefabButtonClicked(Prefab prefab)
     {
         GameObject instance = Instantiate(prefab.gameObject, prefabParent);
-        instance.layer = Constants.PrefabParentLayer;
-        foreach(Transform child in instance.transform)
-        {
-            child.gameObject.layer = Constants.PrefabChildLayer;
-        }
+        instance.layer = Constants.PrefabPlacementLayer;
 
         CreateObjectCollider(instance);
-        PlaceObjectInContext(instance);
         _prefabGizmoManager.OnTargetObjectChanged(instance);
     }
 
@@ -81,33 +78,6 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             }
             myCollider.center = bounds.center - instance.transform.position;
             myCollider.size = bounds.size;
-        }
-    }
-
-    // If we have an object select, place the new object perfectly on top of it
-    // If not, spawn 10 units in front of the camera
-    private void PlaceObjectInContext(GameObject instance)
-    {
-        if(_prefabGizmoManager.TargetObject != null)
-        {
-            GameObject snapTarget = _prefabGizmoManager.TargetObject;
-            
-            BoxCollider snapCollider = snapTarget.GetComponent<BoxCollider>();
-            BoxCollider myCollider = instance.GetComponent<BoxCollider>();
-
-            Vector3 startPosition = snapTarget.transform.position;
-
-            if(snapCollider && myCollider)
-            {
-                startPosition.y += myCollider.bounds.size.y / 2; // add half of my height
-                startPosition.y += snapCollider.bounds.size.y / 2; // add half of the snap target's height
-            }
-
-            instance.transform.position = startPosition;
-        }
-        else
-        {
-            instance.transform.position = mainCamera.transform.position + (mainCamera.transform.forward * 10);
         }
     }
 

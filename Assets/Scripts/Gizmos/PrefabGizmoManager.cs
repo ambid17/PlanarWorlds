@@ -7,7 +7,7 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, Terrain, None
+    Prefab, Terrain, PrefabPlacement, None
 }
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
@@ -75,23 +75,33 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
-        TrySelectObject();
+        // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
+        if (_currentTargetingType != TargetingType.PrefabPlacement)
+        {
+            TrySelectObject();
+        }
 
-        // Don't use any hotkeys while using a text field or editing the terrain tiles
-        if (!_inspectorManager.IsEditingText && _currentTargetingType != TargetingType.Terrain)
+        switch (_currentTargetingType)
+        {
+            case TargetingType.PrefabPlacement:
+                TryPlacePrefab();
+                break;
+            case TargetingType.Terrain:
+                TryTerrainModification();
+                break;
+        }
+
+        // Don't use any hotkeys while using a text field or editing the terrain tiles/prefab placement
+        if (!_inspectorManager.IsEditingText && _currentTargetingType == TargetingType.Prefab)
         {
             TryChangeMode();
             TryDuplicate();
             TryDelete();
             TryFocusObject();
         }
-
-        if(_currentTargetingType == TargetingType.Terrain)
-        {
-            TryTerrainModification();
-        }
     }
 
+    #region Prefab Selection
     private void TrySelectObject()
     {
         if (Input.GetMouseButtonDown(0)
@@ -117,22 +127,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
     }
 
-    private void TryTerrainModification()
-    {
-        if (Input.GetMouseButton(0)
-            && !EventSystem.current.IsPointerOverGameObject())
-        {
-            // Build a ray using the current mouse cursor position
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-            // Check if the ray intersects a game object. If it does, return it
-            if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
-            {
-                _terrainInspector.TryPaintTile(rayHit);
-            }
-        }
-    }
-
     public void OnTargetObjectChanged(GameObject newTargetObject)
     {
         ToggleOutlineRender(false);
@@ -142,11 +136,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (_targetObject != null)
         {
-            if (_targetObject.layer == Constants.Terrain)
+            if (_targetObject.layer == Constants.TerrainLayer)
             {
                 _currentTargetingType = TargetingType.Terrain;
             }
-            else
+            else if(_targetObject.layer == Constants.PrefabParentLayer)
             {
                 _currentTargetingType = TargetingType.Prefab;
 
@@ -159,6 +153,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
                 List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
                 moveGizmo.SetVertexSnapTargetObjects(snapTargets);
 
+                ToggleOutlineRender(true);
+            }
+            else if (_targetObject.layer == Constants.PrefabPlacementLayer)
+            {
+                _currentTargetingType = TargetingType.PrefabPlacement;
                 ToggleOutlineRender(true);
             }
         }
@@ -177,6 +176,58 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             if (myRenderer)
             {
                 myRenderer.material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 1f);
+            }
+        }
+    }
+    #endregion
+
+    #region Prefab Creation
+    private void TryPlacePrefab()
+    {
+        UpdatePrefabPosition();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            _targetObject.layer = Constants.PrefabParentLayer;
+            OnTargetObjectChanged(_targetObject);
+        }
+    }
+
+    private void UpdatePrefabPosition()
+    {
+        // Build a ray using the current mouse cursor position
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        // Check if the ray intersects a game object. If it does, return it
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        {
+            BoxCollider myCollider = _targetObject.GetComponent<BoxCollider>();
+
+            Vector3 snappedPosition = rayHit.point;
+
+            if (myCollider)
+            {
+                snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+            }
+
+            _targetObject.transform.position = snappedPosition;
+        }
+    }
+    #endregion
+
+    #region Hotkeys
+    private void TryTerrainModification()
+    {
+        if (Input.GetMouseButton(0)
+            && !EventSystem.current.IsPointerOverGameObject())
+        {
+            // Build a ray using the current mouse cursor position
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            // Check if the ray intersects a game object. If it does, return it
+            if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+            {
+                _terrainInspector.TryPaintTile(rayHit);
             }
         }
     }
@@ -277,6 +328,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
     }
 
+    #endregion
+
+    #region Gizmo Callbacks
     void OnGizmoPostDragBegin(Gizmo gizmo, int handleId)
     {
         
@@ -308,6 +362,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _inspectorManager.UpdateInputFields(currentTransformType, value);
     }
 
+    #endregion
+
+    #region Utils
     private void ValidateScale()
     {
         Vector3 newScale = _targetObject.transform.localScale;
@@ -333,7 +390,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     public void UpdateTargetTransform(float value, TransformType transformType, TransformAxis transformAxis)
     {
-        if(_targetObject == null)
+        if (_targetObject == null)
             return;
 
         Vector3 newPosition = _targetObject.transform.position;
@@ -375,4 +432,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
     }
+
+    #endregion
 }
