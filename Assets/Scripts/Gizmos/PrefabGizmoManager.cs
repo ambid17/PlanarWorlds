@@ -75,6 +75,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
+        CheckHotkeyModifiers();
+
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
         if (_currentTargetingType != TargetingType.PrefabPlacement)
         {
@@ -98,6 +100,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             TryDuplicate();
             TryDelete();
             TryFocusObject();
+        }
+    }
+
+    private void CheckHotkeyModifiers()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isHoldingControl = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            isHoldingControl = false;
         }
     }
 
@@ -188,8 +203,21 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (Input.GetMouseButtonDown(0))
         {
-            _targetObject.layer = Constants.PrefabParentLayer;
-            OnTargetObjectChanged(_targetObject);
+            if (isHoldingControl)
+            {
+                GameObject newTarget = Duplicate();
+
+                // Change the non-duplicated object's layer so it can be targeted
+                _targetObject.layer = Constants.PrefabParentLayer;
+
+                // THEN change the target object, so we keep the PrefabPlacementLayer
+                OnTargetObjectChanged(newTarget);
+            }
+            else
+            {
+                _targetObject.layer = Constants.PrefabParentLayer;
+                OnTargetObjectChanged(_targetObject);
+            }
         }
     }
 
@@ -285,24 +313,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void TryDuplicate()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            isHoldingControl = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            isHoldingControl = false;
-        }
-
         if (isHoldingControl && Input.GetKeyDown(KeyCode.D) && _targetObject != null)
         {
-            GameObject duplicateObject = Instantiate(_targetObject);
-            duplicateObject.transform.position = _targetObject.transform.position;
-            duplicateObject.transform.rotation = _targetObject.transform.rotation;
-            duplicateObject.transform.localScale = _targetObject.transform.localScale;
-            duplicateObject.layer = _targetObject.layer;
-            duplicateObject.transform.parent = _targetObject.transform.parent;
+            GameObject duplicateObject = Duplicate();
 
             OnTargetObjectChanged(duplicateObject);
         }
@@ -365,6 +378,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #endregion
 
     #region Utils
+    private GameObject Duplicate()
+    {
+        GameObject duplicateObject = Instantiate(_targetObject);
+        duplicateObject.transform.position = _targetObject.transform.position;
+        duplicateObject.transform.rotation = _targetObject.transform.rotation;
+        duplicateObject.transform.localScale = _targetObject.transform.localScale;
+        duplicateObject.layer = _targetObject.layer;
+        duplicateObject.transform.parent = _targetObject.transform.parent;
+
+        return duplicateObject;
+    }
+
     private void ValidateScale()
     {
         Vector3 newScale = _targetObject.transform.localScale;
