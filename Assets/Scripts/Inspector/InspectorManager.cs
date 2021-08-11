@@ -24,14 +24,8 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public TMP_InputField zScaleInput;
 
     // Containers
-    public GameObject gizmoModeButtons;
-    public GameObject positionInputs;
-    public GameObject rotationInputs;
-    public GameObject scaleInputs;
-    public GameObject terrainMaterialSelector;
-    public GameObject tilingInputs;
-
-    public TilingInput tilingInput;
+    public GameObject objectInspectorParent;
+    public GameObject terrainInspectorParent;
 
     public bool IsEditingText;
 
@@ -72,11 +66,6 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
         }
     }
 
-    public void UpdateTerrainInputFields()
-	{
-        tilingInput.RefreshInputs();
-	}
-
     private void GizmoButtonClicked(TransformType transformType)
     {
         _prefabGizmoManager.ChangeGimzoMode(transformType);
@@ -103,12 +92,8 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
     public void ShowUiForTarget(TargetingType targetingType)
     {
-        gizmoModeButtons.SetActive(targetingType != TargetingType.None);
-        positionInputs.SetActive(targetingType != TargetingType.None);
-        rotationInputs.SetActive(targetingType != TargetingType.None);
-        scaleInputs.SetActive(targetingType != TargetingType.None);
-        terrainMaterialSelector.SetActive(targetingType == TargetingType.Terrain);
-        tilingInputs.SetActive(targetingType == TargetingType.Terrain);
+        objectInspectorParent.SetActive(targetingType == TargetingType.Prefab);
+        terrainInspectorParent.SetActive(targetingType == TargetingType.Terrain);
     }
 
     private void InitInputFields()

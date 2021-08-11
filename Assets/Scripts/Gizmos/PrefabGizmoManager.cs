@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Tilemaps;
 using RTG;
 
 public enum TargetingType
@@ -13,9 +14,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 {
     [SerializeField]
     private LayerMask layerMask;
+    [SerializeField]
+    private LayerMask terrainLayerMask;
 
+    [SerializeField]
     private InspectorManager _inspectorManager;
     private PrefabManager _prefabManager;
+    private TerrainInspector _terrainInspector;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -36,9 +41,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
     private Camera mainCamera;
-
-    private Vector2 _currentMaterialScale;
-
     #endregion
 
     void Start()
@@ -47,6 +49,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         _inspectorManager = InspectorManager.GetInstance();
         _prefabManager = PrefabManager.GetInstance();
+        _terrainInspector = TerrainInspector.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -74,13 +77,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         TrySelectObject();
 
-        // Don't use any hotkeys while using a text field
-        if (!_inspectorManager.IsEditingText)
+        // Don't use any hotkeys while using a text field or editing the terrain tiles
+        if (!_inspectorManager.IsEditingText && _currentTargetingType != TargetingType.Terrain)
         {
             TryChangeMode();
             TryDuplicate();
             TryDelete();
             TryFocusObject();
+        }
+
+        if(_currentTargetingType == TargetingType.Terrain)
+        {
+            TryTerrainModification();
         }
     }
 
@@ -109,6 +117,22 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
     }
 
+    private void TryTerrainModification()
+    {
+        if (Input.GetMouseButton(0)
+            && !EventSystem.current.IsPointerOverGameObject())
+        {
+            // Build a ray using the current mouse cursor position
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            // Check if the ray intersects a game object. If it does, return it
+            if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+            {
+                _terrainInspector.TryPaintTile(rayHit);
+            }
+        }
+    }
+
     public void OnTargetObjectChanged(GameObject newTargetObject)
     {
         ToggleOutlineRender(false);
@@ -125,18 +149,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             else
             {
                 _currentTargetingType = TargetingType.Prefab;
+
+                activeGizmo.SetTargetObject(_targetObject);
+
+                // Access the move gizmo behaviour and specify the vertex snap target objects
+                MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
+
+                // Vertex snapping won't function properly if the meshes are children of an empty parent
+                List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
+                moveGizmo.SetVertexSnapTargetObjects(snapTargets);
+
+                ToggleOutlineRender(true);
             }
-
-            activeGizmo.SetTargetObject(_targetObject);
-
-            // Access the move gizmo behaviour and specify the vertex snap target objects
-            MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
-
-            // Vertex snapping won't function properly if the meshes are children of an empty parent
-            List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
-            moveGizmo.SetVertexSnapTargetObjects(snapTargets);
-
-            ToggleOutlineRender(true);
         }
 
         _inspectorManager.ShowUiForTarget(_currentTargetingType);
@@ -202,9 +226,10 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void ToggleGizmos()
     {
-        positionGizmo.Gizmo.SetEnabled(_targetObject != null && currentTransformType == TransformType.Position);
-        rotationGizmo.Gizmo.SetEnabled(_targetObject != null && currentTransformType == TransformType.Rotation);
-        scaleGizmo.Gizmo.SetEnabled(_targetObject != null && currentTransformType == TransformType.Scale);
+        bool gizmosCanShow = _targetObject != null && _currentTargetingType == TargetingType.Prefab;
+        positionGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Position);
+        rotationGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Rotation);
+        scaleGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Scale);
     }
 
     private void TryDuplicate()
@@ -304,8 +329,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         value = _targetObject.transform.localScale;
         _inspectorManager.UpdateInputFields(TransformType.Scale, value);
-
-        _inspectorManager.UpdateTerrainInputFields();
     }
 
     public void UpdateTargetTransform(float value, TransformType transformType, TransformAxis transformAxis)
@@ -351,27 +374,5 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.position = newPosition;
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
-    }
-
-
-    public void SetMaterialForCurrentObject(Material material)
-    {
-        if (_targetObject == null)
-            return;
-
-        Renderer myRenderer = _targetObject.GetComponent<Renderer>();
-        myRenderer.material = material;
-        myRenderer.material.mainTextureScale = _currentMaterialScale;
-    }
-
-    public void SetTilingForCurrentObject(float xscale, float yscale)
-    {
-        if (_targetObject == null)
-            return;
-
-        _currentMaterialScale = new Vector2(xscale, yscale);
-
-        Renderer myRenderer = _targetObject.GetComponent<Renderer>();
-        myRenderer.material.mainTextureScale = _currentMaterialScale;
     }
 }
