@@ -37,6 +37,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private bool isHoldingControl;
 
+    [SerializeField]
     private TargetingType _currentTargetingType;
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
@@ -246,16 +247,27 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #region Hotkeys
     private void TryTerrainModification()
     {
-        if (Input.GetMouseButton(0)
-            && !EventSystem.current.IsPointerOverGameObject())
-        {
-            // Build a ray using the current mouse cursor position
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        // Build a ray using the current mouse cursor position
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            // Check if the ray intersects a game object. If it does, return it
-            if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        bool hitTileMap = false;
+
+        // Check if the ray intersects a game object. If it does, return it
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        {
+            hitTileMap = true;
+        }
+
+        if (hitTileMap)
+        {
+            if (Input.GetMouseButton(0)
+            && !EventSystem.current.IsPointerOverGameObject())
             {
-                _terrainInspector.TryPaintTile(rayHit);
+                _terrainInspector.TryPaintTile(rayHit.point);
+            }
+            else
+            {
+                _terrainInspector.PaintShadowTile(rayHit.point);
             }
         }
     }
