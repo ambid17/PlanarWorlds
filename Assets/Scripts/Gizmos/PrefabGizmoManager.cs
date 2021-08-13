@@ -236,7 +236,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             if (myCollider)
             {
-                snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+                // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
+                //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
             }
 
             _targetObject.transform.position = snappedPosition;
