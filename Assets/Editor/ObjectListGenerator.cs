@@ -32,7 +32,8 @@ public class PrefabListGenerator : EditorWindow
                 "Assets/Models/TestAssets/Campfire",
                 "Assets/Models/TestAssets/Maple Tree",
                 "Assets/Models/TestAssets/Rocks",
-                "Assets/Models/TestAssets/Wood Cart"
+                "Assets/Models/TestAssets/Wood Cart",
+                "Assets/Models/TestAssets/House1"
             };
 
             GameObject[] prefabs = GetAllPrefabs(foldersToGetAssetsFrom);

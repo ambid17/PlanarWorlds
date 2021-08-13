@@ -27,3 +27,5 @@ MonoBehaviour:
     previewTexture: {fileID: 2800000, guid: 99611090fd0f64640ac5c16a8b74669b, type: 3}
   - gameObject: {fileID: 100000, guid: bbcd66f89b4989947826e275aa879814, type: 3}
     previewTexture: {fileID: 2800000, guid: da59044a728ec5e488813be9e723cc35, type: 3}
+  - gameObject: {fileID: 100000, guid: 2abcd3d43ca224d4487a64df6fb351d2, type: 3}
+    previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
