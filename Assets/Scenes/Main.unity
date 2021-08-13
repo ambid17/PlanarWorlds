@@ -6598,6 +6598,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   _inspectorManager: {fileID: 0}
+  _currentTargetingType: 0
 --- !u!114 &797217222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9933,7 +9934,7 @@ MonoBehaviour:
       _canBeDisplayed: 1
       _isExpanded: 1
       _snapDestinationLayers: -1
-      _canSnapToGrid: 0
+      _canSnapToGrid: 1
       _canSnapToObjectVerts: 1
     _sglSliderSettings:
     - _lineHoverEps: 0.7
@@ -17003,7 +17004,7 @@ MonoBehaviour:
   _lookAndFeel:
     _canBeDisplayed: 1
     _isExpanded: 1
-    _lineColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 0.40000004}
+    _lineColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
     _useCellFading: 1
 --- !u!1 &1695402998
 GameObject:
