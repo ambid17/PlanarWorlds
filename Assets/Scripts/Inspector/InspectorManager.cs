@@ -24,10 +24,8 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public TMP_InputField zScaleInput;
 
     // Containers
-    public GameObject gizmoModeButtons;
-    public GameObject positionInputs;
-    public GameObject rotationInputs;
-    public GameObject scaleInputs;
+    public GameObject objectInspectorParent;
+    public GameObject terrainInspectorParent;
 
     public bool IsEditingText;
 
@@ -94,10 +92,8 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
     public void ShowUiForTarget(TargetingType targetingType)
     {
-        gizmoModeButtons.SetActive(targetingType == TargetingType.Prefab);
-        positionInputs.SetActive(targetingType == TargetingType.Prefab);
-        rotationInputs.SetActive(targetingType == TargetingType.Prefab);
-        scaleInputs.SetActive(targetingType == TargetingType.Prefab);
+        objectInspectorParent.SetActive(targetingType == TargetingType.Prefab);
+        terrainInspectorParent.SetActive(targetingType == TargetingType.Terrain);
     }
 
     private void InitInputFields()

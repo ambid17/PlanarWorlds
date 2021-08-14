@@ -2,20 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Tilemaps;
 using RTG;
 
 public enum TargetingType
 {
-    Prefab, None
+    Prefab, Terrain, PrefabPlacement, None
 }
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 {
     [SerializeField]
     private LayerMask layerMask;
+    [SerializeField]
+    private LayerMask terrainLayerMask;
 
+    [SerializeField]
     private InspectorManager _inspectorManager;
     private PrefabManager _prefabManager;
+    private TerrainInspector _terrainInspector;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -32,6 +37,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private bool isHoldingControl;
 
+    [SerializeField]
     private TargetingType _currentTargetingType;
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
@@ -44,6 +50,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         _inspectorManager = InspectorManager.GetInstance();
         _prefabManager = PrefabManager.GetInstance();
+        _terrainInspector = TerrainInspector.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -69,10 +76,26 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
-        TrySelectObject();
+        CheckHotkeyModifiers();
 
-        // Don't use any hotkeys while using a text field
-        if (!_inspectorManager.IsEditingText)
+        // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
+        if (_currentTargetingType != TargetingType.PrefabPlacement)
+        {
+            TrySelectObject();
+        }
+
+        switch (_currentTargetingType)
+        {
+            case TargetingType.PrefabPlacement:
+                TryPlacePrefab();
+                break;
+            case TargetingType.Terrain:
+                TryTerrainModification();
+                break;
+        }
+
+        // Don't use any hotkeys while using a text field or editing the terrain tiles/prefab placement
+        if (!_inspectorManager.IsEditingText && _currentTargetingType == TargetingType.Prefab)
         {
             TryChangeMode();
             TryDuplicate();
@@ -81,6 +104,20 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
     }
 
+    private void CheckHotkeyModifiers()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isHoldingControl = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            isHoldingControl = false;
+        }
+    }
+
+    #region Prefab Selection
     private void TrySelectObject()
     {
         if (Input.GetMouseButtonDown(0)
@@ -115,18 +152,30 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (_targetObject != null)
         {
-            _currentTargetingType = TargetingType.Prefab;
+            if (_targetObject.layer == Constants.TerrainLayer)
+            {
+                _currentTargetingType = TargetingType.Terrain;
+            }
+            else if(_targetObject.layer == Constants.PrefabParentLayer)
+            {
+                _currentTargetingType = TargetingType.Prefab;
 
-            activeGizmo.SetTargetObject(_targetObject);
+                activeGizmo.SetTargetObject(_targetObject);
 
-            // Access the move gizmo behaviour and specify the vertex snap target objects
-            MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
+                // Access the move gizmo behaviour and specify the vertex snap target objects
+                MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
 
-            // Vertex snapping won't function properly if the meshes are children of an empty parent
-            List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
-            moveGizmo.SetVertexSnapTargetObjects(snapTargets);
+                // Vertex snapping won't function properly if the meshes are children of an empty parent
+                List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
+                moveGizmo.SetVertexSnapTargetObjects(snapTargets);
 
-            ToggleOutlineRender(true);
+                ToggleOutlineRender(true);
+            }
+            else if (_targetObject.layer == Constants.PrefabPlacementLayer)
+            {
+                _currentTargetingType = TargetingType.PrefabPlacement;
+                ToggleOutlineRender(true);
+            }
         }
 
         _inspectorManager.ShowUiForTarget(_currentTargetingType);
@@ -143,6 +192,83 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             if (myRenderer)
             {
                 myRenderer.material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 1f);
+            }
+        }
+    }
+    #endregion
+
+    #region Prefab Creation
+    private void TryPlacePrefab()
+    {
+        UpdatePrefabPosition();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (isHoldingControl)
+            {
+                GameObject newTarget = Duplicate();
+
+                // Change the non-duplicated object's layer so it can be targeted
+                _targetObject.layer = Constants.PrefabParentLayer;
+
+                // THEN change the target object, so we keep the PrefabPlacementLayer
+                OnTargetObjectChanged(newTarget);
+            }
+            else
+            {
+                _targetObject.layer = Constants.PrefabParentLayer;
+                OnTargetObjectChanged(_targetObject);
+            }
+        }
+    }
+
+    private void UpdatePrefabPosition()
+    {
+        // Build a ray using the current mouse cursor position
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        // Check if the ray intersects a game object. If it does, return it
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        {
+            BoxCollider myCollider = _targetObject.GetComponent<BoxCollider>();
+
+            Vector3 snappedPosition = rayHit.point;
+
+            if (myCollider)
+            {
+                // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
+                //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+            }
+
+            _targetObject.transform.position = snappedPosition;
+        }
+    }
+    #endregion
+
+    #region Hotkeys
+    private void TryTerrainModification()
+    {
+        // Build a ray using the current mouse cursor position
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        bool hitTileMap = false;
+
+        // Check if the ray intersects a game object. If it does, return it
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        {
+            hitTileMap = true;
+        }
+
+        if (hitTileMap)
+        {
+            if (Input.GetMouseButton(0)
+            && !EventSystem.current.IsPointerOverGameObject())
+            {
+                _terrainInspector.TryPaintTile(rayHit.point);
+            }
+            else
+            {
+                _terrainInspector.PaintShadowTile(rayHit.point);
             }
         }
     }
@@ -192,31 +318,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void ToggleGizmos()
     {
-        positionGizmo.Gizmo.SetEnabled(_targetObject != null && currentTransformType == TransformType.Position);
-        rotationGizmo.Gizmo.SetEnabled(_targetObject != null && currentTransformType == TransformType.Rotation);
-        scaleGizmo.Gizmo.SetEnabled(_targetObject != null && currentTransformType == TransformType.Scale);
+        bool gizmosCanShow = _targetObject != null && _currentTargetingType == TargetingType.Prefab;
+        positionGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Position);
+        rotationGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Rotation);
+        scaleGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Scale);
     }
 
     private void TryDuplicate()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            isHoldingControl = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            isHoldingControl = false;
-        }
-
         if (isHoldingControl && Input.GetKeyDown(KeyCode.D) && _targetObject != null)
         {
-            GameObject duplicateObject = Instantiate(_targetObject);
-            duplicateObject.transform.position = _targetObject.transform.position;
-            duplicateObject.transform.rotation = _targetObject.transform.rotation;
-            duplicateObject.transform.localScale = _targetObject.transform.localScale;
-            duplicateObject.layer = Constants.PrefabParentLayer;
-            duplicateObject.transform.parent = _targetObject.transform.parent;
+            GameObject duplicateObject = Duplicate();
 
             OnTargetObjectChanged(duplicateObject);
         }
@@ -242,6 +354,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
     }
 
+    #endregion
+
+    #region Gizmo Callbacks
     void OnGizmoPostDragBegin(Gizmo gizmo, int handleId)
     {
         
@@ -273,6 +388,21 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _inspectorManager.UpdateInputFields(currentTransformType, value);
     }
 
+    #endregion
+
+    #region Utils
+    private GameObject Duplicate()
+    {
+        GameObject duplicateObject = Instantiate(_targetObject);
+        duplicateObject.transform.position = _targetObject.transform.position;
+        duplicateObject.transform.rotation = _targetObject.transform.rotation;
+        duplicateObject.transform.localScale = _targetObject.transform.localScale;
+        duplicateObject.layer = _targetObject.layer;
+        duplicateObject.transform.parent = _targetObject.transform.parent;
+
+        return duplicateObject;
+    }
+
     private void ValidateScale()
     {
         Vector3 newScale = _targetObject.transform.localScale;
@@ -298,7 +428,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     public void UpdateTargetTransform(float value, TransformType transformType, TransformAxis transformAxis)
     {
-        if(_targetObject == null)
+        if (_targetObject == null)
             return;
 
         Vector3 newPosition = _targetObject.transform.position;
@@ -340,4 +470,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
     }
+
+    #endregion
 }

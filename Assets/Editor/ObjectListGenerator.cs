@@ -29,7 +29,11 @@ public class PrefabListGenerator : EditorWindow
         {
             string[] foldersToGetAssetsFrom = new string[]
             {
-                "Assets/ThirdParty/Modular Village"
+                "Assets/Models/TestAssets/Campfire",
+                "Assets/Models/TestAssets/Maple Tree",
+                "Assets/Models/TestAssets/Rocks",
+                "Assets/Models/TestAssets/Wood Cart",
+                "Assets/Models/TestAssets/House1"
             };
 
             GameObject[] prefabs = GetAllPrefabs(foldersToGetAssetsFrom);
