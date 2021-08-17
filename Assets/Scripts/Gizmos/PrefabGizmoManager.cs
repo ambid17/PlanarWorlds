@@ -92,12 +92,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
 
         // Don't use any hotkeys while using a text field or editing the terrain tiles/prefab placement
-        if (!_uIManager.isEditingValues && _currentTargetingType == TargetingType.Prefab)
+        if (!_uIManager.isEditingValues)
         {
-            TryChangeMode();
-            TryDuplicate();
-            TryDelete();
-            TryFocusObject();
+            TryHideMouse();
+
+            if(_currentTargetingType == TargetingType.Prefab)
+            {
+                TryChangeMode();
+                TryDuplicate();
+                TryDelete();
+                TryFocusObject();
+            }
         }
     }
 
@@ -321,6 +326,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if(Input.GetKeyDown(KeyCode.F) && _targetObject != null)
         {
             RTFocusCamera.Get.Focus(new List<GameObject>() { _targetObject });
+        }
+    }
+
+    private void TryHideMouse()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.visible = true;
         }
     }
 
