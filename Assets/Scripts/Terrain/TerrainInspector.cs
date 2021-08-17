@@ -28,6 +28,7 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
 
     protected override void Awake()
     {
+        base.Awake();
         _terrainManager = TerrainManager.GetInstance();
     }
 

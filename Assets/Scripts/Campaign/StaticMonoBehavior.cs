@@ -25,7 +25,7 @@ public class StaticMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (ms_instance != null && ms_instance != gameObject)
+        if (ms_instance != null && ms_instance.gameObject != gameObject)
         {
             Destroy(gameObject);
         }
