@@ -7446,9 +7446,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6d2b187eba869cb4f826baad49fd7dbf, type: 2}
   - {fileID: 11400000, guid: 449f697fd5f334944a8da4f0b4febf4e, type: 2}
   buttonPrefab: {fileID: 257451615768583596, guid: 4aad387627f9cdc48ae91bec5de840f2, type: 3}
-  buttonParent: {fileID: 986681787}
   paintButton: {fileID: 1092676261}
   eraseButton: {fileID: 710882860}
+  settingsButton: {fileID: 827618722}
+  tileSelectorParent: {fileID: 986681786}
+  settingsParent: {fileID: 1434256773}
   tileMap: {fileID: 933569558}
 --- !u!1 &807779931
 GameObject:
@@ -9544,7 +9546,7 @@ GameObject:
   - component: {fileID: 986681787}
   - component: {fileID: 986681788}
   m_Layer: 5
-  m_Name: TileSelector
+  m_Name: TileSelectorParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17143,7 +17145,7 @@ GameObject:
   - component: {fileID: 1434256774}
   - component: {fileID: 1434256775}
   m_Layer: 5
-  m_Name: TerrainSettings
+  m_Name: TerrainSettingsParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17739,7 +17741,7 @@ GameObject:
   - component: {fileID: 1543658232}
   - component: {fileID: 1543658233}
   m_Layer: 5
-  m_Name: Buttons
+  m_Name: HeaderButtons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

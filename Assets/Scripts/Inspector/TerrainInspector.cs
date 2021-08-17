@@ -15,10 +15,13 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
     public Tile[] tiles;
 
     public GameObject buttonPrefab;
-    public Transform buttonParent;
 
     public Button paintButton;
     public Button eraseButton;
+    public Button settingsButton;
+
+    public GameObject tileSelectorParent;
+    public GameObject settingsParent;
 
     public Tilemap tileMap;
 
@@ -26,6 +29,7 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
 
     private Tile _currentTile;
     private Vector3Int _lastShadowTilePosition;
+    private int brushSize;
 
     private PrefabGizmoManager _prefabGizmoManager;
 
@@ -34,13 +38,14 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         CreateTileButtons();
         InitModeButtons();
+        InitSettingsMenu();
     }
 
     private void CreateTileButtons()
     {
         foreach (Tile tile in tiles)
         {
-            GameObject newButton = Instantiate(buttonPrefab, buttonParent);
+            GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
             ButtonManagerBasicIcon buttonManager = newButton.GetComponent<ButtonManagerBasicIcon>();
             buttonManager.buttonIcon = tile.sprite;
             buttonManager.UpdateUI();
@@ -61,10 +66,22 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
         eraseButton.onClick.AddListener(() => ChangeEditMode(TerrainEditMode.Erase));
     }
 
+    private void InitSettingsMenu()
+    {
+        settingsButton.onClick.AddListener(() => ToggleSettingsMenu(true));
+        ToggleSettingsMenu(false);
+    }
 
     private void ChangeEditMode(TerrainEditMode newMode)
     {
         currentEditMode = newMode;
+        ToggleSettingsMenu(false);
+    }
+
+    private void ToggleSettingsMenu(bool shouldBeActive)
+    {
+        settingsParent.SetActive(shouldBeActive);
+        tileSelectorParent.SetActive(!shouldBeActive);
     }
 
 
