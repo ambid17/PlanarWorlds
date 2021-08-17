@@ -439,6 +439,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.position = newPosition;
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
+        activeGizmo.SetTargetObject(_targetObject);
     }
 
     #endregion
