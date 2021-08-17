@@ -20,7 +20,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     [SerializeField]
     private InspectorManager _inspectorManager;
     private PrefabManager _prefabManager;
-    private TerrainInspector _terrainInspector;
+    private TerrainManager _terrainManager;
+    private UIManager _uIManager;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -50,7 +51,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         _inspectorManager = InspectorManager.GetInstance();
         _prefabManager = PrefabManager.GetInstance();
-        _terrainInspector = TerrainInspector.GetInstance();
+        _terrainManager = TerrainManager.GetInstance();
+        _uIManager = UIManager.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -95,7 +97,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
 
         // Don't use any hotkeys while using a text field or editing the terrain tiles/prefab placement
-        if (!_inspectorManager.IsEditingText && _currentTargetingType == TargetingType.Prefab)
+        if (!_uIManager.isEditingValues && _currentTargetingType == TargetingType.Prefab)
         {
             TryChangeMode();
             TryDuplicate();
@@ -264,11 +266,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             if (Input.GetMouseButton(0)
             && !EventSystem.current.IsPointerOverGameObject())
             {
-                _terrainInspector.TryPaintTile(rayHit.point);
+                _terrainManager.PaintTile(rayHit.point);
             }
             else
             {
-                _terrainInspector.PaintShadowTile(rayHit.point);
+                _terrainManager.PaintShadowTile(rayHit.point);
             }
         }
     }
