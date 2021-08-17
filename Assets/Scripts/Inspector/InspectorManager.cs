@@ -27,14 +27,14 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public GameObject objectInspectorParent;
     public GameObject terrainInspectorParent;
 
-    public bool IsEditingText;
-
 
     private PrefabGizmoManager _prefabGizmoManager;
+    private UIManager _uIManager;
 
     void Start()
     {
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
+        _uIManager = UIManager.GetInstance();
 
         InitInputFields();
         positionButton.onClick.AddListener(() => GizmoButtonClicked(TransformType.Position));
@@ -73,21 +73,9 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
     private void InputFieldUpdated(TMP_InputField inputField, TransformType transformType, TransformAxis transformAxis)
     {
-        float parsedValue = ValidateFloatInput(inputField, transformType);
+        float parsedValue = InputValidation.ValidateFloat(text: inputField.text, defaultValue: 1);
 
         _prefabGizmoManager.UpdateTargetTransform(parsedValue, transformType, transformAxis);
-    }
-
-    private float ValidateFloatInput(TMP_InputField inputField, TransformType transformType)
-    {
-        bool isValid = float.TryParse(inputField.text, out float result);
-        
-        if (!isValid)
-        {
-            result = 1;
-        }
-
-        return result;
     }
 
     public void ShowUiForTarget(TargetingType targetingType)
@@ -99,42 +87,42 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     private void InitInputFields()
     {
         xPositionInput.onValueChanged.AddListener(delegate { InputFieldUpdated(xPositionInput, TransformType.Position, TransformAxis.X); });
-        xPositionInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        xPositionInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        xPositionInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        xPositionInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
         yPositionInput.onValueChanged.AddListener(delegate { InputFieldUpdated(yPositionInput, TransformType.Position, TransformAxis.Y); });
-        yPositionInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        yPositionInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        yPositionInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        yPositionInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
         zPositionInput.onValueChanged.AddListener(delegate { InputFieldUpdated(zPositionInput, TransformType.Position, TransformAxis.Z); });
-        zPositionInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        zPositionInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        zPositionInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        zPositionInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
 
         xRotationInput.onValueChanged.AddListener(delegate { InputFieldUpdated(xRotationInput, TransformType.Rotation, TransformAxis.X); });
-        xRotationInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        xRotationInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        xRotationInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        xRotationInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
         yRotationInput.onValueChanged.AddListener(delegate { InputFieldUpdated(yRotationInput, TransformType.Rotation, TransformAxis.Y); });
-        yRotationInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        yRotationInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        yRotationInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        yRotationInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
         zRotationInput.onValueChanged.AddListener(delegate { InputFieldUpdated(zRotationInput, TransformType.Rotation, TransformAxis.Z); });
-        zRotationInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        zRotationInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        zRotationInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        zRotationInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
 
         xScaleInput.onValueChanged.AddListener(delegate { InputFieldUpdated(xScaleInput, TransformType.Scale, TransformAxis.X); });
-        xScaleInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        xScaleInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        xScaleInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        xScaleInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
         yScaleInput.onValueChanged.AddListener(delegate { InputFieldUpdated(yScaleInput, TransformType.Scale, TransformAxis.Y); });
-        yScaleInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        yScaleInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        yScaleInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        yScaleInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
         zScaleInput.onValueChanged.AddListener(delegate { InputFieldUpdated(zScaleInput, TransformType.Scale, TransformAxis.Z); });
-        zScaleInput.onSelect.AddListener(delegate { IsEditingText = true; });
-        zScaleInput.onDeselect.AddListener(delegate { IsEditingText = false; });
+        zScaleInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
+        zScaleInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
     }
 }
 

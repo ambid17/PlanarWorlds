@@ -9,16 +9,35 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public GameObject HierarchyCanvas;
     public GameObject CampaignCanvas;
 
+    public bool isEditingValues;
+
+    public bool campaignWindowShouldBeActive;
+    public bool hierarchyWindowShouldBeActive;
+    public bool inspectorWindowShouldBeActive;
+    public bool prefabWindowShouldBeActive;
+
     void Start()
     {
-        CampaignCanvas.SetActive(true);
-        PrefabCanvas.SetActive(false);
-        InspectorCanvas.SetActive(false);
-        HierarchyCanvas.SetActive(false);
+        isEditingValues = false;
+
+        campaignWindowShouldBeActive = false;
+        hierarchyWindowShouldBeActive = false;
+        inspectorWindowShouldBeActive = true;
+        prefabWindowShouldBeActive = true;
+
+        UpdateActiveWindows();
     }
 
     void Update()
     {
         
+    }
+
+    private void UpdateActiveWindows()
+    {
+        CampaignCanvas.SetActive(campaignWindowShouldBeActive);
+        HierarchyCanvas.SetActive(hierarchyWindowShouldBeActive);
+        InspectorCanvas.SetActive(inspectorWindowShouldBeActive);
+        PrefabCanvas.SetActive(prefabWindowShouldBeActive);
     }
 }
