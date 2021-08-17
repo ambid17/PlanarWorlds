@@ -14,8 +14,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 {
     [SerializeField]
     private LayerMask layerMask;
-    [SerializeField]
-    private LayerMask terrainLayerMask;
 
     [SerializeField]
     private InspectorManager _inspectorManager;
@@ -90,9 +88,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             case TargetingType.PrefabPlacement:
                 TryPlacePrefab();
-                break;
-            case TargetingType.Terrain:
-                TryTerrainModification();
                 break;
         }
 
@@ -229,8 +224,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         // Build a ray using the current mouse cursor position
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        // Check if the ray intersects a game object. If it does, return it
-        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        // Check if the ray intersects the tilemap. If it does, snap the object to the terrain
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainManager.terrainLayerMask))
         {
             BoxCollider myCollider = _targetObject.GetComponent<BoxCollider>();
 
@@ -248,33 +243,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #endregion
 
     #region Hotkeys
-    private void TryTerrainModification()
-    {
-        // Build a ray using the current mouse cursor position
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        bool hitTileMap = false;
-
-        // Check if the ray intersects a game object. If it does, return it
-        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
-        {
-            hitTileMap = true;
-        }
-
-        if (hitTileMap)
-        {
-            if (Input.GetMouseButton(0)
-            && !EventSystem.current.IsPointerOverGameObject())
-            {
-                _terrainManager.PaintTile(rayHit.point);
-            }
-            else
-            {
-                _terrainManager.PaintShadowTile(rayHit.point);
-            }
-        }
-    }
-
     private void TryChangeMode()
     {
         if (Input.GetKeyDown(Constants.positionHotkey))

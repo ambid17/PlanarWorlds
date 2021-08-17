@@ -1,13 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 {
+    public LayerMask terrainLayerMask;
     public Tilemap tileMap;
+    public Tilemap highlightTileMap;
+    public Tilemap shadowTileMap;
 
     private Vector3Int _lastShadowTilePosition;
+    [SerializeField]
+    private Tile highlightTile;
+
     private Tile _currentTile;
     private TerrainEditMode _currentEditMode;
 
@@ -24,12 +31,51 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     }
     private Vector2 _previousMapSize;
 
+    private Camera mainCamera;
+    private PrefabGizmoManager _prefabGizmoManager;
+
 
     void Start()
     {
         _brushSize = Constants.defaultBrushSize;
         _mapSize = new Vector2(Constants.defaultMapSize, Constants.defaultMapSize);
         _previousMapSize = _mapSize;
+
+        mainCamera = Camera.main;
+        _prefabGizmoManager = PrefabGizmoManager.GetInstance();
+    }
+
+    private void Update()
+    {
+        if(_prefabGizmoManager.CurrentTargetingType == TargetingType.Terrain)
+        {
+            TryTerrainModification();
+        }
+    }
+
+    private void TryTerrainModification()
+    {
+        // Build a ray using the current mouse cursor position
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        bool hitTileMap = false;
+
+        // Check if the ray intersects a game object. If it does, return it
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
+        {
+            hitTileMap = true;
+        }
+
+        if (hitTileMap)
+        {
+            if (Input.GetMouseButton(0)
+            && !EventSystem.current.IsPointerOverGameObject())
+            {
+                PaintTile(rayHit.point);
+            }
+
+            HighlightSelection(rayHit.point);
+        }
     }
 
     public void SetBrushSize(int brushSize)
@@ -67,15 +113,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         foreach(Vector3Int tilePosition in tilePositionsForBrush)
         {
             if (_currentEditMode == TerrainEditMode.Paint)
-            {
                 tileMap.SetTile(tilePosition, _currentTile);
-                tileMap.SetTileFlags(tilePosition, TileFlags.None);
-                tileMap.SetColor(tilePosition, new Color(1, 1, 1, 1));
-            }
             else if (_currentEditMode == TerrainEditMode.Erase)
-            {
                 tileMap.SetTile(tilePosition, null);
-            }
         }
     }
 
@@ -86,6 +126,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if(_brushSize == 1)
             return new List<Vector3Int> { centerPos };
 
+        // convert the brush size, to the number of tiles from the center
         int sizeFromCenter = _brushSize - 1;
 
         for (int x = -sizeFromCenter; x <= sizeFromCenter; x++)
@@ -99,32 +140,37 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         return tilePositions;
     }
 
-    public void PaintShadowTile(Vector3 hitPoint)
+    public void HighlightSelection(Vector3 hitPoint)
     {
-        //if (!_currentTile || _currentEditMode == TerrainEditMode.Erase)
-        //    return;
+        highlightTileMap.ClearAllTiles();
 
-        //Vector3Int tilePos = tileMap.WorldToCell(hitPoint);
+        Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
+        List<Vector3Int> tilePositionsForBrush = GetTilesByBrushSize(centerPosition);
 
-        //// Clear the last shadow tile
-        //if (_lastShadowTilePosition != null
-        //    && tileMap.GetColor(_lastShadowTilePosition).a == 0.5f
-        //    && _lastShadowTilePosition != tilePos)
-        //{
-        //    tileMap.SetTile(_lastShadowTilePosition, null);
-        //    tileMap.SetTileFlags(tilePos, TileFlags.None);
-        //    tileMap.SetColor(tilePos, new Color(1, 1, 1, 1));
-        //}
+        foreach (Vector3Int tilePosition in tilePositionsForBrush)
+        {
+            highlightTileMap.SetTile(tilePosition, highlightTile);
+        }
 
-        //if (tileMap.GetTile(tilePos) == null)
-        //{
-        //    // Set the shadow tile
-        //    tileMap.SetTile(tilePos, _currentTile);
-        //    tileMap.SetTileFlags(tilePos, TileFlags.None);
-        //    tileMap.SetColor(tilePos, new Color(1, 1, 1, 0.5f));
-        //}
+        PaintShadowTiles(hitPoint);
+    }
 
-        //_lastShadowTilePosition = tilePos;
+    public void PaintShadowTiles(Vector3 hitPoint)
+    {
+        shadowTileMap.ClearAllTiles();
+
+        if (!_currentTile || _currentEditMode == TerrainEditMode.Erase)
+            return;
+
+        Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
+        List<Vector3Int> tilePositionsForBrush = GetTilesByBrushSize(centerPosition);
+
+        foreach (Vector3Int tilePosition in tilePositionsForBrush)
+        {
+            shadowTileMap.SetTile(tilePosition, _currentTile);
+            shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
+            shadowTileMap.SetColor(tilePosition, new Color(1, 1, 1, 0.3f));
+        }
     }
 
     public void GenerateDefaultMap()
@@ -132,14 +178,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (!_currentTile)
             return;
 
-        for (int x = 0; x < _previousMapSize.x; x++)
-        {
-            for (int y = 0; y < _previousMapSize.y; y++)
-            {
-                Vector3Int tilePos = new Vector3Int(x, y, 0);
-                tileMap.SetTile(tilePos, null);
-            }
-        }
+        tileMap.ClearAllTiles();
 
         for (int x = 0; x < _mapSize.x; x++)
         {
