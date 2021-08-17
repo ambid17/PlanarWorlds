@@ -12011,7 +12011,7 @@ MonoBehaviour:
       _text: Scale gizmo
     - _tooltip: Allows you to change universal gizmo settings.
       _text: Universal gizmo
-    _activeTabIndex: 2
+    _activeTabIndex: 0
   _settings:
     _canBeDisplayed: 1
     _isExpanded: 1
@@ -20622,7 +20622,7 @@ MonoBehaviour:
     _canBeDisplayed: 1
     _isExpanded: 1
     _gridUp:
-      _isEnabled: 1
+      _isEnabled: 0
       _key: 93
       _lCtrl: 0
       _lCmd: 0
@@ -20637,7 +20637,7 @@ MonoBehaviour:
       _staticData:
         CanHaveMouseButtons: 0
     _gridDown:
-      _isEnabled: 1
+      _isEnabled: 0
       _key: 91
       _lCtrl: 0
       _lCmd: 0
