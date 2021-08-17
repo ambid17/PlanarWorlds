@@ -88,6 +88,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             case TargetingType.PrefabPlacement:
                 TryPlacePrefab();
+                TryRotateObject();
                 break;
         }
 
@@ -244,6 +245,23 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             _targetObject.transform.position = snappedPosition;
         }
+    }
+
+    private void TryRotateObject()
+    {
+        Vector2 mouseScrollDelta = Input.mouseScrollDelta;
+
+        Vector3 rotation = _targetObject.transform.rotation.eulerAngles;
+        if (mouseScrollDelta.y > 0)
+        {
+            rotation.y += Constants.rotationSpeed;
+        }
+        else if(mouseScrollDelta.y < 0)
+        {
+            rotation.y -= Constants.rotationSpeed;
+        }
+
+        _targetObject.transform.rotation = Quaternion.Euler(rotation);
     }
     #endregion
 
