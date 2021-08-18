@@ -88,6 +88,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             case TargetingType.PrefabPlacement:
                 TryPlacePrefab();
+                TryCancelPrefabPlacement();
                 break;
         }
 
@@ -125,7 +126,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             // Build a ray using the current mouse cursor position
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            
+
             // Check if the ray intersects a game object. If it does, return it
             if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, layerMask))
             {
@@ -153,7 +154,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             {
                 _currentTargetingType = TargetingType.Terrain;
             }
-            else if(_targetObject.layer == Constants.PrefabParentLayer)
+            else if (_targetObject.layer == Constants.PrefabParentLayer)
             {
                 _currentTargetingType = TargetingType.Prefab;
 
@@ -195,7 +196,22 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #endregion
 
     #region Prefab Creation
-    private void TryPlacePrefab()
+    private void TryCancelPrefabPlacement()
+    {
+        // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
+        if (Input.GetMouseButtonDown(1)
+            || Input.GetKeyDown(KeyCode.Escape))
+		{
+            // destroy the current object, set target object to null, call on target change
+            if(_targetObject != null)
+            {
+                Destroy(_targetObject);
+                OnTargetObjectChanged(null);
+            }
+        }
+    }
+
+	private void TryPlacePrefab()
     {
         UpdatePrefabPosition();
 
