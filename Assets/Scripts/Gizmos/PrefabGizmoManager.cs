@@ -203,9 +203,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #region Prefab Creation
     private void TryPlacePrefab()
     {
+        if (_uIManager.isEditingValues
+            || EventSystem.current.IsPointerOverGameObject())
+            return;
+
         UpdatePrefabPosition();
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) )
         {
             if (isHoldingControl)
             {
