@@ -123,9 +123,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #region Prefab Selection
     private void TrySelectObject()
     {
-        if (Input.GetMouseButtonDown(0)
-            && RTGizmosEngine.Get.HoveredGizmo == null
-            && !EventSystem.current.IsPointerOverGameObject()) // only try a raycast if the mouse isn't over UI
+        if (DidClickValidObject())
         {
             GameObject pickedObject = null;
 
@@ -400,6 +398,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #endregion
 
     #region Utils
+    // We can only click on an object if:
+    // - We click the left mouse button
+    // - We aren't clicking on a gizmo
+    // - We aren't clicking on any UI
+    private bool DidClickValidObject()
+    {
+        return Input.GetMouseButtonDown(0)
+            && RTGizmosEngine.Get.HoveredGizmo == null
+            && !EventSystem.current.IsPointerOverGameObject();
+    }
+
     private GameObject Duplicate()
     {
         GameObject duplicateObject = Instantiate(_targetObject);
