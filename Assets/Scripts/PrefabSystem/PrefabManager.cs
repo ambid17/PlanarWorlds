@@ -5,20 +5,15 @@ using UnityEngine;
 public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 {
     public Transform prefabParent;
-    public PrefabItemContainer prefabItemContainer;
     public PrefabList prefabList;
     public GameObject listItemPrefab;
     public Transform scrollViewContainer;
 
-    private Camera mainCamera;
     private PrefabGizmoManager _prefabGizmoManager;
-
-    private bool isPlacingObject;
 
     void Start()
     {
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
-        mainCamera = Camera.main;
         PopulatePrefabMenu();
     }
 

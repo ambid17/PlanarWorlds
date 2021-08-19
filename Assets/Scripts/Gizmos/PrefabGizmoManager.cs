@@ -7,7 +7,7 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, Terrain, PrefabPlacement, None
+    Prefab, PrefabPlacement, None
 }
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
@@ -76,6 +76,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
+        if (_uIManager.EditMode != EditMode.Prefab || _uIManager.isEditingValues)
+            return;
+
         CheckHotkeyModifiers();
 
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
@@ -83,17 +86,15 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             TrySelectObject();
         }
-
-        switch (_currentTargetingType)
+        else if (_currentTargetingType == TargetingType.PrefabPlacement)
         {
-            case TargetingType.PrefabPlacement:
-                TryPlacePrefab();
-                TryCancelPrefabPlacement();
-                break;
+            TryPlacePrefab();
+            TryRotateObject();
         }
 
-        // Don't use any hotkeys while using a text field or editing the terrain tiles/prefab placement
-        if (!_uIManager.isEditingValues && _currentTargetingType == TargetingType.Prefab)
+        TryHideMouse();
+
+        if(_currentTargetingType == TargetingType.Prefab)
         {
             TryChangeMode();
             TryDuplicate();
@@ -118,9 +119,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #region Prefab Selection
     private void TrySelectObject()
     {
-        if (Input.GetMouseButtonDown(0)
-            && RTGizmosEngine.Get.HoveredGizmo == null
-            && !EventSystem.current.IsPointerOverGameObject()) // only try a raycast if the mouse isn't over UI
+        if (DidClickValidObject())
         {
             GameObject pickedObject = null;
 
@@ -150,11 +149,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (_targetObject != null)
         {
-            if (_targetObject.layer == Constants.TerrainLayer)
-            {
-                _currentTargetingType = TargetingType.Terrain;
-            }
-            else if (_targetObject.layer == Constants.PrefabParentLayer)
+            if(_targetObject.layer == Constants.PrefabParentLayer)
             {
                 _currentTargetingType = TargetingType.Prefab;
 
@@ -213,9 +208,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
 	private void TryPlacePrefab()
     {
+        if (_uIManager.isEditingValues
+            || EventSystem.current.IsPointerOverGameObject())
+            return;
+
         UpdatePrefabPosition();
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) )
         {
             if (isHoldingControl)
             {
@@ -255,6 +254,23 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             _targetObject.transform.position = snappedPosition;
         }
+    }
+
+    private void TryRotateObject()
+    {
+        Vector2 mouseScrollDelta = Input.mouseScrollDelta;
+
+        Vector3 rotation = _targetObject.transform.rotation.eulerAngles;
+        if (mouseScrollDelta.y > 0)
+        {
+            rotation.y += Constants.rotationSpeed;
+        }
+        else if(mouseScrollDelta.y < 0)
+        {
+            rotation.y -= Constants.rotationSpeed;
+        }
+
+        _targetObject.transform.rotation = Quaternion.Euler(rotation);
     }
     #endregion
 
@@ -340,6 +356,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         }
     }
 
+    private void TryHideMouse()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.visible = true;
+        }
+    }
+
     #endregion
 
     #region Gizmo Callbacks
@@ -377,6 +405,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #endregion
 
     #region Utils
+    // We can only click on an object if:
+    // - We click the left mouse button
+    // - We aren't clicking on a gizmo
+    // - We aren't clicking on any UI
+    private bool DidClickValidObject()
+    {
+        return Input.GetMouseButtonDown(0)
+            && RTGizmosEngine.Get.HoveredGizmo == null
+            && !EventSystem.current.IsPointerOverGameObject();
+    }
+
     private GameObject Duplicate()
     {
         GameObject duplicateObject = Instantiate(_targetObject);
@@ -455,6 +494,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _targetObject.transform.position = newPosition;
         _targetObject.transform.rotation = Quaternion.Euler(newRotation);
         _targetObject.transform.localScale = newScale;
+        activeGizmo.SetTargetObject(_targetObject);
     }
 
     #endregion

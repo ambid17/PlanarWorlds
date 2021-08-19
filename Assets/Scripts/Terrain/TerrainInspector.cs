@@ -10,7 +10,7 @@ public enum TerrainEditMode
     Paint, Erase, BoxPaint
 }
 
-public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
+public class TerrainInspector : MonoBehaviour
 {
     public Tile[] tiles;
 
@@ -26,9 +26,8 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
 
     private TerrainManager _terrainManager;
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
         _terrainManager = TerrainManager.GetInstance();
     }
 
@@ -53,7 +52,7 @@ public class TerrainInspector : StaticMonoBehaviour<TerrainInspector>
         }
     }
 
-    public void SetCurrentTile(Tile tile)
+    private void SetCurrentTile(Tile tile)
     {
         _terrainManager.SetCurrentTile(tile);
     }
