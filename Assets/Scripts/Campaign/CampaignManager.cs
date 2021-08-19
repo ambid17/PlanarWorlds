@@ -14,7 +14,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private Campaign _campaign;
     private CampaignUiHeader _campaignHeader;
-    private PrefabManager _prefabManager;
 
     protected override void Awake()
     {
@@ -24,7 +23,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void Start()
     {
-        _prefabManager = PrefabManager.GetInstance();
     }
 
 
@@ -53,6 +51,16 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         PopulatePrefabs();
         _campaign.Save();
     }
+
+    public void LoadPrefabFromSave(SerializedPrefab prefab)
+    {
+        //PrefabItem prefabItem = GetPrefabItem(prefab);
+        //GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
+        //instance.layer = Constants.PrefabLayer;
+        //instance.transform.position = prefab.position;
+        //instance.transform.rotation = Quaternion.Euler(prefab.rotation);
+        //instance.transform.localScale = prefab.scale;
+    }
     #endregion
 
 
@@ -61,22 +69,22 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         foreach (SerializedPrefab campaignPrefab in _campaign.prefabs)
         {
-            _prefabManager.LoadPrefabFromSave(campaignPrefab);
+            //_prefabManager.LoadPrefabFromSave(campaignPrefab);
         }
     }
 
     public void PopulatePrefabs()
     {
-        _campaign.prefabs = new List<SerializedPrefab>();
-        foreach (Transform child in _prefabManager.prefabParent)
-        {
-            SerializedPrefab newPrefab = new SerializedPrefab();
+        //_campaign.prefabs = new List<SerializedPrefab>();
+        //foreach (Transform child in _prefabManager.prefabParent)
+        //{
+        //    SerializedPrefab newPrefab = new SerializedPrefab();
 
-            newPrefab.position = child.position;
-            newPrefab.rotation = child.rotation.eulerAngles;
-            newPrefab.scale = child.localScale;
-            _campaign.prefabs.Add(newPrefab);
-        }
+        //    newPrefab.position = child.position;
+        //    newPrefab.rotation = child.rotation.eulerAngles;
+        //    newPrefab.scale = child.localScale;
+        //    _campaign.prefabs.Add(newPrefab);
+        //}
     }
     #endregion
 

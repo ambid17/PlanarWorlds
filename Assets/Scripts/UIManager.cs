@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,8 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public bool prefabWindowShouldBeActive;
     public bool terrainInspectorWindowShouldBeActive;
 
+    public static event Action<EditMode> OnEditModeChanged;
+
     private EditMode _currentEditmode;
     public EditMode EditMode
     {
@@ -45,13 +48,18 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         _currentEditmode = editMode;
 
-        campaignWindowShouldBeActive = editMode == EditMode.Terrain || editMode == EditMode.Prefab;
+        // TODO: revert this when the campaign system is added
+        campaignWindowShouldBeActive = false;
+        //campaignWindowShouldBeActive = editMode == EditMode.Terrain || editMode == EditMode.Prefab;
+        
+        
         hierarchyWindowShouldBeActive = editMode == EditMode.Prefab;
         inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
         prefabWindowShouldBeActive = editMode == EditMode.Prefab;
         terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;
 
-        // Here is where you have to tell the UI scripts that are listening to clean their UI and affects before their scripts are toggled off
+        //tell the UI scripts that are listening to clean their UI and affects before their scripts are toggled off
+        OnEditModeChanged.Invoke(editMode);
 
         UpdateActiveWindows();
     }

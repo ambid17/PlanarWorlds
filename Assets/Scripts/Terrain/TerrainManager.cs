@@ -45,6 +45,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         mainCamera = Camera.main;
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         _uiManager = UIManager.GetInstance();
+
+        UIManager.OnEditModeChanged += EditModeChanged;
     }
 
     private void Update()
@@ -192,7 +194,14 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 tileMap.SetTileFlags(tilePos, TileFlags.None);
             }
         }
+    }
 
-        
+    private void EditModeChanged(EditMode newEditMode)
+    {
+        if (newEditMode != EditMode.Terrain)
+        {
+            highlightTileMap.ClearAllTiles();
+            shadowTileMap.ClearAllTiles();
+        }
     }
 }

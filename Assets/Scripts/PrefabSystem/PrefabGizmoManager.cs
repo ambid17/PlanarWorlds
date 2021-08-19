@@ -17,7 +17,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     [SerializeField]
     private InspectorManager _inspectorManager;
-    private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
     private UIManager _uIManager;
 
@@ -48,7 +47,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         mainCamera = Camera.main;
 
         _inspectorManager = InspectorManager.GetInstance();
-        _prefabManager = PrefabManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
         _uIManager = UIManager.GetInstance();
 
@@ -72,6 +70,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo = positionGizmo;
 
         _currentTargetingType = TargetingType.None;
+
+        UIManager.OnEditModeChanged += EditModeChanged;
     }
 
     void Update()
@@ -180,12 +180,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         if (_targetObject != null)
         {
-            Renderer myRenderer = _targetObject.GetComponent<Renderer>();
+            Renderer[] renderers= _targetObject.GetComponentsInChildren<Renderer>();
 
-            if (myRenderer)
+            foreach(Renderer renderer in renderers)
             {
-                myRenderer.material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 1f);
+                Material[] materials = renderer.materials;
+                foreach (Material material in materials)
+                {
+                    material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 0);
+                }
             }
+                
         }
     }
     #endregion
@@ -280,16 +285,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if (Input.GetKeyDown(Constants.positionHotkey))
         {
             ChangeGimzoMode(TransformType.Position);
+            _inspectorManager.GizmoModeChanged(TransformType.Position);
         }
 
         if (Input.GetKeyDown(Constants.rotationHotkey))
         {
             ChangeGimzoMode(TransformType.Rotation);
+            _inspectorManager.GizmoModeChanged(TransformType.Rotation);
         }
 
         if (Input.GetKeyDown(Constants.scaleHotkey))
         {
             ChangeGimzoMode(TransformType.Scale);
+            _inspectorManager.GizmoModeChanged(TransformType.Scale);
         }
     }
 
@@ -497,5 +505,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo.SetTargetObject(_targetObject);
     }
 
+
+    private void EditModeChanged(EditMode newEditMode)
+    {
+        if(newEditMode != EditMode.Prefab)
+        {
+            OnTargetObjectChanged(null);
+        }
+    }
     #endregion
 }

@@ -7,9 +7,9 @@ using UnityEngine.UI;
 
 public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 {
-    public Button positionButton;
-    public Button rotationButton;
-    public Button scaleButton;
+    public ToggleButton positionButton;
+    public ToggleButton rotationButton;
+    public ToggleButton scaleButton;
 
     public TMP_InputField xPositionInput;
     public TMP_InputField yPositionInput;
@@ -25,7 +25,6 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
     // Containers
     public GameObject objectInspectorParent;
-    public GameObject terrainInspectorParent;
 
 
     private PrefabGizmoManager _prefabGizmoManager;
@@ -37,9 +36,11 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
         _uIManager = UIManager.GetInstance();
 
         InitInputFields();
-        positionButton.onClick.AddListener(() => GizmoButtonClicked(TransformType.Position));
-        rotationButton.onClick.AddListener(() => GizmoButtonClicked(TransformType.Rotation));
-        scaleButton.onClick.AddListener(() => GizmoButtonClicked(TransformType.Scale));
+
+        positionButton.SetupAction(() => GizmoButtonClicked(TransformType.Position));
+        rotationButton.SetupAction(() => GizmoButtonClicked(TransformType.Rotation));
+        scaleButton.SetupAction(() => GizmoButtonClicked(TransformType.Scale));
+        positionButton.Select();
 
         ShowUiForTarget(TargetingType.None);
     }
@@ -69,6 +70,26 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     private void GizmoButtonClicked(TransformType transformType)
     {
         _prefabGizmoManager.ChangeGimzoMode(transformType);
+
+        positionButton.Unselect();
+        rotationButton.Unselect();
+        scaleButton.Unselect();
+    }
+
+    public void GizmoModeChanged(TransformType transformType)
+    {
+        positionButton.Unselect();
+        rotationButton.Unselect();
+        scaleButton.Unselect();
+
+        if(transformType == TransformType.Position)
+            positionButton.Select();
+
+        if (transformType == TransformType.Rotation)
+            rotationButton.Select();
+
+        if (transformType == TransformType.Scale)
+            scaleButton.Select();
     }
 
     private void InputFieldUpdated(TMP_InputField inputField, TransformType transformType, TransformAxis transformAxis)
