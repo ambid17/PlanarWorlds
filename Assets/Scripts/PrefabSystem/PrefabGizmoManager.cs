@@ -18,7 +18,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     [SerializeField]
     private InspectorManager _inspectorManager;
     private TerrainManager _terrainManager;
-    private UIManager _uIManager;
+    private UIManager _uiManager;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -46,7 +46,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         _inspectorManager = InspectorManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
-        _uIManager = UIManager.GetInstance();
+        _uiManager = UIManager.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -74,7 +74,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
-        if (_uIManager.EditMode != EditMode.Prefab || _uIManager.isEditingValues)
+        if (_uiManager.EditMode != EditMode.Prefab || _uiManager.isEditingValues || _uiManager.isPaused)
             return;
 
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
@@ -196,7 +196,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
 	private void TryPlacePrefab()
     {
-        if (_uIManager.isEditingValues
+        if (_uiManager.isEditingValues
             || EventSystem.current.IsPointerOverGameObject())
             return;
 

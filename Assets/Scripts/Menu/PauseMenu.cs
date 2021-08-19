@@ -14,8 +14,12 @@ public class PauseMenu : MonoBehaviour
     public GameObject pausePanel;
     public GameObject optionsPanel;
 
-    private bool _isPaused;
-    public bool IsPaused { get => _isPaused; }
+    private UIManager _uiManager;
+
+    private void Awake()
+    {
+        _uiManager = UIManager.GetInstance();
+    }
 
     void Start()
     {
@@ -30,7 +34,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (_isPaused)
+            if (_uiManager.isPaused)
             {
                 container.SetActive(false);
             }
@@ -41,7 +45,7 @@ public class PauseMenu : MonoBehaviour
                 optionsPanel.SetActive(false);
             }
 
-            _isPaused = !_isPaused;
+            _uiManager.isPaused = !_uiManager.isPaused;
         }    
     }
 
