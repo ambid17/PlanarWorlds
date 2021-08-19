@@ -50,12 +50,13 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
 
     public void LoadSavedHotkeys()
     {
-        LoadSavedKey(HotkeyConstants.ModifierKey, HotkeyConstants.ModifierKeyDefault);
         LoadSavedKey(HotkeyConstants.SelectPosition, HotkeyConstants.SelectPositionDefault);
         LoadSavedKey(HotkeyConstants.SelectRotation, HotkeyConstants.SelectRotationDefault);
         LoadSavedKey(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleDefault);
         LoadSavedKey(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabDefault);
         LoadSavedKey(HotkeyConstants.Focus, HotkeyConstants.FocusDefault);
+        LoadSavedKey(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateDefault);
+        LoadSavedKey(HotkeyConstants.ModifierKey, HotkeyConstants.ModifierKeyDefault);
     }
 
     public void LoadSavedKey(string keyName, string defaultValue)
@@ -86,12 +87,12 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
 
     public void InitDefaults()
     {
-        AddDefaultKey(HotkeyConstants.ModifierKey, HotkeyConstants.ModifierKeyDefault);
         AddDefaultKey(HotkeyConstants.SelectPosition, HotkeyConstants.SelectPositionDefault);
         AddDefaultKey(HotkeyConstants.SelectRotation, HotkeyConstants.SelectRotationDefault);
         AddDefaultKey(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleDefault);
         AddDefaultKey(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabDefault);
         AddDefaultKey(HotkeyConstants.Focus, HotkeyConstants.FocusDefault);
+        AddDefaultKey(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateDefault);
     }
 
     public void AddDefaultKey(string keyName, string defaultValue)
@@ -112,9 +113,9 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
         tooltips.Add(HotkeyConstants.SelectPosition, HotkeyConstants.SelectPositionTooltip);
         tooltips.Add(HotkeyConstants.SelectRotation, HotkeyConstants.SelectRotationTooltip);
         tooltips.Add(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleTooltip);
-        tooltips.Add(HotkeyConstants.ModifierKey, HotkeyConstants.ModifierKeyTooltip);
         tooltips.Add(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabTooltip);
         tooltips.Add(HotkeyConstants.Focus, HotkeyConstants.FocusTooltip);
+        tooltips.Add(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateTooltip);
     }
 
 

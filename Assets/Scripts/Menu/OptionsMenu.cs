@@ -78,6 +78,9 @@ public class OptionsMenu : MonoBehaviour
         buttonKeyCodeTexts = new Dictionary<string, TMP_Text>();
         foreach (string hotkey in keys.Keys)
         {
+            if (hotkey == HotkeyConstants.ModifierKey)
+                return;
+
             GameObject newItem = Instantiate(hotKeyPrefab);
             newItem.transform.SetParent(scrollViewContent, false);
 

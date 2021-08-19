@@ -30,5 +30,5 @@ public static class HotkeyConstants
 
     public static string Duplicate = "Duplicate";
     public static string DuplicateDefault = "D";
-    public static string DuplicateTooltip = "Duplicate the currently selected object";
+    public static string DuplicateTooltip = "*** Duplicate the currently selected object";
 }
