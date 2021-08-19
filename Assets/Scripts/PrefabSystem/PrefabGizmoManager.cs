@@ -33,8 +33,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private GameObject _targetObject;
     public GameObject TargetObject { get => _targetObject; }
 
-    private bool isHoldingControl;
-
     [SerializeField]
     private TargetingType _currentTargetingType;
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
@@ -79,8 +77,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if (_uIManager.EditMode != EditMode.Prefab || _uIManager.isEditingValues)
             return;
 
-        CheckHotkeyModifiers();
-
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
         if (_currentTargetingType != TargetingType.PrefabPlacement)
         {
@@ -90,6 +86,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             TryPlacePrefab();
             TryRotateObject();
+            TryCancelPrefabPlacement();
         }
 
         TryHideMouse();
@@ -100,19 +97,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             TryDuplicate();
             TryDelete();
             TryFocusObject();
-        }
-    }
-
-    private void CheckHotkeyModifiers()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            isHoldingControl = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            isHoldingControl = false;
         }
     }
 
@@ -199,8 +183,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private void TryCancelPrefabPlacement()
     {
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
-        if (Input.GetMouseButtonDown(1)
-            || Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetMouseButtonDown(1))
 		{
             // destroy the current object, set target object to null, call on target change
             if(_targetObject != null)
@@ -221,21 +204,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (Input.GetMouseButtonDown(0) )
         {
-            if (isHoldingControl)
-            {
-                GameObject newTarget = Duplicate();
+            GameObject newTarget = Duplicate();
 
-                // Change the non-duplicated object's layer so it can be targeted
-                _targetObject.layer = Constants.PrefabParentLayer;
+            // Change the non-duplicated object's layer so it can be targeted
+            _targetObject.layer = Constants.PrefabParentLayer;
 
-                // THEN change the target object, so we keep the PrefabPlacementLayer
-                OnTargetObjectChanged(newTarget);
-            }
-            else
-            {
-                _targetObject.layer = Constants.PrefabParentLayer;
-                OnTargetObjectChanged(_targetObject);
-            }
+            // THEN change the target object, so we keep the PrefabPlacementLayer
+            OnTargetObjectChanged(newTarget);
         }
     }
 
@@ -336,7 +311,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void TryDuplicate()
     {
-        if (isHoldingControl && Input.GetKeyDown(KeyCode.D) && _targetObject != null)
+        if (HotKeyManager.GetModifiedKeyDown(HotkeyConstants.Duplicate) && _targetObject != null)
         {
             GameObject duplicateObject = Duplicate();
 
@@ -346,7 +321,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void TryDelete()
     {
-        if(Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace))
+        if(HotKeyManager.GetKeyDown(HotkeyConstants.DeletePrefab))
         {
             if (_targetObject != null) 
             {
@@ -358,7 +333,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void TryFocusObject()
     {
-        if(Input.GetKeyDown(KeyCode.F) && _targetObject != null)
+        if(HotKeyManager.GetKeyDown(HotkeyConstants.Focus) && _targetObject != null)
         {
             RTFocusCamera.Get.Focus(new List<GameObject>() { _targetObject });
         }
