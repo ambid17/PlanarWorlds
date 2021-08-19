@@ -70,6 +70,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo = positionGizmo;
 
         _currentTargetingType = TargetingType.None;
+
+        UIManager.OnEditModeChanged += EditModeChanged;
     }
 
     void Update()
@@ -503,5 +505,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo.SetTargetObject(_targetObject);
     }
 
+
+    private void EditModeChanged(EditMode newEditMode)
+    {
+        if(newEditMode != EditMode.Prefab)
+        {
+            OnTargetObjectChanged(null);
+        }
+    }
     #endregion
 }
