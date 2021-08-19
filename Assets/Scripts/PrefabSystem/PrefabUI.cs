@@ -39,6 +39,12 @@ public class PrefabUI : MonoBehaviour
         GameObject instance = Instantiate(prefab.gameObject, prefabParent);
         instance.layer = Constants.PrefabPlacementLayer;
 
+        MeshRenderer[] renderers = instance.GetComponentsInChildren<MeshRenderer>();
+        foreach(MeshRenderer renderer in renderers)
+        {
+            renderer.material.shader = Shader.Find("");
+        }
+
         CreateObjectCollider(instance);
         _prefabGizmoManager.OnTargetObjectChanged(instance);
     }
