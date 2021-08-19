@@ -51,6 +51,8 @@ public class UIManager : StaticMonoBehaviour<UIManager>
         prefabWindowShouldBeActive = editMode == EditMode.Prefab;
         terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;
 
+        // Here is where you have to tell the UI scripts that are listening to clean their UI and affects before their scripts are toggled off
+
         UpdateActiveWindows();
     }
 
