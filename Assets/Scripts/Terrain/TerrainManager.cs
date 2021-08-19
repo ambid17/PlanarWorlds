@@ -33,6 +33,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private Camera mainCamera;
     private PrefabGizmoManager _prefabGizmoManager;
+    private UIManager _uiManager;
 
 
     void Start()
@@ -43,14 +44,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         mainCamera = Camera.main;
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
+        _uiManager = UIManager.GetInstance();
     }
 
     private void Update()
     {
-        if(_prefabGizmoManager.CurrentTargetingType == TargetingType.Terrain)
-        {
-            TryTerrainModification();
-        }
+        if (_uiManager.EditMode != EditMode.Terrain)
+            return;
+        
+        TryTerrainModification();
     }
 
     private void TryTerrainModification()

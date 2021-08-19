@@ -81,7 +81,6 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public void ShowUiForTarget(TargetingType targetingType)
     {
         objectInspectorParent.SetActive(targetingType == TargetingType.Prefab);
-        terrainInspectorParent.SetActive(targetingType == TargetingType.Terrain);
     }
 
     private void InitInputFields()

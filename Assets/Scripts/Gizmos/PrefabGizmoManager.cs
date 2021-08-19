@@ -7,7 +7,7 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, Terrain, PrefabPlacement, None
+    Prefab, PrefabPlacement, None
 }
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
@@ -76,6 +76,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
+        if (_uIManager.EditMode != EditMode.Prefab || _uIManager.isEditingValues)
+            return;
+
         CheckHotkeyModifiers();
 
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
@@ -83,27 +86,20 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             TrySelectObject();
         }
-
-        switch (_currentTargetingType)
+        else if (_currentTargetingType == TargetingType.PrefabPlacement)
         {
-            case TargetingType.PrefabPlacement:
-                TryPlacePrefab();
-                TryRotateObject();
-                break;
+            TryPlacePrefab();
+            TryRotateObject();
         }
 
-        // Don't use any hotkeys while using a text field or editing the terrain tiles/prefab placement
-        if (!_uIManager.isEditingValues)
-        {
-            TryHideMouse();
+        TryHideMouse();
 
-            if(_currentTargetingType == TargetingType.Prefab)
-            {
-                TryChangeMode();
-                TryDuplicate();
-                TryDelete();
-                TryFocusObject();
-            }
+        if(_currentTargetingType == TargetingType.Prefab)
+        {
+            TryChangeMode();
+            TryDuplicate();
+            TryDelete();
+            TryFocusObject();
         }
     }
 
@@ -153,11 +149,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if (_targetObject != null)
         {
-            if (_targetObject.layer == Constants.TerrainLayer)
-            {
-                _currentTargetingType = TargetingType.Terrain;
-            }
-            else if(_targetObject.layer == Constants.PrefabParentLayer)
+            if(_targetObject.layer == Constants.PrefabParentLayer)
             {
                 _currentTargetingType = TargetingType.Prefab;
 

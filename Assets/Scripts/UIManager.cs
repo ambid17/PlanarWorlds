@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum EditMode
 {
-    Map, Prop, Encounter
+    Terrain, Prefab, Encounter
 }
 
 public class UIManager : StaticMonoBehaviour<UIManager>
@@ -13,6 +13,7 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public GameObject InspectorCanvas;
     public GameObject HierarchyCanvas;
     public GameObject CampaignCanvas;
+    public GameObject TerrainInspectorCanvas;
 
     public bool isEditingValues;
 
@@ -20,19 +21,19 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public bool hierarchyWindowShouldBeActive;
     public bool inspectorWindowShouldBeActive;
     public bool prefabWindowShouldBeActive;
+    public bool terrainInspectorWindowShouldBeActive;
 
     private EditMode _currentEditmode;
+    public EditMode EditMode
+    {
+        get => _currentEditmode;
+    }
 
     void Start()
     {
         isEditingValues = false;
 
-        campaignWindowShouldBeActive = false;
-        hierarchyWindowShouldBeActive = false;
-        inspectorWindowShouldBeActive = true;
-        prefabWindowShouldBeActive = true;
-
-        UpdateActiveWindows();
+        SetEditMode(EditMode.Terrain);
     }
 
     void Update()
@@ -44,10 +45,11 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         _currentEditmode = editMode;
 
-        campaignWindowShouldBeActive = editMode == EditMode.Map || editMode == EditMode.Prop;
-        hierarchyWindowShouldBeActive = editMode == EditMode.Prop;
-        inspectorWindowShouldBeActive = true;
-        prefabWindowShouldBeActive = editMode == EditMode.Prop;
+        campaignWindowShouldBeActive = editMode == EditMode.Terrain || editMode == EditMode.Prefab;
+        hierarchyWindowShouldBeActive = editMode == EditMode.Prefab;
+        inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
+        prefabWindowShouldBeActive = editMode == EditMode.Prefab;
+        terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;
 
         UpdateActiveWindows();
     }
@@ -58,5 +60,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
         HierarchyCanvas.SetActive(hierarchyWindowShouldBeActive);
         InspectorCanvas.SetActive(inspectorWindowShouldBeActive);
         PrefabCanvas.SetActive(prefabWindowShouldBeActive);
+        TerrainInspectorCanvas.SetActive(terrainInspectorWindowShouldBeActive);
     }
 }

@@ -18,8 +18,8 @@ public class EditorModeUI : MonoBehaviour
 
     void Start()
     {
-        mapButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Map));
-        propButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Prop));
+        mapButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Terrain));
+        propButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Prefab));
         encounterButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Encounter));
     }
 }
