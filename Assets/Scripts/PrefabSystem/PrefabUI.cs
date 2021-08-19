@@ -39,14 +39,22 @@ public class PrefabUI : MonoBehaviour
         GameObject instance = Instantiate(prefab.gameObject, prefabParent);
         instance.layer = Constants.PrefabPlacementLayer;
 
-        MeshRenderer[] renderers = instance.GetComponentsInChildren<MeshRenderer>();
-        foreach(MeshRenderer renderer in renderers)
-        {
-            renderer.material.shader = Shader.Find("");
-        }
-
+        SetObjectShader(instance);
         CreateObjectCollider(instance);
         _prefabGizmoManager.OnTargetObjectChanged(instance);
+    }
+
+    private void SetObjectShader(GameObject instance)
+    {
+        MeshRenderer[] renderers = instance.GetComponentsInChildren<MeshRenderer>();
+        foreach (MeshRenderer renderer in renderers)
+        {
+            Material[] materials = renderer.materials;
+            foreach (Material material in materials)
+            {
+                material.shader = Shader.Find("Custom/Outline");
+            }
+        }
     }
 
     // If the object doesn't have a collider
@@ -58,6 +66,10 @@ public class PrefabUI : MonoBehaviour
         {
             myCollider = instance.AddComponent<BoxCollider>();
         }
+
+        // Unity will auto calculate collider size for only one object, we don't need the rest of the code if the model is set up properly
+        if(instance.transform.childCount == 0)
+            return;
 
         Bounds bounds = new Bounds(instance.transform.position, Vector3.zero);
         Renderer myRenderer = instance.GetComponent<Renderer>();
@@ -72,6 +84,9 @@ public class PrefabUI : MonoBehaviour
         Transform[] children = instance.GetComponentsInChildren<Transform>();
         foreach (Transform child in children)
         {
+            if (child == transform)
+                return;
+
             Renderer childRenderer = child.GetComponent<Renderer>();
             if (childRenderer)
             {

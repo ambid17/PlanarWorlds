@@ -178,12 +178,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         if (_targetObject != null)
         {
-            Renderer myRenderer = _targetObject.GetComponent<Renderer>();
+            Renderer[] renderers= _targetObject.GetComponentsInChildren<Renderer>();
 
-            if (myRenderer)
+            foreach(Renderer renderer in renderers)
             {
-                myRenderer.material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 1f);
+                Material[] materials = renderer.materials;
+                foreach (Material material in materials)
+                {
+                    material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 0);
+                }
             }
+                
         }
     }
     #endregion
