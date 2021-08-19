@@ -10,21 +10,22 @@ public enum TerrainEditMode
     Paint, Erase, BoxPaint
 }
 
-public class TerrainInspector : MonoBehaviour
+public class TerrainInspectorUI : MonoBehaviour
 {
     public Tile[] tiles;
 
     public GameObject buttonPrefab;
 
-    public Button paintButton;
-    public Button eraseButton;
-    public Button settingsButton;
+    public ToggleButton paintButton;
+    public ToggleButton eraseButton;
+    public ToggleButton settingsButton;
 
     public GameObject tileSelectorParent;
 
     public TerrainSettingsUI terrainSettingsUI;
 
     private TerrainManager _terrainManager;
+    private ImageToggleButton _currentSelectedButton;
 
     void Awake()
     {
@@ -35,7 +36,6 @@ public class TerrainInspector : MonoBehaviour
     {
         CreateTileButtons();
         InitModeButtons();
-        InitSettingsMenu();
     }
 
     private void CreateTileButtons()
@@ -43,35 +43,40 @@ public class TerrainInspector : MonoBehaviour
         foreach (Tile tile in tiles)
         {
             GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-            ButtonManagerBasicIcon buttonManager = newButton.GetComponent<ButtonManagerBasicIcon>();
-            buttonManager.buttonIcon = tile.sprite;
-            buttonManager.UpdateUI();
-
-            Button myButton = newButton.GetComponent<Button>();
-            myButton.onClick.AddListener(() => SetCurrentTile(tile));
+            ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
+            toggleButton.Setup(tile.sprite, () => SetCurrentTile(tile, toggleButton));
         }
     }
 
-    private void SetCurrentTile(Tile tile)
+    private void SetCurrentTile(Tile tile, ImageToggleButton toggleButton)
     {
+        if (_currentSelectedButton)
+        {
+            _currentSelectedButton.Unselect();
+        }
+
         _terrainManager.SetCurrentTile(tile);
+
+        _currentSelectedButton = toggleButton;
     }
 
     private void InitModeButtons()
     {
-        paintButton.onClick.AddListener(() => ChangeEditMode(TerrainEditMode.Paint));
-        eraseButton.onClick.AddListener(() => ChangeEditMode(TerrainEditMode.Erase));
-    }
+        paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
+        eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
 
-    private void InitSettingsMenu()
-    {
-        settingsButton.onClick.AddListener(() => ToggleSettingsMenu(true));
+        settingsButton.SetupAction(() => ToggleSettingsMenu(true));
         ToggleSettingsMenu(false);
+        paintButton.Select();
     }
 
     private void ToggleSettingsMenu(bool shouldBeActive)
     {
         terrainSettingsUI.ToggleSettingsMenu(shouldBeActive);
+
+        paintButton.Unselect();
+        eraseButton.Unselect();
+        settingsButton.Unselect();
     }
 
     private void ChangeEditMode(TerrainEditMode newMode)

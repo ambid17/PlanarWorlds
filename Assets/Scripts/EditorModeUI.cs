@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class EditorModeUI : MonoBehaviour
 {
-    public Button mapButton;
-    public Button propButton;
-    public Button encounterButton;
+    public ToggleButton mapButton;
+    public ToggleButton propButton;
+    public ToggleButton encounterButton;
 
     private UIManager _uiManager;
+
 
     private void Awake()
     {
@@ -18,8 +19,19 @@ public class EditorModeUI : MonoBehaviour
 
     void Start()
     {
-        mapButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Terrain));
-        propButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Prefab));
-        encounterButton.onClick.AddListener(() => _uiManager.SetEditMode(EditMode.Encounter));
+        mapButton.SetupAction(() => SelectButton(EditMode.Terrain));
+        propButton.SetupAction(() => SelectButton(EditMode.Prefab));
+        encounterButton.SetupAction(() => SelectButton(EditMode.Encounter));
+
+        mapButton.Select();
+    }
+
+    void SelectButton(EditMode editMode)
+    {
+        _uiManager.SetEditMode(editMode);
+
+        mapButton.Unselect();
+        propButton.Unselect();
+        encounterButton.Unselect();
     }
 }

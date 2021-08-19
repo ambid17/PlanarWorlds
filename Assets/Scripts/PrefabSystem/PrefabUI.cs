@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabManager : StaticMonoBehaviour<PrefabManager>
+public class PrefabUI : MonoBehaviour
 {
     public Transform prefabParent;
     public PrefabList prefabList;
@@ -74,15 +74,5 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             myCollider.center = bounds.center - instance.transform.position;
             myCollider.size = bounds.size;
         }
-    }
-
-    public void LoadPrefabFromSave(SerializedPrefab prefab)
-    {
-        //PrefabItem prefabItem = GetPrefabItem(prefab);
-        //GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
-        //instance.layer = Constants.PrefabLayer;
-        //instance.transform.position = prefab.position;
-        //instance.transform.rotation = Quaternion.Euler(prefab.rotation);
-        //instance.transform.localScale = prefab.scale;
     }
 }

@@ -17,7 +17,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     [SerializeField]
     private InspectorManager _inspectorManager;
-    private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
     private UIManager _uIManager;
 
@@ -48,7 +47,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         mainCamera = Camera.main;
 
         _inspectorManager = InspectorManager.GetInstance();
-        _prefabManager = PrefabManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
         _uIManager = UIManager.GetInstance();
 
