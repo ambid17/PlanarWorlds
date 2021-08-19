@@ -51,7 +51,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void Update()
     {
-        if (_uiManager.EditMode != EditMode.Terrain)
+        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused)
             return;
         
         TryTerrainModification();

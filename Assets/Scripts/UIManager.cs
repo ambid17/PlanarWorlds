@@ -32,6 +32,8 @@ public class UIManager : StaticMonoBehaviour<UIManager>
         get => _currentEditmode;
     }
 
+    public bool isPaused;
+
     void Start()
     {
         isEditingValues = false;
