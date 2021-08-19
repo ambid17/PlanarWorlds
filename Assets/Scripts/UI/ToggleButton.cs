@@ -19,7 +19,7 @@ public class ToggleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private bool isSelected;
 
 
-    void Start()
+    void Awake()
     {
         buttonText = GetComponentInChildren<TMP_Text>();
         button = GetComponent<Button>();

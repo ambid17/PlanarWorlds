@@ -283,16 +283,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if (Input.GetKeyDown(Constants.positionHotkey))
         {
             ChangeGimzoMode(TransformType.Position);
+            _inspectorManager.GizmoModeChanged(TransformType.Position);
         }
 
         if (Input.GetKeyDown(Constants.rotationHotkey))
         {
             ChangeGimzoMode(TransformType.Rotation);
+            _inspectorManager.GizmoModeChanged(TransformType.Rotation);
         }
 
         if (Input.GetKeyDown(Constants.scaleHotkey))
         {
             ChangeGimzoMode(TransformType.Scale);
+            _inspectorManager.GizmoModeChanged(TransformType.Scale);
         }
     }
 
