@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
@@ -36,6 +38,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private UIManager _uiManager;
 
 
+    // Drag Mode
+    private bool _isDragging;
+    private Vector3Int _cursorCellPos;
+
+    private TileBase _tileBeingDragged;
+    
+    public Tile[] gridTiles; 
+    private Vector3Int _tilePatternGrid;
+
     void Start()
     {
         _brushSize = Constants.defaultBrushSize;
@@ -53,7 +64,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused)
             return;
-        
+
         TryTerrainModification();
     }
 
@@ -74,9 +85,61 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         {
             if (Input.GetMouseButton(0)
             && !EventSystem.current.IsPointerOverGameObject())
-            {
-                PaintTile(rayHit.point);
+            {   
+                if (_currentEditMode == TerrainEditMode.Paint)
+                    PaintTile(rayHit.point);
             }
+
+            Vector3Int newCursorCellPos = tileMap.WorldToCell(rayHit.point);
+            TileBase tileUnderCursor = tileMap.GetTile(newCursorCellPos);
+
+            // Drag handling 
+            if (_currentEditMode == TerrainEditMode.Drag)
+            {
+                // Start drag if clicking on tile when in drag mode
+                if (Input.GetMouseButtonDown(0)
+                    && tileUnderCursor != null)
+                {
+                    _isDragging = true;
+                }
+                
+                if (Input.GetMouseButtonUp(0))
+                {
+                    _isDragging = false;
+                }
+
+                if (_isDragging)
+                {
+                    // Todo: Replace this temporary tile indexing solution
+                    //int tileIndex = Convert.ToInt32(tileUnderCursor.name.First());
+                    int tileIndex = Array.IndexOf(gridTiles, _tileBeingDragged);
+
+                    int row = Mathf.FloorToInt(tileIndex / 3);
+                    int col = tileIndex % 3;
+
+                    Vector3Int coords = new Vector3Int(row, col, 0);
+
+                    if (newCursorCellPos != _cursorCellPos)
+                    {
+                        Vector3Int delta = newCursorCellPos - _cursorCellPos;
+
+                        // Todo: Configurable pattern grid dimensions 
+                        // Todo: Wrap round when row = 0 and delta.y = -1
+                        row = Mathf.Max(0, (row + delta.y) % 3);
+                        col = Mathf.Max(0, (col + delta.x) % 3);
+
+                        // 2D -> 1D index
+                        int newTileIndex = row * 3 + col;
+
+                        // Index determined by cursor tile's neighbour
+                        tileMap.SetTile(newCursorCellPos, gridTiles[newTileIndex]);
+                    }
+
+                    _tileBeingDragged = tileMap.GetTile(newCursorCellPos);
+                }
+            }
+
+            _cursorCellPos = newCursorCellPos;
 
             HighlightSelection(rayHit.point);
         }
@@ -120,6 +183,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 tileMap.SetTile(tilePosition, _currentTile);
             else if (_currentEditMode == TerrainEditMode.Erase)
                 tileMap.SetTile(tilePosition, null);
+            //else if (_currentEditMode == TerrainEditMode.Drag)
+                
         }
     }
 

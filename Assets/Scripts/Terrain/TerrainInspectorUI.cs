@@ -7,12 +7,13 @@ using Michsky.UI.ModernUIPack;
 
 public enum TerrainEditMode
 {
-    Paint, Erase, BoxPaint
+    Paint, Drag, Erase, BoxPaint
 }
 
 public class TerrainInspectorUI : MonoBehaviour
 {
     public Tile[] tiles;
+    public Tile[] patternedGridTiles;
 
     public GameObject buttonPrefab;
 
@@ -36,11 +37,24 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         CreateTileButtons();
         InitModeButtons();
+
+        // Temp 
+        _terrainManager.gridTiles = patternedGridTiles;
+    }
+
+    private void Update()
+    {
+        // Temp
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            ChangeEditMode(TerrainEditMode.Drag);
+            Cursor.visible = true;
+        }
     }
 
     private void CreateTileButtons()
     {
-        foreach (Tile tile in tiles)
+        foreach (Tile tile in patternedGridTiles)
         {
             GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
             ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
