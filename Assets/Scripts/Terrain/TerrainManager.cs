@@ -1,3 +1,4 @@
+using RTG;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,9 +40,10 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
 
     // Drag Mode
-    private bool _isDragging;
     private Vector3 _dragStartPosition;
     public TileGrid currentTileGrid;
+
+    private bool _isValidClick;
 
     void Start()
     {
@@ -73,25 +75,19 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
         {
             if (Input.GetMouseButtonDown(0)
-                && !EventSystem.current.IsPointerOverGameObject())
+                && !EventSystem.current.IsPointerOverGameObject()
+                && RTGizmosEngine.Get.HoveredGizmo == null)
             {
-                _isDragging = true;
+                _isValidClick = true;
                 _dragStartPosition = rayHit.point;
             }
 
             if (Input.GetMouseButtonUp(0))
             {
-                Vector3 offset = rayHit.point - _dragStartPosition;
-                
-                if (offset.magnitude < 0.5f)
-                {
-                    // We haven't dragged, so paint. 
-                    PaintTile(rayHit.point);
-                }
-                else
-                {
-                    BoxPaint(rayHit.point);
-                }
+                if (_isValidClick) 
+                    BoxPaint(dragEndPosition: rayHit.point);
+
+                _isValidClick = false;
             }
 
             HighlightSelection(rayHit.point);
@@ -114,29 +110,25 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             Vector3Int temp = startPosition;
             startPosition = endPosition;
             endPosition = temp;
-
-            offset = endPosition - startPosition;
         }
-        else if (offset.x > 0 && offset.y < 0)
+        else if (offset.x >= 0 && offset.y < 0)
         {
             Vector3Int newStartPosition = new Vector3Int(startPosition.x, endPosition.y, 0);
             Vector3Int newEndPosition = new Vector3Int(endPosition.x, startPosition.y, 0);
 
             startPosition = newStartPosition;
             endPosition = newEndPosition;
-
-            offset = endPosition - startPosition;
         }
-        else if (offset.x < 0 && offset.y > 0)
+        else if (offset.x < 0 && offset.y >= 0)
         {
             Vector3Int newStartPosition = new Vector3Int(endPosition.x, startPosition.y, 0);
             Vector3Int newEndPosition = new Vector3Int(startPosition.x, endPosition.y, 0);
 
             startPosition = newStartPosition;
             endPosition = newEndPosition;
-
-            offset = endPosition - startPosition;
         }
+
+        offset = endPosition - startPosition;
 
         for (int x = 0; x <= offset.x; x++)
         {

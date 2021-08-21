@@ -8,6 +8,9 @@ public class TileGrid : ScriptableObject
 
     public Tile GetTileByPosition(int x, int y, Vector3Int offset)
     {
+        if (offset.x == 0 || offset.y == 0)
+            return middleMiddle;
+
         bool isLeft = x == 0;
         bool isMiddleX = x > 0 && x < offset.x;
         bool isRight = x == offset.x;
