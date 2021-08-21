@@ -13,7 +13,7 @@ public enum TerrainEditMode
 public class TerrainInspectorUI : MonoBehaviour
 {
     public Tile[] tiles;
-    public Tile[] patternedGridTiles;
+    public TileGrid[] tileGrids;
 
     public GameObject buttonPrefab;
 
@@ -37,9 +37,6 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         CreateTileButtons();
         InitModeButtons();
-
-        // Temp 
-        _terrainManager.gridTiles = patternedGridTiles;
     }
 
     private void Update()
@@ -54,7 +51,7 @@ public class TerrainInspectorUI : MonoBehaviour
 
     private void CreateTileButtons()
     {
-        foreach (Tile tile in patternedGridTiles)
+        foreach (Tile tile in tiles)
         {
             GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
             ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
@@ -70,6 +67,18 @@ public class TerrainInspectorUI : MonoBehaviour
         }
 
         _terrainManager.SetCurrentTile(tile);
+
+        _currentSelectedButton = toggleButton;
+    }
+
+    private void SetCurrentTileGrid(TileGrid tileGrid, ImageToggleButton toggleButton)
+    {
+        if (_currentSelectedButton)
+        {
+            _currentSelectedButton.Unselect();
+        }
+
+        _terrainManager.SetCurrentTileGrid(tileGrid);
 
         _currentSelectedButton = toggleButton;
     }
