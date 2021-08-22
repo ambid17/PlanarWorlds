@@ -85,7 +85,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             if (Input.GetMouseButtonUp(0))
             {
                 if (_isValidClick) 
-                    BoxPaint(dragEndPosition: rayHit.point);
+                    PaintTilesByDragging(dragEndPosition: rayHit.point);
 
                 _isValidClick = false;
             }
@@ -99,36 +99,12 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         currentTileGrid = tileGrid;
     }
 
-    private void BoxPaint(Vector3 dragEndPosition)
+    private void PaintTilesByDragging(Vector3 dragEndPosition)
     {
         Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
         Vector3Int endPosition = tileMap.WorldToCell(dragEndPosition);
-        Vector3Int offset = endPosition - startPosition;
 
-        if (offset.x < 0 && offset.y < 0)
-        {
-            Vector3Int temp = startPosition;
-            startPosition = endPosition;
-            endPosition = temp;
-        }
-        else if (offset.x >= 0 && offset.y < 0)
-        {
-            Vector3Int newStartPosition = new Vector3Int(startPosition.x, endPosition.y, 0);
-            Vector3Int newEndPosition = new Vector3Int(endPosition.x, startPosition.y, 0);
-
-            startPosition = newStartPosition;
-            endPosition = newEndPosition;
-        }
-        else if (offset.x < 0 && offset.y >= 0)
-        {
-            Vector3Int newStartPosition = new Vector3Int(endPosition.x, startPosition.y, 0);
-            Vector3Int newEndPosition = new Vector3Int(startPosition.x, endPosition.y, 0);
-
-            startPosition = newStartPosition;
-            endPosition = newEndPosition;
-        }
-
-        offset = endPosition - startPosition;
+        Vector3Int offset = TerrainUtils.GetDragBoxPaintOffset(startPosition, endPosition);
 
         for (int x = 0; x <= offset.x; x++)
         {
