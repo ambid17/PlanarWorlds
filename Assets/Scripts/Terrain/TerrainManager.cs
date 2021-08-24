@@ -116,7 +116,10 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         {
             for (int y = 0; y <= offset.y; y++)
             {
-                Tile tileToPaint = currentTileGrid.GetTileByPosition(x, y, offset);
+                Tile tileToPaint = _currentEditMode == TerrainEditMode.Paint
+                    ? currentTileGrid.GetTileByPosition(x, y, offset)
+                    : null;
+
                 tileMap.SetTile(new Vector3Int(startPosition.x + x, startPosition.y + y, 0), tileToPaint);
             }
         }
