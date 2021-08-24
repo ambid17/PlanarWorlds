@@ -38,9 +38,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private PrefabGizmoManager _prefabGizmoManager;
     private UIManager _uiManager;
 
-
-    // Drag Mode
+    public bool isDragEnabled;
     private Vector3 _dragStartPosition;
+
     public TileGrid currentTileGrid;
 
     private bool _isValidClick;
@@ -68,43 +68,49 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void TryTerrainModification()
     {
+        if (EventSystem.current.IsPointerOverGameObject()
+            || RTGizmosEngine.Get.HoveredGizmo != null)
+        {
+            return;
+        }
+
         // Build a ray using the current mouse cursor position
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         // Check if the ray intersects a game object. If it does, return it
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
         {
-            if (Input.GetMouseButtonDown(0)
-                && !EventSystem.current.IsPointerOverGameObject()
-                && RTGizmosEngine.Get.HoveredGizmo == null)
+            if (isDragEnabled)
             {
-                _isValidClick = true;
-                _dragStartPosition = rayHit.point;
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _isValidClick = true;
+                    _dragStartPosition = rayHit.point;
+                }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    if (_isValidClick)
+                        DragPaintTiles(dragEndPosition: rayHit.point);
+
+                    _isValidClick = false;
+                }
             }
-
-            if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButton(0))
             {
-                if (_isValidClick) 
-                    PaintTilesByDragging(dragEndPosition: rayHit.point);
-
-                _isValidClick = false;
+                PaintTile(rayHit.point);
             }
 
             HighlightSelection(rayHit.point);
         }
     }
 
-    public void SetCurrentTileGrid(TileGrid tileGrid)
-    {
-        currentTileGrid = tileGrid;
-    }
-
-    private void PaintTilesByDragging(Vector3 dragEndPosition)
+    private void DragPaintTiles(Vector3 dragEndPosition)
     {
         Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
         Vector3Int endPosition = tileMap.WorldToCell(dragEndPosition);
 
-        Vector3Int offset = TerrainUtils.GetDragBoxPaintOffset(startPosition, endPosition);
+        Vector3Int offset = TerrainUtils.GetDragPaintOffset(startPosition, endPosition);
 
         for (int x = 0; x <= offset.x; x++)
         {
@@ -140,6 +146,11 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         _currentTile = tile;
     }
 
+    public void SetCurrentTileGrid(TileGrid tileGrid)
+    {
+        currentTileGrid = tileGrid;
+    }
+
     public void PaintTile(Vector3 hitPoint)
     {
         if (!_currentTile)
@@ -154,7 +165,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 tileMap.SetTile(tilePosition, _currentTile);
             else if (_currentEditMode == TerrainEditMode.Erase)
                 tileMap.SetTile(tilePosition, null);
-                
         }
     }
 

@@ -7,7 +7,7 @@ using Michsky.UI.ModernUIPack;
 
 public enum TerrainEditMode
 {
-    Paint, Drag, Erase, BoxPaint
+    Paint, Erase, BoxPaint
 }
 
 public class TerrainInspectorUI : MonoBehaviour
@@ -36,17 +36,8 @@ public class TerrainInspectorUI : MonoBehaviour
     void Start()
     {
         CreateTileButtons();
+        CreateTileGridButtons();
         InitModeButtons();
-    }
-
-    private void Update()
-    {
-        // Temp
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            ChangeEditMode(TerrainEditMode.Drag);
-            Cursor.visible = true;
-        }
     }
 
     private void CreateTileButtons()
@@ -69,6 +60,16 @@ public class TerrainInspectorUI : MonoBehaviour
         _terrainManager.SetCurrentTile(tile);
 
         _currentSelectedButton = toggleButton;
+    }
+
+    private void CreateTileGridButtons()
+    {
+        foreach (TileGrid tileGrid in tileGrids)
+        {
+            GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
+            ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
+            toggleButton.Setup(tileGrid.sprite, () => SetCurrentTileGrid(tileGrid, toggleButton));
+        }
     }
 
     private void SetCurrentTileGrid(TileGrid tileGrid, ImageToggleButton toggleButton)
@@ -106,5 +107,10 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         _terrainManager.SetCurrentEditMode(newMode);
         ToggleSettingsMenu(false);
+    }
+
+    private void ToggleDragTerrain()
+    {
+        _terrainManager.isDragEnabled = !_terrainManager.isDragEnabled;
     }
 }
