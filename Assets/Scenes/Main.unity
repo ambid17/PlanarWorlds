@@ -2276,7 +2276,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744504455}
   m_HandleRect: {fileID: 1744504454}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -24603,7 +24603,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fa279ad829e27c94bb63ccc61ffe0793, type: 2}
   - {fileID: 11400000, guid: 99195d95d7bd08345adbbe956c8867e9, type: 2}
   tileGrids:
-  - {fileID: 11400000, guid: 79fd18580f78d07439594b04f2474fa1, type: 2}
+  - {fileID: 11400000, guid: dd076d45310c1b04eab94e24d6274d87, type: 2}
   buttonPrefab: {fileID: 9151598574256022449, guid: 5b1813a35bb552d4099da16da9c6922e, type: 3}
   paintButton: {fileID: 763093779}
   eraseButton: {fileID: 49092931}

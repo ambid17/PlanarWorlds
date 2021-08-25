@@ -110,7 +110,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
         Vector3Int endPosition = tileMap.WorldToCell(dragEndPosition);
 
-        Vector3Int offset = TerrainUtils.GetDragPaintOffset(startPosition, endPosition);
+        Vector3Int offset = TerrainUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
 
         for (int x = 0; x <= offset.x; x++)
         {

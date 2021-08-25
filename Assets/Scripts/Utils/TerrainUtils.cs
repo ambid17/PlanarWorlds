@@ -2,7 +2,7 @@
 
 public static class TerrainUtils
 {
-    public static Vector3Int GetDragPaintOffset(Vector3Int startPosition, Vector3Int endPosition)
+    public static Vector3Int GetDragPaintOffset(ref Vector3Int startPosition, ref Vector3Int endPosition)
     {
         // Set a default offset, which will be overridden if either x or y are negative
         Vector3Int offset = endPosition - startPosition;
