@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Tilemaps;
-using Michsky.UI.ModernUIPack;
 
 public enum TerrainEditMode
 {
@@ -19,6 +15,7 @@ public class TerrainInspectorUI : MonoBehaviour
 
     public ToggleButton paintButton;
     public ToggleButton eraseButton;
+    public ToggleButton dragButton;
     public ToggleButton settingsButton;
 
     public GameObject tileSelectorParent;
@@ -58,6 +55,7 @@ public class TerrainInspectorUI : MonoBehaviour
         }
 
         _terrainManager.SetCurrentTile(tile);
+        _terrainManager.SetCurrentTileGrid(null);
 
         _currentSelectedButton = toggleButton;
     }
@@ -80,6 +78,7 @@ public class TerrainInspectorUI : MonoBehaviour
         }
 
         _terrainManager.SetCurrentTileGrid(tileGrid);
+        _terrainManager.SetCurrentTile(null);
 
         _currentSelectedButton = toggleButton;
     }
@@ -88,6 +87,8 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
         eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
+
+        dragButton.SetupAction(ToggleDragTerrain);
 
         settingsButton.SetupAction(() => ToggleSettingsMenu(true));
         ToggleSettingsMenu(false);
@@ -112,5 +113,10 @@ public class TerrainInspectorUI : MonoBehaviour
     private void ToggleDragTerrain()
     {
         _terrainManager.isDragEnabled = !_terrainManager.isDragEnabled;
+
+        if (_terrainManager.isDragEnabled)
+            dragButton.Select();
+        else
+            dragButton.Unselect();
     }
 }

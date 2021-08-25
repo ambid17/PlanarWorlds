@@ -41,7 +41,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public bool isDragEnabled;
     private Vector3 _dragStartPosition;
 
-    public TileGrid currentTileGrid;
+    private TileGrid _currentTileGrid;
 
     private bool _isValidClick;
 
@@ -116,9 +116,20 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         {
             for (int y = 0; y <= offset.y; y++)
             {
-                Tile tileToPaint = _currentEditMode == TerrainEditMode.Paint
-                    ? currentTileGrid.GetTileByPosition(x, y, offset)
-                    : null;
+                // Default to null for erasing 
+                Tile tileToPaint = null;
+
+                if (_currentEditMode != TerrainEditMode.Erase)
+                {
+                    if (_currentTile != null)
+                    {
+                        tileToPaint = _currentTile;
+                    }
+                    else if (_currentTileGrid != null)
+                    {
+                        tileToPaint = _currentTileGrid.GetTileByPosition(x, y, offset);
+                    }
+                }
 
                 tileMap.SetTile(new Vector3Int(startPosition.x + x, startPosition.y + y, 0), tileToPaint);
             }
@@ -151,7 +162,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void SetCurrentTileGrid(TileGrid tileGrid)
     {
-        currentTileGrid = tileGrid;
+        _currentTileGrid = tileGrid;
     }
 
     public void PaintTile(Vector3 hitPoint)
