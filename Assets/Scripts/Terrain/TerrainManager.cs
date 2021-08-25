@@ -38,12 +38,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private PrefabGizmoManager _prefabGizmoManager;
     private UIManager _uiManager;
 
-    public bool isDragEnabled;
-    private Vector3 _dragStartPosition;
-
     private TileGrid _currentTileGrid;
 
-    private bool _isValidClick;
+    public bool isDragEnabled;
+    private bool _isValidDrag;
+    
+    private Vector3 _dragStartPosition;
+    private List<Tile> _tilesUnderDragArea = new List<Tile>();
+    //private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
+    private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
 
     void Start()
     {
@@ -82,19 +85,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         {
             if (isDragEnabled)
             {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    _isValidClick = true;
-                    _dragStartPosition = rayHit.point;
-                }
-
-                if (Input.GetMouseButtonUp(0))
-                {
-                    if (_isValidClick)
-                        DragPaintTiles(dragEndPosition: rayHit.point);
-
-                    _isValidClick = false;
-                }
+                HandleDrag(rayHit.point);
             }
             else if (Input.GetMouseButton(0))
             {
@@ -105,12 +96,35 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         }
     }
 
-    private void DragPaintTiles(Vector3 dragEndPosition)
+    private void HandleDrag(Vector3 hitPoint)
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isValidDrag = true;
+            _dragStartPosition = hitPoint;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (_isValidDrag)
+                DragPaintTiles(dragEndPosition: hitPoint, tileMap);
+
+            _isValidDrag = false;
+        }
+
+        // Show shadow tiles while drag is in progress
+        if (_isValidDrag)
+            DragPaintTiles(dragEndPosition: hitPoint, shadowTileMap);
+    }
+
+    private void DragPaintTiles(Vector3 dragEndPosition, Tilemap tileMap)
     {
         Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
         Vector3Int endPosition = tileMap.WorldToCell(dragEndPosition);
 
         Vector3Int offset = TerrainUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
+
+        List<Vector3Int> newDraggedPositions = new List<Vector3Int>();
 
         for (int x = 0; x <= offset.x; x++)
         {
@@ -122,18 +136,34 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 if (_currentEditMode != TerrainEditMode.Erase)
                 {
                     if (_currentTile != null)
-                    {
                         tileToPaint = _currentTile;
-                    }
                     else if (_currentTileGrid != null)
-                    {
                         tileToPaint = _currentTileGrid.GetTileByPosition(x, y, offset);
-                    }
                 }
 
-                tileMap.SetTile(new Vector3Int(startPosition.x + x, startPosition.y + y, 0), tileToPaint);
+                Vector3Int tilePosition = new Vector3Int(startPosition.x + x, startPosition.y + y, 0);
+                newDraggedPositions.Add(tilePosition);
+
+                if (tileMap == shadowTileMap)
+                    PaintShadowTile(tilePosition, tileToPaint);
+                else
+                    tileMap.SetTile(tilePosition, tileToPaint);
             }
         }
+
+        if (tileMap == shadowTileMap)
+        {
+            // Remove any shadow tiles that are no longer representing tiles being dragged
+            IEnumerable<Vector3Int> shadowPositionsToRemove = _draggedTilePositions
+                .Where(x => !newDraggedPositions.Contains(x));
+
+            foreach (Vector3Int position in shadowPositionsToRemove)
+            {
+                shadowTileMap.SetTile(position, null);
+            }
+        }
+
+        _draggedTilePositions = newDraggedPositions;
     }
 
     public void SetBrushSize(int brushSize)
@@ -220,7 +250,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void PaintShadowTiles(Vector3 hitPoint)
     {
-        shadowTileMap.ClearAllTiles();
+        if (!_isValidDrag)
+            shadowTileMap.ClearAllTiles();
 
         if (!_currentTile || _currentEditMode == TerrainEditMode.Erase)
             return;
@@ -230,10 +261,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         foreach (Vector3Int tilePosition in tilePositionsForBrush)
         {
-            shadowTileMap.SetTile(tilePosition, _currentTile);
-            shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
-            shadowTileMap.SetColor(tilePosition, new Color(1, 1, 1, 0.3f));
+            PaintShadowTile(tilePosition, _currentTile);
         }
+    }
+
+    private void PaintShadowTile(Vector3Int tilePosition, Tile tileToPaint)
+    {
+        shadowTileMap.SetTile(tilePosition, tileToPaint);
+        shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
+        shadowTileMap.SetColor(tilePosition, new Color(1, 1, 1, 0.3f));
     }
 
     public void GenerateDefaultMap()

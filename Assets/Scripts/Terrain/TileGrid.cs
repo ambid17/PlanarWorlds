@@ -4,9 +4,13 @@ using UnityEngine.Tilemaps;
 [CreateAssetMenu(fileName = "TileGrid", menuName = "ScriptableObjects/TileGrid")]
 public class TileGrid : ScriptableObject
 {
-    public Sprite sprite;
+    [SerializeField] 
+    private Sprite _sprite;
 
-    // Tiles that make up the grid 
+    // Default to the middle sprite in the grid 
+    public Sprite Sprite => _sprite != null ? _sprite : middleMiddle.sprite;
+
+    #region Grid Tiles 
     public Tile bottomLeft;
     public Tile bottomMiddle;
     public Tile bottomRight;
@@ -18,6 +22,7 @@ public class TileGrid : ScriptableObject
     public Tile topLeft;
     public Tile topMiddle;
     public Tile topRight;
+    #endregion  
 
     public Tile GetTileByPosition(int x, int y, Vector3Int offset)
     {
