@@ -17,8 +17,11 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private Vector3Int _lastShadowTilePosition;
     [SerializeField]
     private Tile highlightTile;
+    [SerializeField]
+    private Tile shadowEraseTile;
 
     private Tile _currentTile;
+    private TileGrid _currentTileGrid;
     private TerrainEditMode _currentEditMode;
 
     private int _brushSize;
@@ -38,14 +41,10 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private PrefabGizmoManager _prefabGizmoManager;
     private UIManager _uiManager;
 
-    private TileGrid _currentTileGrid;
-
     public bool isDragEnabled;
     private bool _isValidDrag;
     
     private Vector3 _dragStartPosition;
-    private List<Tile> _tilesUnderDragArea = new List<Tile>();
-    //private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
 
     void Start()
@@ -84,13 +83,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, terrainLayerMask))
         {
             if (isDragEnabled)
-            {
                 HandleDrag(rayHit.point);
-            }
             else if (Input.GetMouseButton(0))
-            {
                 PaintTile(rayHit.point);
-            }
 
             HighlightSelection(rayHit.point);
         }
@@ -109,6 +104,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             if (_isValidDrag)
                 DragPaintTiles(dragEndPosition: hitPoint, tileMap);
 
+            _draggedTilePositions.Clear();
             _isValidDrag = false;
         }
 
@@ -130,16 +126,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         {
             for (int y = 0; y <= offset.y; y++)
             {
-                // Default to null for erasing 
-                Tile tileToPaint = null;
+                Tile tileToPaint = default;
 
-                if (_currentEditMode != TerrainEditMode.Erase)
-                {
-                    if (_currentTile != null)
-                        tileToPaint = _currentTile;
-                    else if (_currentTileGrid != null)
-                        tileToPaint = _currentTileGrid.GetTileByPosition(x, y, offset);
-                }
+                // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
+                if (_currentEditMode == TerrainEditMode.Erase)
+                    tileToPaint = tileMap == shadowTileMap ? highlightTile : null;
+                else if (_currentTile != null)
+                    tileToPaint = _currentTile;
+                else if (_currentTileGrid != null)
+                    tileToPaint = _currentTileGrid.GetTileByPosition(x, y, offset);
 
                 Vector3Int tilePosition = new Vector3Int(startPosition.x + x, startPosition.y + y, 0);
                 newDraggedPositions.Add(tilePosition);
@@ -157,10 +152,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             IEnumerable<Vector3Int> shadowPositionsToRemove = _draggedTilePositions
                 .Where(x => !newDraggedPositions.Contains(x));
 
-            foreach (Vector3Int position in shadowPositionsToRemove)
-            {
-                shadowTileMap.SetTile(position, null);
-            }
+            shadowTileMap.ClearTiles(shadowPositionsToRemove);
         }
 
         _draggedTilePositions = newDraggedPositions;
@@ -269,7 +261,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         shadowTileMap.SetTile(tilePosition, tileToPaint);
         shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
-        shadowTileMap.SetColor(tilePosition, new Color(1, 1, 1, 0.3f));
+        shadowTileMap.SetColor(tilePosition, Constants.shadowTileColor);
     }
 
     public void GenerateDefaultMap()

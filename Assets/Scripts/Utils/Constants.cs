@@ -17,5 +17,7 @@ public class Constants
     public static int defaultBrushSize = 1;
     public static float rotationSpeed = 15;
 
+    public static Color shadowTileColor = new Color(1, 1, 1, 0.3f);
+
     public static string tileGridDir = "Assets/ScriptableObjects/TileGrids";
 }
