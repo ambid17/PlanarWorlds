@@ -7,6 +7,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
+public enum DragState
+{
+    Paint, Indicate
+}
+
 public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 {
     public LayerMask terrainLayerMask;
@@ -70,8 +75,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void TryTerrainModification()
     {
-        if (EventSystem.current.IsPointerOverGameObject()
+        if ((EventSystem.current.IsPointerOverGameObject()
             || RTGizmosEngine.Get.HoveredGizmo != null)
+            && !isDragEnabled)
         {
             return;
         }
@@ -102,18 +108,19 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (Input.GetMouseButtonUp(0))
         {
             if (_isValidDrag)
-                DragPaintTiles(dragEndPosition: hitPoint, tileMap);
+                DragPaintTiles(dragEndPosition: hitPoint, DragState.Paint);
 
             _draggedTilePositions.Clear();
+            shadowTileMap.ClearAllTiles();
             _isValidDrag = false;
         }
 
         // Show shadow tiles while drag is in progress
         if (_isValidDrag)
-            DragPaintTiles(dragEndPosition: hitPoint, shadowTileMap);
+            DragPaintTiles(dragEndPosition: hitPoint, DragState.Indicate);
     }
 
-    private void DragPaintTiles(Vector3 dragEndPosition, Tilemap tileMap)
+    private void DragPaintTiles(Vector3 dragEndPosition, DragState dragState)
     {
         Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
         Vector3Int endPosition = tileMap.WorldToCell(dragEndPosition);
@@ -130,7 +137,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
                 // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
                 if (_currentEditMode == TerrainEditMode.Erase)
-                    tileToPaint = tileMap == shadowTileMap ? highlightTile : null;
+                    tileToPaint = dragState == DragState.Indicate ? highlightTile : null;
                 else if (_currentTile != null)
                     tileToPaint = _currentTile;
                 else if (_currentTileGrid != null)
@@ -139,14 +146,14 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 Vector3Int tilePosition = new Vector3Int(startPosition.x + x, startPosition.y + y, 0);
                 newDraggedPositions.Add(tilePosition);
 
-                if (tileMap == shadowTileMap)
+                if (dragState == DragState.Indicate)
                     PaintShadowTile(tilePosition, tileToPaint);
                 else
                     tileMap.SetTile(tilePosition, tileToPaint);
             }
         }
 
-        if (tileMap == shadowTileMap)
+        if (dragState == DragState.Indicate)
         {
             // Remove any shadow tiles that are no longer representing tiles being dragged
             IEnumerable<Vector3Int> shadowPositionsToRemove = _draggedTilePositions
@@ -242,10 +249,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void PaintShadowTiles(Vector3 hitPoint)
     {
-        if (!_isValidDrag)
-            shadowTileMap.ClearAllTiles();
-
-        if (!_currentTile || _currentEditMode == TerrainEditMode.Erase)
+        if (!_currentTile 
+            || _currentEditMode == TerrainEditMode.Erase
+            || (isDragEnabled && !_isValidDrag))
             return;
 
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);

@@ -64,9 +64,12 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         foreach (TileGrid tileGrid in tileGrids)
         {
-            GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-            ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
-            toggleButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, toggleButton));
+            if (tileGrid != null)
+            {
+                GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
+                ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
+                toggleButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, toggleButton));
+            }
         }
     }
 
