@@ -16,7 +16,7 @@ public class ButtonBase : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public bool isSelected;
 
-    void Awake()
+    public virtual void Awake()
     {
         buttonText = GetComponentInChildren<TMP_Text>();
         button = GetComponent<Button>();

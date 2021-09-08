@@ -4,6 +4,7 @@ public class TabButton : ButtonBase
 {
     public override void SetupAction(Action callback)
     {
+        button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => callback());
         button.onClick.AddListener(Select);
     }
