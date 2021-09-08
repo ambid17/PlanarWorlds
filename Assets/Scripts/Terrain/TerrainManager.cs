@@ -46,8 +46,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private PrefabGizmoManager _prefabGizmoManager;
     private UIManager _uiManager;
 
+    private bool CanModifyTerrain
+    {
+        get => (!EventSystem.current.IsPointerOverGameObject()
+            && RTGizmosEngine.Get.HoveredGizmo == null)
+            || isDragEnabled;
+    }
+
     public bool isDragEnabled;
-    private bool _isValidDrag;
+    public bool isValidDrag;
     
     private Vector3 _dragStartPosition;
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
@@ -101,22 +108,22 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _isValidDrag = true;
+            isValidDrag = true;
             _dragStartPosition = hitPoint;
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (_isValidDrag)
+            if (isValidDrag)
                 DragPaintTiles(dragEndPosition: hitPoint, DragState.Paint);
 
             _draggedTilePositions.Clear();
             shadowTileMap.ClearAllTiles();
-            _isValidDrag = false;
+            isValidDrag = false;
         }
 
         // Show shadow tiles while drag is in progress
-        if (_isValidDrag)
+        if (isValidDrag)
             DragPaintTiles(dragEndPosition: hitPoint, DragState.Indicate);
     }
 
@@ -129,6 +136,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         List<Vector3Int> newDraggedPositions = new List<Vector3Int>();
 
+        // Todo: Break out 
         for (int x = 0; x <= offset.x; x++)
         {
             for (int y = 0; y <= offset.y; y++)
@@ -251,8 +259,11 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         if (!_currentTile 
             || _currentEditMode == TerrainEditMode.Erase
-            || (isDragEnabled && !_isValidDrag))
+            || (isDragEnabled && !isValidDrag))
             return;
+
+        if (!isValidDrag)
+            shadowTileMap.ClearAllTiles();
 
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
         List<Vector3Int> tilePositionsForBrush = GetTilesByBrushSize(centerPosition);

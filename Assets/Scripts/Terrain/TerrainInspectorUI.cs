@@ -13,17 +13,17 @@ public class TerrainInspectorUI : MonoBehaviour
 
     public GameObject buttonPrefab;
 
-    public ToggleButton paintButton;
-    public ToggleButton eraseButton;
+    public TabButton paintButton;
+    public TabButton eraseButton;
+    public TabButton settingsButton;
     public ToggleButton dragButton;
-    public ToggleButton settingsButton;
 
     public GameObject tileSelectorParent;
 
     public TerrainSettingsUI terrainSettingsUI;
 
     private TerrainManager _terrainManager;
-    private ImageToggleButton _currentSelectedButton;
+    private ImageTabButton _currentSelectedButton;
 
     void Awake()
     {
@@ -42,12 +42,12 @@ public class TerrainInspectorUI : MonoBehaviour
         foreach (Tile tile in tiles)
         {
             GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-            ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
+            ImageTabButton toggleButton = newButton.GetComponent<ImageTabButton>();
             toggleButton.Setup(tile.sprite, () => SetCurrentTile(tile, toggleButton));
         }
     }
 
-    private void SetCurrentTile(Tile tile, ImageToggleButton toggleButton)
+    private void SetCurrentTile(Tile tile, ImageTabButton toggleButton)
     {
         if (_currentSelectedButton)
         {
@@ -67,13 +67,13 @@ public class TerrainInspectorUI : MonoBehaviour
             if (tileGrid != null)
             {
                 GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-                ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
+                ImageTabButton toggleButton = newButton.GetComponent<ImageTabButton>();
                 toggleButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, toggleButton));
             }
         }
     }
 
-    private void SetCurrentTileGrid(TileGrid tileGrid, ImageToggleButton toggleButton)
+    private void SetCurrentTileGrid(TileGrid tileGrid, ImageTabButton toggleButton)
     {
         if (_currentSelectedButton)
         {
@@ -90,10 +90,9 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
         eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
-
+        settingsButton.SetupAction(() => ToggleSettingsMenu(true));
         dragButton.SetupAction(ToggleDragTerrain);
 
-        settingsButton.SetupAction(() => ToggleSettingsMenu(true));
         ToggleSettingsMenu(false);
         paintButton.Select();
     }
@@ -116,10 +115,6 @@ public class TerrainInspectorUI : MonoBehaviour
     private void ToggleDragTerrain()
     {
         _terrainManager.isDragEnabled = !_terrainManager.isDragEnabled;
-
-        if (_terrainManager.isDragEnabled)
-            dragButton.Select();
-        else
-            dragButton.Unselect();
+        _terrainManager.isValidDrag = false;
     }
 }

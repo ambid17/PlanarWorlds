@@ -6,7 +6,7 @@ using TMPro;
 using System;
 using UnityEngine.EventSystems;
 
-public class ImageToggleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ImageTabButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Color activeTextColor = new Color(0.4f, 0.4f, 1, 1);
     public Color hoverTextColor = new Color(0.4f, 0.4f, 1, 1);

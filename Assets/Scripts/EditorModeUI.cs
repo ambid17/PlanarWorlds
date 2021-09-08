@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class EditorModeUI : MonoBehaviour
 {
-    public ToggleButton mapButton;
-    public ToggleButton propButton;
-    public ToggleButton encounterButton;
+    public TabButton mapButton;
+    public TabButton propButton;
+    public TabButton encounterButton;
 
     private UIManager _uiManager;
 
