@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -30,6 +31,8 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     private PrefabGizmoManager _prefabGizmoManager;
     private UIManager _uIManager;
 
+    private string multiSelectMismatch = "-";
+
     void Start()
     {
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
@@ -42,28 +45,77 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
         scaleButton.SetupAction(() => GizmoButtonClicked(TransformType.Scale));
         positionButton.Select();
 
-        ShowUiForTarget(TargetingType.None);
+        ShowUiForTargetType(TargetingType.None);
     }
 
-    public void UpdateInputFields(TransformType transformType, Vector3 value)
+    public void UpdateInputFields()
     {
-        switch (transformType)
+        if (_prefabGizmoManager.TargetObjects.Count > 0)
         {
-            case TransformType.Position:
-                xPositionInput.text = value.x.ToString("F");
-                yPositionInput.text = value.y.ToString("F");
-                zPositionInput.text = value.z.ToString("F");
-                break;
-            case TransformType.Rotation:
-                xRotationInput.text = value.x.ToString("##0");
-                yRotationInput.text = value.y.ToString("##0");
-                zRotationInput.text = value.z.ToString("##0");
-                break;
-            case TransformType.Scale:
-                xScaleInput.text = value.x.ToString("F");
-                yScaleInput.text = value.y.ToString("F");
-                zScaleInput.text = value.z.ToString("F");
-                break;
+            // A lot of the time, due to floating point precision, the values can be like 8E-6, instead of 0
+            // So we need to round to account for that
+            RoundTargetObjectTransforms();
+            Transform first = _prefabGizmoManager.TargetObjects.First().transform;
+
+            if(!_prefabGizmoManager.TargetObjects.All(go => go.transform.position.x == first.transform.position.x))
+                xPositionInput.text = multiSelectMismatch;
+            else
+                xPositionInput.text = first.position.x.ToString("F2");
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.position.y == first.transform.position.y))
+                yPositionInput.text = multiSelectMismatch;
+            else
+                yPositionInput.text = first.position.y.ToString("F2");
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.position.z == first.transform.position.z))
+                zPositionInput.text = multiSelectMismatch;
+            else
+                zPositionInput.text = first.position.z.ToString("F2");
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.rotation.x == first.transform.rotation.x))
+                xRotationInput.text = multiSelectMismatch;
+            else
+                xRotationInput.text = first.rotation.eulerAngles.x.ToString("##0");
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.rotation.y == first.transform.rotation.y))
+                yRotationInput.text = multiSelectMismatch;
+            else
+                yRotationInput.text = first.rotation.eulerAngles.y.ToString("##0");
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.rotation.z == first.transform.rotation.z))
+                zRotationInput.text = multiSelectMismatch;
+            else
+                zRotationInput.text = first.rotation.eulerAngles.z.ToString("##0");
+
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.localScale.x == first.transform.localScale.x))
+                xScaleInput.text = multiSelectMismatch;
+            else
+                xScaleInput.text = first.localScale.x.ToString("F2");
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.localScale.y == first.transform.localScale.y))
+                yScaleInput.text = multiSelectMismatch;
+            else
+                yScaleInput.text = first.localScale.y.ToString("F2");
+
+            if (!_prefabGizmoManager.TargetObjects.All(go => go.transform.localScale.z == first.transform.localScale.z))
+                zScaleInput.text = multiSelectMismatch;
+            else
+                zScaleInput.text = first.localScale.z.ToString("F2");
+        }
+    }
+
+    private void RoundTargetObjectTransforms()
+    {
+        foreach(GameObject go in _prefabGizmoManager.TargetObjects)
+        {
+            Transform tf = go.transform;
+            Vector3 newPosition = InputValidation.Round(tf.position, 2);
+            Vector3 newRotation = InputValidation.Round(tf.rotation.eulerAngles, 2);
+            Vector3 newScale = InputValidation.Round(tf.localScale, 2);
+
+            go.transform.position = newPosition;
+            go.transform.rotation = Quaternion.Euler(newRotation);
+            go.transform.localScale = newScale;
         }
     }
 
@@ -94,12 +146,17 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
     private void InputFieldUpdated(TMP_InputField inputField, TransformType transformType, TransformAxis transformAxis)
     {
+        if(inputField.text == multiSelectMismatch)
+        {
+            return;
+        }
+
         float parsedValue = InputValidation.ValidateFloat(text: inputField.text, defaultValue: 1);
 
-        _prefabGizmoManager.UpdateTargetTransform(parsedValue, transformType, transformAxis);
+        _prefabGizmoManager.UpdateTargetTransforms(parsedValue, transformType, transformAxis);
     }
 
-    public void ShowUiForTarget(TargetingType targetingType)
+    public void ShowUiForTargetType(TargetingType targetingType)
     {
         objectInspectorParent.SetActive(targetingType == TargetingType.Prefab);
     }

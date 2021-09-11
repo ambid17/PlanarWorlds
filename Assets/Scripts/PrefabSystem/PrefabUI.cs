@@ -41,7 +41,7 @@ public class PrefabUI : MonoBehaviour
 
         SetObjectShader(instance);
         CreateObjectCollider(instance);
-        _prefabGizmoManager.OnTargetObjectChanged(instance);
+        _prefabGizmoManager.OnTargetObjectChanged(instance, true);
     }
 
     private void SetObjectShader(GameObject instance)
