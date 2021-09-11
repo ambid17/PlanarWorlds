@@ -159,21 +159,6 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public void ShowUiForTargetType(TargetingType targetingType)
     {
         objectInspectorParent.SetActive(targetingType == TargetingType.Prefab);
-
-        if(targetingType != TargetingType.Prefab)
-        {
-            xPositionInput.text = string.Empty;
-            yPositionInput.text = string.Empty;
-            zPositionInput.text = string.Empty;
-                                  
-            xRotationInput.text = string.Empty;
-            yRotationInput.text = string.Empty;
-            zRotationInput.text = string.Empty;
-                                  
-            xScaleInput.text = string.Empty;
-            yScaleInput.text = string.Empty;
-            zScaleInput.text = string.Empty;
-        }
     }
 
     private void InitInputFields()
