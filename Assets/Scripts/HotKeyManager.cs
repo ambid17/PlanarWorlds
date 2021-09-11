@@ -45,7 +45,16 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
 
     public KeyCode GetKeyFor(string action)
     {
-        return keys[action];
+        KeyCode keyCode = KeyCode.Alpha0; 
+        try
+        {
+            keyCode = keys[action];
+        }
+        catch
+        {
+            Debug.LogError($"Tried to get key {action} but it does not exist");
+        }
+        return keyCode;
     }
 
     public void LoadSavedHotkeys()
