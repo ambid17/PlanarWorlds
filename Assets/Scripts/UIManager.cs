@@ -50,11 +50,7 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         _currentEditmode = editMode;
 
-        // TODO: revert this when the campaign system is added
-        campaignWindowShouldBeActive = false;
-        //campaignWindowShouldBeActive = editMode == EditMode.Terrain || editMode == EditMode.Prefab;
-        
-        
+        campaignWindowShouldBeActive = editMode == EditMode.Terrain || editMode == EditMode.Prefab;
         hierarchyWindowShouldBeActive = editMode == EditMode.Prefab;
         inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
         prefabWindowShouldBeActive = editMode == EditMode.Prefab;
