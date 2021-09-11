@@ -68,6 +68,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo = positionGizmo;
 
         _currentTargetingType = TargetingType.None;
+        ToggleZoomAbility();
 
         UIManager.OnEditModeChanged += EditModeChanged;
     }
@@ -158,6 +159,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _inspectorManager.ShowUiForTarget(_currentTargetingType);
         ToggleGizmos();
         UpdateAllInputFields();
+        ToggleZoomAbility();
     }
 
     private void ToggleOutlineRender(bool shouldRender)
@@ -480,13 +482,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo.SetTargetObject(_targetObject);
     }
 
-
     private void EditModeChanged(EditMode newEditMode)
     {
         if(newEditMode != EditMode.Prefab)
         {
             OnTargetObjectChanged(null);
         }
+    }
+
+    private void ToggleZoomAbility()
+    {
+        bool canZoom = _currentTargetingType != TargetingType.PrefabPlacement;
+        RTFocusCamera.Get.ZoomSettings.IsZoomEnabled = canZoom;
     }
     #endregion
 }
