@@ -15,17 +15,25 @@ MonoBehaviour:
   prefabs:
   - gameObject: {fileID: 100002, guid: 382c5c276cbf0244f95cb598627de3bf, type: 3}
     previewTexture: {fileID: 2800000, guid: 7799fa07fbc74cb428e5604cbd17ab11, type: 3}
+    prefabId: 0
   - gameObject: {fileID: 100000, guid: bd454777355c9714587252a203a6bef8, type: 3}
     previewTexture: {fileID: 2800000, guid: 2fa646c5780f8c043870520166a0763c, type: 3}
+    prefabId: 1
   - gameObject: {fileID: 100000, guid: 6524847568f8b4d4db0728c081dcac76, type: 3}
     previewTexture: {fileID: 2800000, guid: 5f68d1654892d3e47bbd5c9fd992b572, type: 3}
+    prefabId: 2
   - gameObject: {fileID: 100000, guid: 89dc010c0e1e5394cb6982a224a94d0b, type: 3}
     previewTexture: {fileID: 2800000, guid: 2623debae2f0b29488e7f1b793388825, type: 3}
+    prefabId: 3
   - gameObject: {fileID: 100000, guid: ff066ae0d025e294aa43998d5ad15279, type: 3}
     previewTexture: {fileID: 2800000, guid: 64623bcb09b76da4ebf5bb7e742b7079, type: 3}
+    prefabId: 4
   - gameObject: {fileID: 100000, guid: 3af63e32eb676b143be201160a95c566, type: 3}
     previewTexture: {fileID: 2800000, guid: 99611090fd0f64640ac5c16a8b74669b, type: 3}
+    prefabId: 5
   - gameObject: {fileID: 100000, guid: bbcd66f89b4989947826e275aa879814, type: 3}
     previewTexture: {fileID: 2800000, guid: da59044a728ec5e488813be9e723cc35, type: 3}
+    prefabId: 6
   - gameObject: {fileID: 100000, guid: 2abcd3d43ca224d4487a64df6fb351d2, type: 3}
     previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
+    prefabId: 7
