@@ -4,14 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using SimpleFileBrowser;
 using System.IO;
-using Michsky.UI.ModernUIPack;
+using TMPro;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 public class FileMenu : MonoBehaviour
 {
     public Button newButton;
     public Button openButton;
-    public CustomDropdown recentCampaignsDropdown;
+    public TMP_Dropdown recentCampaignsDropdown;
     public Button saveButton;
     public Button saveAsButton;
 
@@ -36,20 +37,26 @@ public class FileMenu : MonoBehaviour
         _defaultFileName = "campaign.json";
 
         PopulateRecentCampaigns();
+        _campaignManager.OnRecentCampaignsUpdated += PopulateRecentCampaigns;
+        recentCampaignsDropdown.onValueChanged.AddListener(OnOpenRecent);
     }
 
     private void PopulateRecentCampaigns()
     {
+        recentCampaignsDropdown.ClearOptions();
+
+        List<string> options = new List<string>();
+        options.Add(string.Empty);
+
         foreach (string filePath in _campaignManager.recentCampaigns.filePaths)
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
 
             string itemText = $"{fileName} \n {filePath}";
-            recentCampaignsDropdown.CreateNewItemFast(fileName, null);
+            options.Add(itemText);
         }
 
-        recentCampaignsDropdown.SetupDropdown();
-        recentCampaignsDropdown.dropdownEvent.AddListener(OnOpenRecent);
+        recentCampaignsDropdown.AddOptions(options);
     }
 
     private void OnNew()
@@ -64,7 +71,7 @@ public class FileMenu : MonoBehaviour
 
     private void OnOpenRecent(int index)
     {
-        string filePath = recentCampaignsDropdown.selectedText.text.Split('\n').Last();
+        string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
         _campaignManager.LoadCampaign(filePath);
     }
 

@@ -8,11 +8,14 @@ using System;
 using RTG;
 using UnityEngine.Tilemaps;
 using System.Linq;
+using UnityEngine.Events;
 
 public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {
-    private Campaign _currentCampaign;
     public RecentCampaigns recentCampaigns;
+    public event Action OnRecentCampaignsUpdated;
+
+    private Campaign _currentCampaign;
 
     private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
@@ -157,6 +160,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             {
                 string fileContents = File.ReadAllText(filePath);
                 recentCampaigns = JsonUtility.FromJson<RecentCampaigns>(fileContents);
+                OnRecentCampaignsUpdated.Invoke();
             }
             catch (Exception e)
             {
@@ -175,6 +179,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         if (!recentCampaigns.filePaths.Contains(path))
         {
             recentCampaigns.filePaths.Add(path);
+            OnRecentCampaignsUpdated.Invoke();
         }
 
         SaveRecentCampaigns();
