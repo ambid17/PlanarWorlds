@@ -1,6 +1,4 @@
 using RTG;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -21,9 +19,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private Vector3Int _lastShadowTilePosition;
     [SerializeField]
-    private Tile highlightTile;
-    [SerializeField]
-    private Tile[] highlightCornerTiles;
+    private HighlightTileSelector _highlightTileSelector;
 
     private Tile _currentTile;
     private TileGrid _currentTileGrid;
@@ -55,7 +51,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public bool isDragEnabled;
     public bool isValidDrag;
-    
+
     private Vector3 _dragStartPosition;
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
 
@@ -145,7 +141,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
                 // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
                 if (_currentEditMode == TerrainEditMode.Erase)
-                    tileToPaint = dragState == DragState.Indicate ? highlightTile : null;
+                    tileToPaint = dragState == DragState.Indicate ? _highlightTileSelector._centre : null;
                 else if (_currentTile != null)
                     tileToPaint = _currentTile;
                 else if (_currentTileGrid != null)
@@ -210,7 +206,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
         List<Vector3Int> tilePositionsForBrush = GetTilesByBrushSize(centerPosition);
 
-        foreach(Vector3Int tilePosition in tilePositionsForBrush)
+        foreach (Vector3Int tilePosition in tilePositionsForBrush)
         {
             if (_currentEditMode == TerrainEditMode.Paint)
                 tileMap.SetTile(tilePosition, _currentTile);
@@ -223,7 +219,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         List<Vector3Int> tilePositions = new List<Vector3Int>();
 
-        if(_brushSize == 1)
+        if (_brushSize == 1)
             return new List<Vector3Int> { centerPos };
 
         // convert the brush size, to the number of tiles from the center
@@ -240,43 +236,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         return tilePositions;
     }
 
-    private Dictionary<Vector3Int, Tile> GetTilesWithPositionsByBrushSize(Vector3Int centerPos)
-    {
-        Dictionary<Vector3Int, Tile> tilesWithPositions = new Dictionary<Vector3Int, Tile>();
-
-        if (_brushSize == 1)
-        {
-            tilesWithPositions.Add(centerPos, highlightTile);
-            return tilesWithPositions;
-        }
-
-        // convert the brush size, to the number of tiles from the center
-        int sizeFromCenter = _brushSize - 1;
-
-        for (int x = -sizeFromCenter; x <= sizeFromCenter; x++)
-        {
-            for (int y = -sizeFromCenter; y <= sizeFromCenter; y++)
-            {
-                // Default to an empty cell 
-                Tile tile = null;
-
-                // Get one of the four corner highlight tiles based on position in loop
-                if (x == -sizeFromCenter && y == -sizeFromCenter)
-                    tile = highlightCornerTiles[0];
-                else if (x == sizeFromCenter && y == -sizeFromCenter)
-                    tile = highlightCornerTiles[1];
-                else if (x == -sizeFromCenter && y == sizeFromCenter)
-                    tile = highlightCornerTiles[2];
-                else if (x == sizeFromCenter && y == sizeFromCenter)
-                    tile = highlightCornerTiles[3];
-
-                tilesWithPositions.Add(new Vector3Int(x + centerPos.x, y + centerPos.y, 0), tile);
-            }
-        }
-
-        return tilesWithPositions;
-    }
-
     public void HighlightSelection(Vector3 hitPoint)
     {
         highlightTileMap.ClearAllTiles();
@@ -287,7 +246,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private void PaintHighlightTiles(Vector3 hitPoint)
     {
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
-        Dictionary<Vector3Int, Tile> tilesForBrush = GetTilesWithPositionsByBrushSize(centerPosition);
+
+        Dictionary<Vector3Int, Tile> tilesForBrush = _highlightTileSelector
+            .GetTilesByBrushSize(centerPosition, _brushSize);
 
         foreach (KeyValuePair<Vector3Int, Tile> keyValuePair in tilesForBrush)
         {
@@ -297,7 +258,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void PaintShadowTiles(Vector3 hitPoint)
     {
-        if (!_currentTile 
+        if (!_currentTile
             || _currentEditMode == TerrainEditMode.Erase
             || (isDragEnabled && !isValidDrag))
             return;
