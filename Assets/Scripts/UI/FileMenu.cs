@@ -52,7 +52,7 @@ public class FileMenu : MonoBehaviour
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
 
-            string itemText = $"{fileName} \n {filePath}";
+            string itemText = $"{fileName} \n{filePath}";
             options.Add(itemText);
         }
 
@@ -106,6 +106,18 @@ public class FileMenu : MonoBehaviour
         if (FileBrowser.Success)
         {
             _campaignManager.SaveCampaignAs(FileBrowser.Result[0]);
+        }
+    }
+
+    IEnumerator ShowNewDialogCoroutine()
+    {
+        yield return FileBrowser.WaitForSaveDialog(FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save", "Save");
+
+        Debug.Log($"FileBrowser succes: {FileBrowser.Success}");
+
+        if (FileBrowser.Success)
+        {
+            _campaignManager.NewCampaign(FileBrowser.Result[0]);
         }
     }
 }

@@ -34,12 +34,14 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     }
 
     #region Campaign Utils
-    public void NewCampaign()
+    public void NewCampaign(string path)
     {
         if (_currentCampaign != null)
         {
             SaveCampaign();
         }
+
+        ClearOldData();
         _currentCampaign = new Campaign();
     }
 
@@ -56,6 +58,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         }
 
         _currentCampaign = Campaign.LoadFromPath(path);
+        ClearOldData();
         LoadPrefabs();
         LoadTiles();
         AddToRecentCampaigns(path);
@@ -125,12 +128,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     #region Load Utils
     private void LoadPrefabs()
     {
-        // Delete all of the current prefabs
-        foreach(Transform child in _prefabManager.prefabContainer)
-        {
-            Destroy(child.gameObject);
-        }
-
         foreach (PrefabModel campaignPrefab in _currentCampaign.prefabs)
         {
             _prefabManager.LoadPrefabFromSave(campaignPrefab);
@@ -139,13 +136,22 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void LoadTiles()
     {
-        // Clear all of the current tiles
-        _terrainManager.tileMap.ClearAllTiles();
-
         foreach(TileModel tile in _currentCampaign.tiles)
         {
             Tile tileToSet = _terrainManager.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
             _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
+        }
+    }
+
+    private void ClearOldData()
+    {
+        // Clear all of the current tiles
+        _terrainManager.tileMap.ClearAllTiles();
+
+        // Delete all of the current prefabs
+        foreach (Transform child in _prefabManager.prefabContainer)
+        {
+            Destroy(child.gameObject);
         }
     }
     #endregion

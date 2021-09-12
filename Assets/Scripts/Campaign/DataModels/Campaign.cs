@@ -70,13 +70,12 @@ public class Campaign
     {
         Campaign campaign = new Campaign();
 
-        string qualifiedFilePath = filePath.Replace("/", "\\\\");
-        File.OpenRead(qualifiedFilePath);
-        if (File.Exists(qualifiedFilePath))
+        Debug.Log($"Loading campaign from: {filePath}");
+        if (File.Exists(filePath))
         {
             try
             {
-                string fileContents = File.ReadAllText(qualifiedFilePath);
+                string fileContents = File.ReadAllText(filePath);
                 campaign = JsonUtility.FromJson<Campaign>(fileContents);
             }
             catch (Exception e)
@@ -86,7 +85,7 @@ public class Campaign
         }
         else
         {
-            Debug.LogError($"Campaign.LoadFromName(): No file exists at: {qualifiedFilePath}");
+            Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
         }
 
         return campaign;
