@@ -12,9 +12,11 @@ using System.Linq;
 public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {
     private Campaign _currentCampaign;
+    public RecentCampaigns recentCampaigns;
 
     private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
+
     protected override void Awake()
     {
         base.Awake();
@@ -24,6 +26,8 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         _prefabManager = PrefabManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
+
+        LoadRecentCampaigns();
     }
 
     #region Campaign Utils
@@ -51,6 +55,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         _currentCampaign = Campaign.LoadFromPath(path);
         LoadPrefabs();
         LoadTiles();
+        AddToRecentCampaigns(path);
     }
 
     public void SaveCampaign()
@@ -66,17 +71,8 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         _currentCampaign.Save();
     }
 
-    public void LoadPrefabFromSave(PrefabModel prefab)
-    {
-        //PrefabItem prefabItem = GetPrefabItem(prefab);
-        //GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
-        //instance.layer = Constants.PrefabLayer;
-        //instance.transform.position = prefab.position;
-        //instance.transform.rotation = Quaternion.Euler(prefab.rotation);
-        //instance.transform.localScale = prefab.scale;
-    }
+    
     #endregion
-
 
     #region Save Utils
     public void SavePrefabs()
@@ -136,6 +132,54 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         {
             Tile tileToSet = _terrainManager.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
             _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
+        }
+    }
+    #endregion
+
+    #region RecentCampaigns
+    private void LoadRecentCampaigns()
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, Constants.recentCampainsFileName);
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                string fileContents = File.ReadAllText(filePath);
+                recentCampaigns = JsonUtility.FromJson<RecentCampaigns>(fileContents);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{e.Message}\n{e.StackTrace}");
+            }
+        }
+        else
+        {
+            recentCampaigns = new RecentCampaigns();
+            recentCampaigns.filePaths = new List<string>();
+        }
+    }
+
+    private void AddToRecentCampaigns(string path)
+    {
+        if (!recentCampaigns.filePaths.Contains(path))
+        {
+            recentCampaigns.filePaths.Add(path);
+        }
+
+        SaveRecentCampaigns();
+    }
+
+    private void SaveRecentCampaigns()
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, Constants.recentCampainsFileName);
+        string fileContents = JsonUtility.ToJson(recentCampaigns);
+        try
+        {
+            File.WriteAllText(filePath, fileContents);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"{e.Message}\n{e.StackTrace}");
         }
     }
     #endregion

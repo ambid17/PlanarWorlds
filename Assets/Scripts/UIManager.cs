@@ -13,12 +13,10 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public GameObject PrefabCanvas;
     public GameObject InspectorCanvas;
     public GameObject HierarchyCanvas;
-    public GameObject CampaignCanvas;
     public GameObject TerrainInspectorCanvas;
 
     public bool isEditingValues;
 
-    public bool campaignWindowShouldBeActive;
     public bool hierarchyWindowShouldBeActive;
     public bool inspectorWindowShouldBeActive;
     public bool prefabWindowShouldBeActive;
@@ -50,7 +48,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         _currentEditmode = editMode;
 
-        campaignWindowShouldBeActive = editMode == EditMode.Terrain || editMode == EditMode.Prefab;
         hierarchyWindowShouldBeActive = editMode == EditMode.Prefab;
         inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
         prefabWindowShouldBeActive = editMode == EditMode.Prefab;
@@ -64,7 +61,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
 
     private void UpdateActiveWindows()
     {
-        CampaignCanvas.SetActive(campaignWindowShouldBeActive);
         HierarchyCanvas.SetActive(hierarchyWindowShouldBeActive);
         InspectorCanvas.SetActive(inspectorWindowShouldBeActive);
         PrefabCanvas.SetActive(prefabWindowShouldBeActive);
