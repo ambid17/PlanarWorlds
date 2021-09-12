@@ -23,7 +23,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     [SerializeField]
     private Tile highlightTile;
     [SerializeField]
-    private Tile shadowEraseTile;
+    private Tile[] highlightCornerTiles;
 
     private Tile _currentTile;
     private TileGrid _currentTileGrid;
@@ -240,19 +240,59 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         return tilePositions;
     }
 
+    private Dictionary<Vector3Int, Tile> GetTilesWithPositionsByBrushSize(Vector3Int centerPos)
+    {
+        Dictionary<Vector3Int, Tile> tilesWithPositions = new Dictionary<Vector3Int, Tile>();
+
+        if (_brushSize == 1)
+        {
+            tilesWithPositions.Add(centerPos, highlightTile);
+            return tilesWithPositions;
+        }
+
+        // convert the brush size, to the number of tiles from the center
+        int sizeFromCenter = _brushSize - 1;
+
+        for (int x = -sizeFromCenter; x <= sizeFromCenter; x++)
+        {
+            for (int y = -sizeFromCenter; y <= sizeFromCenter; y++)
+            {
+                // Default to an empty cell 
+                Tile tile = null;
+
+                // Get one of the four corner highlight tiles based on position in loop
+                if (x == -sizeFromCenter && y == -sizeFromCenter)
+                    tile = highlightCornerTiles[0];
+                else if (x == sizeFromCenter && y == -sizeFromCenter)
+                    tile = highlightCornerTiles[1];
+                else if (x == -sizeFromCenter && y == sizeFromCenter)
+                    tile = highlightCornerTiles[2];
+                else if (x == sizeFromCenter && y == sizeFromCenter)
+                    tile = highlightCornerTiles[3];
+
+                tilesWithPositions.Add(new Vector3Int(x + centerPos.x, y + centerPos.y, 0), tile);
+            }
+        }
+
+        return tilesWithPositions;
+    }
+
     public void HighlightSelection(Vector3 hitPoint)
     {
         highlightTileMap.ClearAllTiles();
-
-        Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
-        List<Vector3Int> tilePositionsForBrush = GetTilesByBrushSize(centerPosition);
-
-        foreach (Vector3Int tilePosition in tilePositionsForBrush)
-        {
-            highlightTileMap.SetTile(tilePosition, highlightTile);
-        }
-
+        PaintHighlightTiles(hitPoint);
         PaintShadowTiles(hitPoint);
+    }
+
+    private void PaintHighlightTiles(Vector3 hitPoint)
+    {
+        Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
+        Dictionary<Vector3Int, Tile> tilesForBrush = GetTilesWithPositionsByBrushSize(centerPosition);
+
+        foreach (KeyValuePair<Vector3Int, Tile> keyValuePair in tilesForBrush)
+        {
+            highlightTileMap.SetTile(keyValuePair.Key, keyValuePair.Value);
+        }
     }
 
     public void PaintShadowTiles(Vector3 hitPoint)

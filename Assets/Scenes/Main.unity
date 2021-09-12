@@ -704,7 +704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8310570353971415019, guid: 9cebade7abe959240b457b7b6a0f4e74, type: 3}
       propertyPath: m_Name
-      value: ToggleButton
+      value: DragButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9cebade7abe959240b457b7b6a0f4e74, type: 3}
@@ -9788,7 +9788,11 @@ MonoBehaviour:
   highlightTileMap: {fileID: 328437130}
   shadowTileMap: {fileID: 1913838038}
   highlightTile: {fileID: 11400000, guid: 56c3a808829ae1e42af5c67138bfc1aa, type: 2}
-  shadowEraseTile: {fileID: 0}
+  highlightCornerTiles:
+  - {fileID: 11400000, guid: 413e309adb05ad84a86929078e168a25, type: 2}
+  - {fileID: 11400000, guid: b427f9b3b4143e94a980f3e7fe72639b, type: 2}
+  - {fileID: 11400000, guid: 32971f2215d8fe64ab43c9198696620d, type: 2}
+  - {fileID: 11400000, guid: 3fca00714faa9164d80ea97f0fcd0ca1, type: 2}
   isDragEnabled: 0
   isValidDrag: 0
 --- !u!1 &807779931
@@ -24688,8 +24692,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a1d2545c252a6db4c8dd79048b34c422, type: 2}
   - {fileID: 11400000, guid: fa279ad829e27c94bb63ccc61ffe0793, type: 2}
   - {fileID: 11400000, guid: 99195d95d7bd08345adbbe956c8867e9, type: 2}
-  tileGrids:
-  - {fileID: 11400000, guid: 79fd18580f78d07439594b04f2474fa1, type: 2}
+  tileGrids: []
   buttonPrefab: {fileID: 9151598574256022449, guid: 5b1813a35bb552d4099da16da9c6922e, type: 3}
   paintButton: {fileID: 1872724122}
   eraseButton: {fileID: 479674794}
