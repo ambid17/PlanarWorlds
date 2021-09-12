@@ -174,7 +174,7 @@ namespace Michsky.UI.ModernUIPack
 
             catch
             {
-                selectedText.text = dropdownTag;
+                selectedText.text = string.Empty;
                 currentListParent = transform.parent;
                 Debug.Log("Dropdown - There is no dropdown items in the list.", this);
             }

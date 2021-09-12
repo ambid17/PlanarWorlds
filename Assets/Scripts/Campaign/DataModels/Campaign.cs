@@ -13,6 +13,8 @@ public class Campaign
     public List<PrefabModel> prefabs;
     [SerializeField]
     public List<TileModel> tiles;
+    [SerializeField]
+    public string filePath;
 
     public Campaign()
     {
@@ -45,7 +47,6 @@ public class Campaign
     #region Serialization
     public void Save()
     {
-        string filePath = FilePathUtil.GetSaveFilePath(campaignName);
         string fileContents = JsonUtility.ToJson(this);
         try
         {
@@ -56,6 +57,13 @@ public class Campaign
             Debug.LogError($"{e.Message}\n{e.StackTrace}");
         }
         Debug.Log($"Finished Saving campaign {campaignName} to {filePath}");
+    }
+
+    public void SaveAs(string filePath)
+    {
+        this.filePath = filePath;
+
+        Save();
     }
 
     public static Campaign LoadFromPath(string filePath)

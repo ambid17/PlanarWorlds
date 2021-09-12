@@ -71,7 +71,18 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         _currentCampaign.Save();
     }
 
-    
+    public void SaveCampaignAs(string filePath)
+    {
+        if (_currentCampaign == null)
+        {
+            Debug.Log("CampaignManager.SaveCampaign(): Saving empty campaign");
+            _currentCampaign = new Campaign();
+        }
+
+        SavePrefabs();
+        SaveTiles();
+        _currentCampaign.SaveAs(filePath);
+    }
     #endregion
 
     #region Save Utils
