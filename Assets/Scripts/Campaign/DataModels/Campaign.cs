@@ -10,12 +10,15 @@ public class Campaign
     [SerializeField]
     public string campaignName;
     [SerializeField]
-    public List<SerializedPrefab> prefabs;
+    public List<PrefabModel> prefabs;
+    [SerializeField]
+    public List<TileModel> tiles;
 
     public Campaign()
     {
         campaignName = "testCampaign";
-        prefabs = new List<SerializedPrefab>();
+        prefabs = new List<PrefabModel>();
+        tiles = new List<TileModel>();
     }
 
     public void UpdateName(string newName)
@@ -55,11 +58,10 @@ public class Campaign
         Debug.Log($"Finished Saving campaign {campaignName} to {filePath}");
     }
 
-    public static Campaign LoadFromName(string campaignName)
+    public static Campaign LoadFromPath(string filePath)
     {
         Campaign campaign = new Campaign();
 
-        string filePath = FilePathUtil.GetSaveFilePath(campaignName);
         if (File.Exists(filePath))
         {
             try
@@ -71,6 +73,10 @@ public class Campaign
             {
                 Debug.LogError($"{e.Message}\n{e.StackTrace}");
             }
+        }
+        else
+        {
+            Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
         }
 
         return campaign;

@@ -12,8 +12,6 @@ public enum TerrainEditMode
 
 public class TerrainInspectorUI : MonoBehaviour
 {
-    public Tile[] tiles;
-
     public GameObject buttonPrefab;
 
     public ToggleButton paintButton;
@@ -40,7 +38,7 @@ public class TerrainInspectorUI : MonoBehaviour
 
     private void CreateTileButtons()
     {
-        foreach (Tile tile in tiles)
+        foreach (Tile tile in _terrainManager.tiles)
         {
             GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
             ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();

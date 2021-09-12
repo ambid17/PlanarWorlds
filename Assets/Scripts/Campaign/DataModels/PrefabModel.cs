@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class SerializedPrefab
+public class PrefabModel
 {
     [SerializeField]
     public Vector3 position;
@@ -13,5 +13,5 @@ public class SerializedPrefab
     [SerializeField]
     public Vector3 scale;
     [SerializeField]
-    public Color color;
+    public int prefabId;
 }

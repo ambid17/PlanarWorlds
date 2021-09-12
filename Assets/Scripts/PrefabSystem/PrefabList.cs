@@ -17,4 +17,6 @@ public class Prefab
     public GameObject gameObject;
     [SerializeField]
     public Texture2D previewTexture;
+    [SerializeField]
+    public int prefabId;
 }

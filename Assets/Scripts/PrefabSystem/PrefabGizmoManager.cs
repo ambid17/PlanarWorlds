@@ -15,7 +15,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     [SerializeField]
     private LayerMask layerMask;
 
-    [SerializeField]
     private InspectorManager _inspectorManager;
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
@@ -24,7 +23,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private ObjectTransformGizmo rotationGizmo;
     private ObjectTransformGizmo scaleGizmo;
     private ObjectTransformGizmo activeGizmo;
-
 
     #region State management variables
     private TransformType currentTransformType;

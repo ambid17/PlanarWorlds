@@ -6,53 +6,67 @@ using System.Linq;
 using System.IO;
 using System;
 using RTG;
+using UnityEngine.Tilemaps;
+using System.Linq;
 
 public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {
-    public GameObject documentPrefab;
-    public Transform documentContainer;
+    private Campaign _currentCampaign;
 
-    private Campaign _campaign;
-    private CampaignUiHeader _campaignHeader;
-
+    private PrefabManager _prefabManager;
+    private TerrainManager _terrainManager;
     protected override void Awake()
     {
         base.Awake();
-        _campaignHeader = GetComponentInChildren<CampaignUiHeader>(true);
     }
 
     private void Start()
     {
+        _prefabManager = PrefabManager.GetInstance();
+        _terrainManager = TerrainManager.GetInstance();
     }
 
-
     #region Campaign Utils
-    public void CreateCampaign()
+    public void NewCampaign()
     {
-        _campaign = new Campaign();
+        if (_currentCampaign != null)
+        {
+            SaveCampaign();
+        }
+        _currentCampaign = new Campaign();
     }
 
     public void UpdateCampaignName(string name)
     {
-        _campaign.UpdateName(name);
+        _currentCampaign.UpdateName(name);
     }
 
-    public void LoadCampaign(string name)
+    public void LoadCampaign(string path)
     {
-        _campaign = Campaign.LoadFromName(name);
+        if (_currentCampaign != null)
+        {
+            SaveCampaign();
+        }
 
-        _campaignHeader.SetCampaignNameInput(_campaign.campaignName);
-
-        InitializePrefabs();
+        _currentCampaign = Campaign.LoadFromPath(path);
+        LoadPrefabs();
+        LoadTiles();
     }
 
     public void SaveCampaign()
     {
-        PopulatePrefabs();
-        _campaign.Save();
+        if (_currentCampaign == null)
+        {
+            Debug.Log("CampaignManager.SaveCampaign(): Saving empty campaign");
+            _currentCampaign = new Campaign();
+        }
+
+        SavePrefabs();
+        SaveTiles();
+        _currentCampaign.Save();
     }
 
-    public void LoadPrefabFromSave(SerializedPrefab prefab)
+    public void LoadPrefabFromSave(PrefabModel prefab)
     {
         //PrefabItem prefabItem = GetPrefabItem(prefab);
         //GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
@@ -64,29 +78,65 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     #endregion
 
 
-    #region Prefab Utils
-    private void InitializePrefabs()
+    #region Save Utils
+    public void SavePrefabs()
     {
-        foreach (SerializedPrefab campaignPrefab in _campaign.prefabs)
+        _currentCampaign.prefabs = new List<PrefabModel>();
+        foreach (Transform child in _prefabManager.prefabContainer)
         {
-            //_prefabManager.LoadPrefabFromSave(campaignPrefab);
+            PrefabModel newPrefab = new PrefabModel();
+
+            newPrefab.position = child.position;
+            newPrefab.rotation = child.rotation.eulerAngles;
+            newPrefab.scale = child.localScale;
+
+            _currentCampaign.prefabs.Add(newPrefab);
         }
     }
 
-    public void PopulatePrefabs()
+    private void SaveTiles()
     {
-        //_campaign.prefabs = new List<SerializedPrefab>();
-        //foreach (Transform child in _prefabManager.prefabParent)
-        //{
-        //    SerializedPrefab newPrefab = new SerializedPrefab();
+        _currentCampaign.tiles = new List<TileModel>();
 
-        //    newPrefab.position = child.position;
-        //    newPrefab.rotation = child.rotation.eulerAngles;
-        //    newPrefab.scale = child.localScale;
-        //    _campaign.prefabs.Add(newPrefab);
-        //}
+        foreach(Vector3Int position in _terrainManager.tileMap.cellBounds.allPositionsWithin)
+        {
+            if (!_terrainManager.tileMap.HasTile(position))
+                continue;
+
+            TileModel tile = new TileModel();
+            tile.tileName = _terrainManager.tileMap.GetTile(position).name;
+            tile.tilePosition = position;
+
+            _currentCampaign.tiles.Add(tile);
+        }
     }
     #endregion
 
+    #region Load Utils
+    private void LoadPrefabs()
+    {
+        // Delete all of the current prefabs
+        foreach(Transform child in _prefabManager.prefabContainer)
+        {
+            Destroy(child.gameObject);
+        }
 
+        foreach (PrefabModel campaignPrefab in _currentCampaign.prefabs)
+        {
+            _prefabManager.LoadPrefabFromSave(campaignPrefab);
+        }
+    }
+
+    private void LoadTiles()
+    {
+        // Clear all of the current tiles
+        _terrainManager.tileMap.ClearAllTiles();
+
+        foreach(TileModel tile in _currentCampaign.tiles)
+        {
+            Tile tileToSet = _terrainManager.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
+            _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
+        }
+    }
+    #endregion
 }
