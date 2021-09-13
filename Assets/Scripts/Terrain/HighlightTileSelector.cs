@@ -18,11 +18,12 @@ public class HighlightTileSelector : MonoBehaviour
     [SerializeField]
     private Tile _topRight;
 
-    public Dictionary<Vector3Int, Tile> GetHighlightTilesByBrushSize(Vector3Int centerPos, int brushSize)
+    public Dictionary<Vector3Int, Tile> GetHighlightTilesByBrushSize(Vector3Int centerPos,
+        int brushSize, bool isDragEnabled)
     {
         Dictionary<Vector3Int, Tile> tilesWithPositions = new Dictionary<Vector3Int, Tile>();
 
-        if (brushSize == 1)
+        if (brushSize == 1 || isDragEnabled)
         {
             tilesWithPositions.Add(centerPos, centre);
             return tilesWithPositions;

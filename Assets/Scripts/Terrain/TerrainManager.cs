@@ -261,7 +261,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
 
         Dictionary<Vector3Int, Tile> tilesForBrush = _highlightTileSelector
-            .GetHighlightTilesByBrushSize(centerPosition, _brushSize);
+            .GetHighlightTilesByBrushSize(centerPosition, _brushSize, isDragEnabled);
 
         foreach (KeyValuePair<Vector3Int, Tile> keyValuePair in tilesForBrush)
         {
