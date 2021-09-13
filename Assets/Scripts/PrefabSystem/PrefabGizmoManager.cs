@@ -276,19 +276,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #region Hotkeys
     private void TryChangeMode()
     {
-        if (Input.GetKeyDown(Constants.positionHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectPosition))
         {
             ChangeGimzoMode(TransformType.Position);
             _inspectorManager.GizmoModeChanged(TransformType.Position);
         }
 
-        if (Input.GetKeyDown(Constants.rotationHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectRotation))
         {
             ChangeGimzoMode(TransformType.Rotation);
             _inspectorManager.GizmoModeChanged(TransformType.Rotation);
         }
 
-        if (Input.GetKeyDown(Constants.scaleHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectScale))
         {
             ChangeGimzoMode(TransformType.Scale);
             _inspectorManager.GizmoModeChanged(TransformType.Scale);
