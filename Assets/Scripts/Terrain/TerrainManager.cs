@@ -232,7 +232,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         List<Vector3Int> tilePositions = new List<Vector3Int>();
 
-        if (_brushSize == 1)
+        if (_brushSize == 1 || isDragEnabled)
             return new List<Vector3Int> { centerPos };
 
         // convert the brush size, to the number of tiles from the center
