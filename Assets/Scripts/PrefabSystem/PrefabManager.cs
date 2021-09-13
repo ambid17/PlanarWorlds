@@ -28,7 +28,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
-        GameObject instance = CreatePrefabInstance(prefab.gameObject);
+        GameObject instance = CreatePrefabInstance(prefab.gameObject, prefab.prefabId);
 
         instance.transform.position = model.position;
         instance.transform.rotation = Quaternion.Euler(model.rotation);
@@ -37,11 +37,16 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         instance.layer = Constants.PrefabParentLayer;
     }
 
-    public GameObject CreatePrefabInstance(GameObject prefabToInstantiate)
+    public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId)
     {
         GameObject instance = Instantiate(prefabToInstantiate, prefabContainer);
+
+        PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
+        container.prefabId = prefabId;
+
         SetObjectShader(instance);
         CreateObjectCollider(instance);
+
 
         return instance;
     }
@@ -55,6 +60,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             foreach (Material material in materials)
             {
                 material.shader = Shader.Find("Custom/Outline");
+                material.SetFloat("_OutlineWidth", 0);
             }
         }
     }

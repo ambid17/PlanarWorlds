@@ -102,6 +102,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             newPrefab.position = child.position;
             newPrefab.rotation = child.rotation.eulerAngles;
             newPrefab.scale = child.localScale;
+            newPrefab.prefabId = child.GetComponent<PrefabModelContainer>().prefabId;
 
             _currentCampaign.prefabs.Add(newPrefab);
         }

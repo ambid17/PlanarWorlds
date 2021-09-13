@@ -36,7 +36,7 @@ public class PrefabUI : MonoBehaviour
 
     private void PrefabButtonClicked(Prefab prefab)
     {
-        GameObject instance = _prefabManager.CreatePrefabInstance(prefab.gameObject);
+        GameObject instance = _prefabManager.CreatePrefabInstance(prefab.gameObject, prefab.prefabId);
         
         instance.layer = Constants.PrefabPlacementLayer;
 
