@@ -12,6 +12,9 @@ public enum TargetingType
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 {
+    public RectTransform inspectorRectTransform;
+    public RectTransform hierarchyRectTransform;
+
     [SerializeField]
     private LayerMask layerMask;
 
@@ -36,6 +39,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
     private Camera mainCamera;
+
     #endregion
 
     void Start()
@@ -78,6 +82,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if (_uiManager.EditMode != EditMode.Prefab || _uiManager.isEditingValues || _uiManager.isPaused)
             return;
 
+        CheckValidClick();
+
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
         if (_currentTargetingType != TargetingType.PrefabPlacement)
         {
@@ -102,6 +108,28 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     }
 
     #region Prefab Selection
+    private void CheckValidClick()
+    {
+        // If we click on the UI:
+        // deselect the current object if we click on anything other than:
+        // - the inspector
+        // - the hierarchy
+        if(Input.GetMouseButtonDown(0)
+            && RTGizmosEngine.Get.HoveredGizmo == null
+            && EventSystem.current.IsPointerOverGameObject())
+        {
+            Vector2 mousePosition = inspectorRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnInspector= inspectorRectTransform.rect.Contains(mousePosition);
+
+            mousePosition = hierarchyRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnHierarchy = hierarchyRectTransform.rect.Contains(mousePosition);
+
+            if(!mouseIsOnHierarchy && !mouseIsOnInspector)
+            {
+                OnTargetObjectChanged(null, false);
+            }
+        }
+    }
     private void TrySelectObject()
     {
         if (DidValidClick())
@@ -130,10 +158,16 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         ToggleOutlineRender(false);
 
-        if (!isMultiSelecting || shouldClearMultiSelect || newTargetObject == null)
+        if(newTargetObject == null)
         {
             _targetObjects.Clear();
         }
+
+        if (shouldClearMultiSelect && !isMultiSelecting)
+        {
+            _targetObjects.Clear();
+        }
+        
 
         _currentTargetingType = TargetingType.None;
 
@@ -186,28 +220,37 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
         if (Input.GetMouseButtonDown(1))
 		{
-            // destroy the current object, set target object to null, call on target change
-            if(_targetObjects.Count > 0)
+            CancelPrefabPlacement();
+        }
+    }
+
+    private void CancelPrefabPlacement()
+    {
+        // destroy the current object, set target object to null, call on target change
+        if (_targetObjects.Count > 0)
+        {
+            foreach (GameObject go in _targetObjects)
             {
-                foreach(GameObject go in _targetObjects)
-                {
-                    Destroy(go);
-                }
-                OnTargetObjectChanged(null, true);
+                Destroy(go);
             }
+            OnTargetObjectChanged(null, true);
         }
     }
 
 	private void TryPlacePrefab()
     {
-        if (_uiManager.isEditingValues
-            || EventSystem.current.IsPointerOverGameObject())
+        if (_uiManager.isEditingValues)
             return;
 
         UpdatePrefabPosition();
 
         if (Input.GetMouseButtonDown(0) )
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                CancelPrefabPlacement();
+                return;
+            }
             List<GameObject> newTargets = Duplicate();
 
             // Change the non-duplicated object's layer so it can be targeted
@@ -220,6 +263,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void UpdatePrefabPosition()
     {
+        if (_targetObjects.Count == 0)
+            return;
+
         // Build a ray using the current mouse cursor position
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -242,6 +288,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void TryRotateObject()
     {
+        if (_targetObjects.Count == 0)
+            return;
+
         Vector2 mouseScrollDelta = Input.mouseScrollDelta;
 
         Vector3 rotation = _targetObjects[0].transform.rotation.eulerAngles;
@@ -261,19 +310,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     #region Hotkeys
     private void TryChangeMode()
     {
-        if (Input.GetKeyDown(Constants.positionHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectPosition))
         {
             ChangeGimzoMode(TransformType.Position);
             _inspectorManager.GizmoModeChanged(TransformType.Position);
         }
 
-        if (Input.GetKeyDown(Constants.rotationHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectRotation))
         {
             ChangeGimzoMode(TransformType.Rotation);
             _inspectorManager.GizmoModeChanged(TransformType.Rotation);
         }
 
-        if (Input.GetKeyDown(Constants.scaleHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectScale))
         {
             ChangeGimzoMode(TransformType.Scale);
             _inspectorManager.GizmoModeChanged(TransformType.Scale);
@@ -330,6 +379,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             List<GameObject> duplicateObjects = Duplicate();
 
+            ToggleOutlineRender(false);
             _targetObjects.Clear();
 
             foreach (GameObject go in duplicateObjects)

@@ -7,6 +7,7 @@ using System.IO;
 using TMPro;
 using System.Linq;
 using UnityEngine.EventSystems;
+using System;
 
 public class FileMenu : MonoBehaviour
 {
@@ -17,12 +18,14 @@ public class FileMenu : MonoBehaviour
     public Button saveAsButton;
     public TempSaveModal tempSaveModal;
 
+    public event Action<string> CampaignNameUpdated;
+
     private CampaignManager _campaignManager;
 
     private string _defaultPath;
-    private string _defaultFileName;
 
     private RectTransform _myRectTransform;
+
 
 
     void Start()
@@ -38,7 +41,6 @@ public class FileMenu : MonoBehaviour
         FileBrowser.SetFilters(true, new FileBrowser.Filter("Campaigns", ".json"));
 
         _defaultPath = Path.Combine(Application.persistentDataPath, "Campaigns");
-        _defaultFileName = "campaign.json";
 
         PopulateRecentCampaigns();
         _campaignManager.OnRecentCampaignsUpdated += PopulateRecentCampaigns;
@@ -77,12 +79,12 @@ public class FileMenu : MonoBehaviour
         recentCampaignsDropdown.AddOptions(options);
     }
 
-    private void OnNew()
+    public void OnNew()
     {
         FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
     }
 
-    private void OnOpen()
+    public void OnOpen()
     {
         FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, string.Empty, "Open", "Open");
     }
@@ -102,10 +104,14 @@ public class FileMenu : MonoBehaviour
         // It.... works i guess
         string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
         _campaignManager.LoadCampaign(filePath);
+
+        string fileName = Path.GetFileNameWithoutExtension(filePath);
+        CampaignNameUpdated.Invoke(fileName);
+
         gameObject.SetActive(false);
     }
 
-    private void OnSave()
+    public void OnSave()
     {
         if (_campaignManager.CurrentCampaign != null)
             _campaignManager.SaveCampaign();
@@ -113,7 +119,7 @@ public class FileMenu : MonoBehaviour
             OnSaveAs();
     }
 
-    private void OnSaveAs()
+    public void OnSaveAs()
     {
         FileBrowser.ShowSaveDialog((paths) => { Save(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }
@@ -132,12 +138,20 @@ public class FileMenu : MonoBehaviour
         }
 
         _campaignManager.LoadCampaign(paths[0]);
+
+        string fileName = Path.GetFileNameWithoutExtension(paths[0]);
+        CampaignNameUpdated.Invoke(fileName);
+
         gameObject.SetActive(false);
     }
 
     private void Save(string[] paths)
     {
         _campaignManager.SaveCampaignAs(paths[0]);
+
+        string fileName = Path.GetFileNameWithoutExtension(paths[0]);
+        CampaignNameUpdated.Invoke(fileName);
+
         gameObject.SetActive(false);
     }
 
@@ -149,6 +163,10 @@ public class FileMenu : MonoBehaviour
         }
 
         _campaignManager.NewCampaign(paths[0]);
+
+        string fileName = Path.GetFileNameWithoutExtension(paths[0]);
+        CampaignNameUpdated.Invoke(fileName);
+
         gameObject.SetActive(false);
     }
 
