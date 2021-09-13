@@ -130,10 +130,16 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         ToggleOutlineRender(false);
 
-        if (!isMultiSelecting || shouldClearMultiSelect || newTargetObject == null)
+        if(newTargetObject == null)
         {
             _targetObjects.Clear();
         }
+
+        if (shouldClearMultiSelect && !isMultiSelecting)
+        {
+            _targetObjects.Clear();
+        }
+        
 
         _currentTargetingType = TargetingType.None;
 
@@ -345,6 +351,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             List<GameObject> duplicateObjects = Duplicate();
 
+            ToggleOutlineRender(false);
             _targetObjects.Clear();
 
             foreach (GameObject go in duplicateObjects)
