@@ -104,6 +104,10 @@ public class FileMenu : MonoBehaviour
         // It.... works i guess
         string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
         _campaignManager.LoadCampaign(filePath);
+
+        string fileName = Path.GetFileNameWithoutExtension(filePath);
+        CampaignNameUpdated.Invoke(fileName);
+
         gameObject.SetActive(false);
     }
 
