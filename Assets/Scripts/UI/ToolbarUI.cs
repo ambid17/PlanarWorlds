@@ -10,8 +10,12 @@ public class ToolbarUI : MonoBehaviour
     public FileMenu fileMenu;
     public TMP_Text campaignNameText;
 
+    private UIManager _uiManager;
+
     void Start()
     {
+        _uiManager = UIManager.GetInstance();
+
         fileButton.onClick.AddListener(FileButtonClicked);
         fileMenu.gameObject.SetActive(false);
         fileMenu.CampaignNameUpdated += UpdateCampaignName;
@@ -19,6 +23,9 @@ public class ToolbarUI : MonoBehaviour
 
     void Update()
     {
+        if (_uiManager.isPaused || _uiManager.isFileBrowserOpen)
+            return;
+
         CheckFileMenuHotkeys();
     }
 

@@ -79,7 +79,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
-        if (_uiManager.EditMode != EditMode.Prefab || _uiManager.isEditingValues || _uiManager.isPaused)
+        if (_uiManager.EditMode != EditMode.Prefab || !_uiManager.UserCanInput)
             return;
 
         CheckValidClick();
@@ -239,9 +239,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
 	private void TryPlacePrefab()
     {
-        if (_uiManager.isEditingValues)
-            return;
-
         UpdatePrefabPosition();
 
         if (Input.GetMouseButtonDown(0) )
