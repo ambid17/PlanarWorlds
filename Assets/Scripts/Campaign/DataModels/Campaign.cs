@@ -67,12 +67,12 @@ public class Campaign
         string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
         int fileCounter = 1;
-        string fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.json");
+        string fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.plane");
 
         while (File.Exists(fullFilePath))
         {
             fileCounter++;
-            fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.json");
+            fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.plane");
         }
 
         filePath = fullFilePath;

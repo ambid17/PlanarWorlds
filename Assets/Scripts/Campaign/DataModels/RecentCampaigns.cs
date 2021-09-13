@@ -29,7 +29,7 @@ public class RecentCampaigns
             CampaignAccess newAccess = new CampaignAccess()
             {
                 filePath = path,
-                lastAccessed = DateTime.Now
+                lastAccessed = DateTime.Now.Ticks
             };
 
             if (accesses.Count > 5)
@@ -40,6 +40,11 @@ public class RecentCampaigns
             }
 
             accesses.Add(newAccess);
+        }
+        else
+        {
+            var accessToUpdate = accesses.First(a => a.filePath == path);
+            accessToUpdate.lastAccessed = DateTime.Now.Ticks;
         }
 
         SaveRecentCampaigns();
@@ -66,5 +71,5 @@ public class CampaignAccess
     [SerializeField]
     public string filePath;
     [SerializeField]
-    public DateTime lastAccessed;
+    public long lastAccessed;
 }

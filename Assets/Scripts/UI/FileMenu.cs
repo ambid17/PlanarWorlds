@@ -9,6 +9,11 @@ using System.Linq;
 using UnityEngine.EventSystems;
 using System;
 
+public enum OverwriteType
+{
+    Save, New
+}
+
 public class FileMenu : MonoBehaviour
 {
     public Button newButton;
@@ -17,6 +22,7 @@ public class FileMenu : MonoBehaviour
     public Button saveButton;
     public Button saveAsButton;
     public TempSaveModal tempSaveModal;
+    public OverwriteSaveModal overwriteSaveModal;
 
     public event Action<string> CampaignNameUpdated;
 
@@ -38,12 +44,14 @@ public class FileMenu : MonoBehaviour
         saveButton.onClick.AddListener(OnSave);
         saveAsButton.onClick.AddListener(OnSaveAs);
 
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("Campaigns", ".json"));
+        FileBrowser.SetFilters(false, new FileBrowser.Filter("Campaigns", ".plane"));
 
         _defaultPath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
         PopulateRecentCampaigns();
         _campaignManager.OnRecentCampaignsUpdated += PopulateRecentCampaigns;
+        overwriteSaveModal.WillOverwrite += Overwrite;
+        overwriteSaveModal.CancelOverwrite += DontOverwrite;
         recentCampaignsDropdown.onValueChanged.AddListener(OnOpenRecent);
     }
 
@@ -121,7 +129,7 @@ public class FileMenu : MonoBehaviour
 
     public void OnSaveAs()
     {
-        FileBrowser.ShowSaveDialog((paths) => { Save(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
+        FileBrowser.ShowSaveDialog((paths) => { SaveAs(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }
 
     private void InformOfSave()
@@ -145,12 +153,23 @@ public class FileMenu : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void Save(string[] paths)
-    {
-        _campaignManager.SaveCampaignAs(paths[0]);
+    
 
-        string fileName = Path.GetFileNameWithoutExtension(paths[0]);
-        CampaignNameUpdated.Invoke(fileName);
+    private void SaveAs(string[] paths)
+    {
+        string path = paths[0];
+
+        if (File.Exists(path))
+        {
+            overwriteSaveModal.Show(path, OverwriteType.Save);
+        }
+        else
+        {
+            _campaignManager.SaveCampaignAs(paths[0]);
+
+            string fileName = Path.GetFileNameWithoutExtension(paths[0]);
+            CampaignNameUpdated.Invoke(fileName);
+        }
 
         gameObject.SetActive(false);
     }
@@ -162,12 +181,42 @@ public class FileMenu : MonoBehaviour
             InformOfSave();
         }
 
-        _campaignManager.NewCampaign(paths[0]);
+        string path = paths[0];
 
-        string fileName = Path.GetFileNameWithoutExtension(paths[0]);
-        CampaignNameUpdated.Invoke(fileName);
+        if (File.Exists(path))
+        {
+            overwriteSaveModal.Show(path, OverwriteType.New);
+        }
+        else
+        {
+            _campaignManager.NewCampaign(path);
+
+            string fileName = Path.GetFileNameWithoutExtension(paths[0]);
+            CampaignNameUpdated.Invoke(fileName);
+        }
 
         gameObject.SetActive(false);
+    }
+
+    private void Overwrite(string path, OverwriteType type)
+    {
+        if(type == OverwriteType.New)
+        {
+            _campaignManager.NewCampaign(path);
+        }
+        else if(type == OverwriteType.Save)
+        {
+            _campaignManager.SaveCampaignAs(path);
+        }
+
+        string fileName = Path.GetFileNameWithoutExtension(path);
+        CampaignNameUpdated.Invoke(fileName);
+    }
+
+    private void DontOverwrite(string path)
+    {
+        string fileName = Path.GetFileNameWithoutExtension(path);
+        CampaignNameUpdated.Invoke(fileName);
     }
 
 
@@ -176,14 +225,14 @@ public class FileMenu : MonoBehaviour
         string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
         int fileCounter = 1;
-        string fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.json");
+        string fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.plane");
 
         while (File.Exists(fullFilePath))
         {
             fileCounter++;
-            fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.json");
+            fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.plane");
         }
 
-        return $"Campaign{fileCounter}.json";
+        return $"Campaign{fileCounter}.plane";
     }
 }
