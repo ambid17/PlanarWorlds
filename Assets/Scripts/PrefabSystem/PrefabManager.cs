@@ -14,16 +14,6 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         base.Awake();
     }
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-
     public void LoadPrefabFromSave(PrefabModel model)
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();

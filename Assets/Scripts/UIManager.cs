@@ -16,6 +16,10 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public GameObject TerrainInspectorCanvas;
 
     public bool isEditingValues;
+    public bool isFileBrowserOpen;
+    public bool isPaused;
+
+    public bool UserCanInput { get => isEditingValues || isFileBrowserOpen || isPaused; }
 
     public bool hierarchyWindowShouldBeActive;
     public bool inspectorWindowShouldBeActive;
@@ -29,8 +33,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         get => _currentEditmode;
     }
-
-    public bool isPaused;
 
     void Start()
     {

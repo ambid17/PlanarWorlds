@@ -5,14 +5,4 @@ using UnityEngine;
 public class PrefabModelContainer : MonoBehaviour
 {
     public int prefabId;
-
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
 }

@@ -71,10 +71,13 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         }
 
         _currentCampaign = Campaign.LoadFromPath(path);
-        ClearOldData();
-        LoadPrefabs();
-        LoadTiles();
-        AddToRecentCampaigns(path);
+        if(_currentCampaign != null)
+        {
+            ClearOldData();
+            LoadPrefabs();
+            LoadTiles();
+            AddToRecentCampaigns(path);
+        }
     }
 
     public void SaveCampaign()

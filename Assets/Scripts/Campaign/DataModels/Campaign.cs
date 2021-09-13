@@ -50,11 +50,13 @@ public class Campaign
             catch (Exception e)
             {
                 Debug.LogError($"{e.Message}\n{e.StackTrace}");
+                campaign = null;
             }
         }
         else
         {
             Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
+            campaign = null;
         }
 
         return campaign;

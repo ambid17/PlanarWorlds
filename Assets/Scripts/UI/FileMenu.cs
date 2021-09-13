@@ -27,6 +27,7 @@ public class FileMenu : MonoBehaviour
     public event Action<string> CampaignNameUpdated;
 
     private CampaignManager _campaignManager;
+    private UIManager _uiManager;
 
     private string _defaultPath;
 
@@ -37,6 +38,7 @@ public class FileMenu : MonoBehaviour
     void Start()
     {
         _campaignManager = CampaignManager.GetInstance();
+        _uiManager = UIManager.GetInstance();
         _myRectTransform = GetComponent<RectTransform>();
 
         newButton.onClick.AddListener(OnNew);
@@ -89,11 +91,13 @@ public class FileMenu : MonoBehaviour
 
     public void OnNew()
     {
+        _uiManager.isFileBrowserOpen = true;
         FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
     }
 
     public void OnOpen()
     {
+        _uiManager.isFileBrowserOpen = true;
         FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, string.Empty, "Open", "Open");
     }
 
@@ -129,6 +133,7 @@ public class FileMenu : MonoBehaviour
 
     public void OnSaveAs()
     {
+        _uiManager.isFileBrowserOpen = true;
         FileBrowser.ShowSaveDialog((paths) => { SaveAs(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }
 
@@ -150,6 +155,7 @@ public class FileMenu : MonoBehaviour
         string fileName = Path.GetFileNameWithoutExtension(paths[0]);
         CampaignNameUpdated.Invoke(fileName);
 
+        _uiManager.isFileBrowserOpen = false;
         gameObject.SetActive(false);
     }
 
@@ -171,6 +177,7 @@ public class FileMenu : MonoBehaviour
             CampaignNameUpdated.Invoke(fileName);
         }
 
+        _uiManager.isFileBrowserOpen = false;
         gameObject.SetActive(false);
     }
 
@@ -195,6 +202,7 @@ public class FileMenu : MonoBehaviour
             CampaignNameUpdated.Invoke(fileName);
         }
 
+        _uiManager.isFileBrowserOpen = false;
         gameObject.SetActive(false);
     }
 
