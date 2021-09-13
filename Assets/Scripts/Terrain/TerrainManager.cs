@@ -46,7 +46,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         get => (!EventSystem.current.IsPointerOverGameObject()
             && RTGizmosEngine.Get.HoveredGizmo == null)
-            || isDragEnabled;
+            || (isDragEnabled && isValidDrag);
     }
 
     public bool isDragEnabled;
@@ -78,9 +78,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void TryTerrainModification()
     {
-        if ((EventSystem.current.IsPointerOverGameObject()
-            || RTGizmosEngine.Get.HoveredGizmo != null)
-            && !isDragEnabled)
+        if (!CanModifyTerrain)
         {
             return;
         }
@@ -108,17 +106,22 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             _dragStartPosition = hitPoint;
         }
 
+        // Cancel drag if RMB is pressed
+        if (Input.GetMouseButtonDown(1))
+        {
+            ResetDrag();
+        }
+
+        // Paint when LMB is released 
         if (Input.GetMouseButtonUp(0))
         {
             if (isValidDrag)
                 DragPaintTiles(dragEndPosition: hitPoint, DragState.Paint);
 
-            _draggedTilePositions.Clear();
-            shadowTileMap.ClearAllTiles();
-            isValidDrag = false;
+            ResetDrag();
         }
 
-        // Show shadow tiles while drag is in progress
+        // Paint shadow tiles while drag is in progress
         if (isValidDrag)
             DragPaintTiles(dragEndPosition: hitPoint, DragState.Indicate);
     }
@@ -130,18 +133,19 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         Vector3Int offset = TerrainUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
 
+        // Keep track of tile positions we have selected
         List<Vector3Int> newDraggedPositions = new List<Vector3Int>();
 
-        // Todo: Break out 
         for (int x = 0; x <= offset.x; x++)
         {
             for (int y = 0; y <= offset.y; y++)
             {
-                Tile tileToPaint = default;
+                // Default to null for erasing 
+                Tile tileToPaint = null;
 
                 // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
                 if (_currentEditMode == TerrainEditMode.Erase)
-                    tileToPaint = dragState == DragState.Indicate ? _highlightTileSelector._centre : null;
+                    tileToPaint = dragState == DragState.Indicate ? _highlightTileSelector.centre : null;
                 else if (_currentTile != null)
                     tileToPaint = _currentTile;
                 else if (_currentTileGrid != null)
@@ -150,6 +154,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 Vector3Int tilePosition = new Vector3Int(startPosition.x + x, startPosition.y + y, 0);
                 newDraggedPositions.Add(tilePosition);
 
+                // Paint on shadow map if we're still selecting which tiles to paint
                 if (dragState == DragState.Indicate)
                     PaintShadowTile(tilePosition, tileToPaint);
                 else
@@ -169,6 +174,13 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         _draggedTilePositions = newDraggedPositions;
     }
 
+    private void ResetDrag()
+    {
+        _draggedTilePositions.Clear();
+        shadowTileMap.ClearAllTiles();
+        isValidDrag = false;
+    }
+
     public void SetBrushSize(int brushSize)
     {
         _brushSize = brushSize;
@@ -186,6 +198,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public void SetCurrentEditMode(TerrainEditMode newEditMode)
     {
         _currentEditMode = newEditMode;
+        shadowTileMap.ClearAllTiles();
     }
 
     public void SetCurrentTile(Tile tile)
@@ -248,7 +261,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
 
         Dictionary<Vector3Int, Tile> tilesForBrush = _highlightTileSelector
-            .GetTilesByBrushSize(centerPosition, _brushSize);
+            .GetHighlightTilesByBrushSize(centerPosition, _brushSize);
 
         foreach (KeyValuePair<Vector3Int, Tile> keyValuePair in tilesForBrush)
         {

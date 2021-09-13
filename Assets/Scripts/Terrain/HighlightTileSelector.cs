@@ -4,9 +4,7 @@ using UnityEngine.Tilemaps;
 
 public class HighlightTileSelector : MonoBehaviour
 {
-    // Todo: Make this private once the drag erase indicator has been done
-    [SerializeField]
-    public Tile _centre;
+    public Tile centre;
 
     [SerializeField]
     private Tile _bottomLeft;
@@ -20,13 +18,13 @@ public class HighlightTileSelector : MonoBehaviour
     [SerializeField]
     private Tile _topRight;
 
-    public Dictionary<Vector3Int, Tile> GetTilesByBrushSize(Vector3Int centerPos, int brushSize)
+    public Dictionary<Vector3Int, Tile> GetHighlightTilesByBrushSize(Vector3Int centerPos, int brushSize)
     {
         Dictionary<Vector3Int, Tile> tilesWithPositions = new Dictionary<Vector3Int, Tile>();
 
         if (brushSize == 1)
         {
-            tilesWithPositions.Add(centerPos, _centre);
+            tilesWithPositions.Add(centerPos, centre);
             return tilesWithPositions;
         }
 
@@ -37,23 +35,26 @@ public class HighlightTileSelector : MonoBehaviour
         {
             for (int y = -sizeFromCenter; y <= sizeFromCenter; y++)
             {
-                // Default to an empty cell 
-                Tile tile = null;
-
-                // Get either one of the four corner tiles or the default 
-                if (x == -sizeFromCenter && y == -sizeFromCenter)
-                    tile = _bottomLeft;
-                else if (x == sizeFromCenter && y == -sizeFromCenter)
-                    tile = _bottomRight;
-                else if (x == -sizeFromCenter && y == sizeFromCenter)
-                    tile = _topLeft;
-                else if (x == sizeFromCenter && y == sizeFromCenter)
-                    tile = _topRight;
-
-                tilesWithPositions.Add(new Vector3Int(x + centerPos.x, y + centerPos.y, 0), tile);
+                tilesWithPositions.Add(new Vector3Int(x + centerPos.x, y + centerPos.y, 0),
+                    GetTileByPositionInBrush(x, y, sizeFromCenter));
             }
         }
 
         return tilesWithPositions;
+    }
+
+    private Tile GetTileByPositionInBrush(int x, int y, int sizeFromCenter)
+    {
+        // Get either one of the four corner tiles or the default 
+        if (x == -sizeFromCenter && y == -sizeFromCenter)
+            return _bottomLeft;
+        if (x == sizeFromCenter && y == -sizeFromCenter)
+            return _bottomRight;
+        if (x == -sizeFromCenter && y == sizeFromCenter)
+            return _topLeft;
+        if (x == sizeFromCenter && y == sizeFromCenter)
+            return _topRight;
+
+        return null;
     }
 }

@@ -2371,7 +2371,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744504455}
   m_HandleRect: {fileID: 1744504454}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -9758,7 +9758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47602f8c6a586e54ea8147a6d8c233a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _centre: {fileID: 11400000, guid: 56c3a808829ae1e42af5c67138bfc1aa, type: 2}
+  centre: {fileID: 11400000, guid: 56c3a808829ae1e42af5c67138bfc1aa, type: 2}
   _bottomLeft: {fileID: 11400000, guid: db76004a5b5926f4bb0911b24485a44e, type: 2}
   _bottomRight: {fileID: 11400000, guid: 91e80a3a689dd214ba874c08a0f3c63b, type: 2}
   _topLeft: {fileID: 11400000, guid: a88e5be1240893b429ebdfca19b4432c, type: 2}
