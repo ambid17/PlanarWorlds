@@ -78,6 +78,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         SavePrefabs();
         SaveTiles();
         _currentCampaign.Save();
+        AddToRecentCampaigns(_currentCampaign.filePath);
     }
 
     public void SaveCampaignAs(string filePath)
@@ -201,7 +202,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             {
                 string fileContents = File.ReadAllText(filePath);
                 recentCampaigns = JsonUtility.FromJson<RecentCampaigns>(fileContents);
-                OnRecentCampaignsUpdated.Invoke();
+                OnRecentCampaignsUpdated?.Invoke();
             }
             catch (Exception e)
             {

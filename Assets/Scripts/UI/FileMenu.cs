@@ -22,10 +22,13 @@ public class FileMenu : MonoBehaviour
     private string _defaultPath;
     private string _defaultFileName;
 
+    private RectTransform _myRectTransform;
+
 
     void Start()
     {
         _campaignManager = CampaignManager.GetInstance();
+        _myRectTransform = GetComponent<RectTransform>();
 
         newButton.onClick.AddListener(OnNew);
         openButton.onClick.AddListener(OnOpen);
@@ -40,6 +43,20 @@ public class FileMenu : MonoBehaviour
         PopulateRecentCampaigns();
         _campaignManager.OnRecentCampaignsUpdated += PopulateRecentCampaigns;
         recentCampaignsDropdown.onValueChanged.AddListener(OnOpenRecent);
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector2 mousePosition = _myRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnMenu = _myRectTransform.rect.Contains(mousePosition);
+
+            if (!mouseIsOnMenu)
+            {
+                gameObject.SetActive(false);
+            }
+        }
     }
 
     private void PopulateRecentCampaigns()
@@ -62,20 +79,11 @@ public class FileMenu : MonoBehaviour
 
     private void OnNew()
     {
-        if (!_campaignManager.CurrentDataIsSaved())
-        {
-            InformOfSave();
-        }
-
         StartCoroutine(ShowNewDialogCoroutine());
     }
 
     private void OnOpen()
     {
-        if (!_campaignManager.CurrentDataIsSaved())
-        {
-            InformOfSave();
-        }
 
         StartCoroutine(ShowLoadDialogCoroutine());
     }
@@ -95,6 +103,7 @@ public class FileMenu : MonoBehaviour
         // It.... works i guess
         string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
         _campaignManager.LoadCampaign(filePath);
+        gameObject.SetActive(false);
     }
 
     private void OnSave()
@@ -124,8 +133,14 @@ public class FileMenu : MonoBehaviour
 
         if (FileBrowser.Success)
         {
+            if (!_campaignManager.CurrentDataIsSaved())
+            {
+                InformOfSave();
+            }
             _campaignManager.LoadCampaign(FileBrowser.Result[0]);
         }
+
+        gameObject.SetActive(false);
     }
 
     IEnumerator ShowSaveDialogCoroutine()
@@ -138,6 +153,7 @@ public class FileMenu : MonoBehaviour
         {
             _campaignManager.SaveCampaignAs(FileBrowser.Result[0]);
         }
+        gameObject.SetActive(false);
     }
 
     IEnumerator ShowNewDialogCoroutine()
@@ -148,7 +164,12 @@ public class FileMenu : MonoBehaviour
 
         if (FileBrowser.Success)
         {
+            if (!_campaignManager.CurrentDataIsSaved())
+            {
+                InformOfSave();
+            }
             _campaignManager.NewCampaign(FileBrowser.Result[0]);
         }
+        gameObject.SetActive(false);
     }
 }
