@@ -79,13 +79,12 @@ public class FileMenu : MonoBehaviour
 
     private void OnNew()
     {
-        StartCoroutine(ShowNewDialogCoroutine());
+        FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save New", "Save New");
     }
 
     private void OnOpen()
     {
-
-        StartCoroutine(ShowLoadDialogCoroutine());
+        FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Open", "Open");
     }
 
     private void OnOpenRecent(int index)
@@ -116,7 +115,7 @@ public class FileMenu : MonoBehaviour
 
     private void OnSaveAs()
     {
-        StartCoroutine(ShowSaveDialogCoroutine());
+        FileBrowser.ShowSaveDialog((paths) => { Save(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save As", "Save As");
     }
 
     private void InformOfSave()
@@ -125,51 +124,31 @@ public class FileMenu : MonoBehaviour
         tempSaveModal.Show(filePath);
     }
 
-    IEnumerator ShowLoadDialogCoroutine()
+    private void Load(string[] paths)
     {
-        yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Load", "Load");
-
-        Debug.Log($"FileBrowser succes: {FileBrowser.Success}");
-
-        if (FileBrowser.Success)
+        if (!_campaignManager.CurrentDataIsSaved())
         {
-            if (!_campaignManager.CurrentDataIsSaved())
-            {
-                InformOfSave();
-            }
-            _campaignManager.LoadCampaign(FileBrowser.Result[0]);
+            InformOfSave();
         }
 
+        _campaignManager.LoadCampaign(paths[0]);
         gameObject.SetActive(false);
     }
 
-    IEnumerator ShowSaveDialogCoroutine()
+    private void Save(string[] paths)
     {
-        yield return FileBrowser.WaitForSaveDialog(FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save", "Save");
-
-        Debug.Log($"FileBrowser succes: {FileBrowser.Success}");
-
-        if (FileBrowser.Success)
-        {
-            _campaignManager.SaveCampaignAs(FileBrowser.Result[0]);
-        }
+        _campaignManager.SaveCampaignAs(paths[0]);
         gameObject.SetActive(false);
     }
 
-    IEnumerator ShowNewDialogCoroutine()
+    private void New(string[] paths)
     {
-        yield return FileBrowser.WaitForSaveDialog(FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save", "Save");
-
-        Debug.Log($"FileBrowser succes: {FileBrowser.Success}");
-
-        if (FileBrowser.Success)
+        if (!_campaignManager.CurrentDataIsSaved())
         {
-            if (!_campaignManager.CurrentDataIsSaved())
-            {
-                InformOfSave();
-            }
-            _campaignManager.NewCampaign(FileBrowser.Result[0]);
+            InformOfSave();
         }
+
+        _campaignManager.NewCampaign(paths[0]);
         gameObject.SetActive(false);
     }
 }

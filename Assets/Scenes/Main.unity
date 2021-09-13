@@ -2046,9 +2046,9 @@ RectTransform:
   m_Father: {fileID: 1364003124}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -15}
   m_SizeDelta: {x: 826, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &155014210
@@ -2913,7 +2913,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744504455}
   m_HandleRect: {fileID: 1744504454}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -10521,6 +10521,7 @@ GameObject:
   - component: {fileID: 674859673}
   - component: {fileID: 674859672}
   - component: {fileID: 674859671}
+  - component: {fileID: 674859674}
   m_Layer: 0
   m_Name: ToolbarCanvas
   m_TagString: Untagged
@@ -10611,6 +10612,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &674859674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674859669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0682edfbdbf4a2a45a3c6a743b1f5543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileButton: {fileID: 1719030285}
+  fileMenu: {fileID: 369411522}
 --- !u!1 &684963505
 GameObject:
   m_ObjectHideFlags: 0
@@ -17588,7 +17603,7 @@ MonoBehaviour:
       _color: {r: 0.8000001, g: 0.8000001, b: 0.8000001, a: 1}
       _hoveredColor: {r: 0.96470594, g: 0.9490197, b: 0.19607845, a: 1}
     _screenCorner: 1
-    _screenOffset: {x: 0, y: 0}
+    _screenOffset: {x: 0, y: -30}
     _screenSize: 90
     _axesLabelTint: {r: 1, g: 1, b: 1, a: 1}
     _camPrjSwitchLabelTint: {r: 1, g: 1, b: 1, a: 0.7}

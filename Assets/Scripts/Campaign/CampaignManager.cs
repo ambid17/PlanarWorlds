@@ -84,10 +84,17 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     public void SaveCampaignAs(string filePath)
     {
         if (_currentCampaign == null)
+        {
             _currentCampaign = new Campaign()
             {
                 filePath = filePath
             };
+        }
+        else
+        {
+            _currentCampaign.filePath = filePath;
+        }
+            
 
         SaveCampaign();
     }
@@ -218,6 +225,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void AddToRecentCampaigns(string path)
     {
+        path = path.Replace("\\", "/");
         if (!recentCampaigns.filePaths.Contains(path) && path != string.Empty)
         {
             recentCampaigns.filePaths.Add(path);
