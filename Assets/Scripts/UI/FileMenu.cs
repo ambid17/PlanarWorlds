@@ -15,6 +15,7 @@ public class FileMenu : MonoBehaviour
     public TMP_Dropdown recentCampaignsDropdown;
     public Button saveButton;
     public Button saveAsButton;
+    public TempSaveModal tempSaveModal;
 
     private CampaignManager _campaignManager;
 
@@ -61,7 +62,12 @@ public class FileMenu : MonoBehaviour
 
     private void OnNew()
     {
-        StartCoroutine(ShowSaveDialogCoroutine());
+        if (!_campaignManager.CurrentDataIsSaved())
+        {
+            InformOfSave();
+        }
+
+        StartCoroutine(ShowNewDialogCoroutine());
     }
 
     private void OnOpen()
@@ -71,18 +77,33 @@ public class FileMenu : MonoBehaviour
 
     private void OnOpenRecent(int index)
     {
+        if (index == 0)
+            return; // This is the empty item, it is only here as a placeholder
+
+        // This is a shitty hack. I was too lazy to learn how to attach a script to the dropdown items
+        // Instead, I truncate the text field, and hide the file path on the next line
+        // It.... works i guess
         string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
         _campaignManager.LoadCampaign(filePath);
     }
 
     private void OnSave()
     {
-        _campaignManager.SaveCampaign();
+        if (_campaignManager.CurrentCampaign != null)
+            _campaignManager.SaveCampaign();
+        else
+            OnSaveAs();
     }
 
     private void OnSaveAs()
     {
         StartCoroutine(ShowSaveDialogCoroutine());
+    }
+
+    private void InformOfSave()
+    {
+        string filePath = _campaignManager.SaveTempCampaign();
+        tempSaveModal.Show(filePath);
     }
 
     IEnumerator ShowLoadDialogCoroutine()

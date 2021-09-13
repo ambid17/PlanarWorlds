@@ -8,8 +8,6 @@ using UnityEngine;
 public class Campaign
 {
     [SerializeField]
-    public string campaignName;
-    [SerializeField]
     public List<PrefabModel> prefabs;
     [SerializeField]
     public List<TileModel> tiles;
@@ -18,30 +16,8 @@ public class Campaign
 
     public Campaign()
     {
-        campaignName = "testCampaign";
         prefabs = new List<PrefabModel>();
         tiles = new List<TileModel>();
-    }
-
-    public void UpdateName(string newName)
-    {
-        // If the file already exists, make sure to rename it
-        string currentFilePath = FilePathUtil.GetSaveFilePath(campaignName);
-        string newFilePath = FilePathUtil.GetSaveFilePath(newName);
-        if (File.Exists(currentFilePath))
-        {
-            try
-            {
-                File.Move(currentFilePath, newFilePath);
-
-            }catch(IOException e)
-            {
-                Debug.LogWarning($"Cannot rename file \n{e.Message}");
-            }
-        }
-
-        campaignName = newName;
-        Save();
     }
 
     #region Serialization
@@ -56,14 +32,7 @@ public class Campaign
         {
             Debug.LogError($"{e.Message}\n{e.StackTrace}");
         }
-        Debug.Log($"Finished Saving campaign {campaignName} to {filePath}");
-    }
-
-    public void SaveAs(string filePath)
-    {
-        this.filePath = filePath;
-
-        Save();
+        Debug.Log($"Finished Saving campaign to {filePath}");
     }
 
     public static Campaign LoadFromPath(string filePath)
@@ -89,6 +58,25 @@ public class Campaign
         }
 
         return campaign;
+    }
+
+    // Find the next unused campaign name
+    // i.e. : tempCampaign0, tempCampaign1, etc
+    public string SetTempFilePath()
+    {
+        string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
+
+        int fileCounter = 1;
+        string fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.json");
+
+        while (File.Exists(fullFilePath))
+        {
+            fileCounter++;
+            fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.json");
+        }
+
+        filePath = fullFilePath;
+        return fullFilePath;
     }
     #endregion
 }

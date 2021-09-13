@@ -16,6 +16,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     public event Action OnRecentCampaignsUpdated;
 
     private Campaign _currentCampaign;
+    public Campaign CurrentCampaign { get => _currentCampaign; }
 
     private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
@@ -33,6 +34,14 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         LoadRecentCampaigns();
     }
 
+    private void OnApplicationQuit()
+    {
+        if(_currentCampaign != null)
+        {
+            SaveCampaign();
+        }
+    }
+
     #region Campaign Utils
     public void NewCampaign(string path)
     {
@@ -42,12 +51,12 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         }
 
         ClearOldData();
-        _currentCampaign = new Campaign();
-    }
+        _currentCampaign = new Campaign()
+        {
+            filePath = path
+        };
 
-    public void UpdateCampaignName(string name)
-    {
-        _currentCampaign.UpdateName(name);
+        AddToRecentCampaigns(path);
     }
 
     public void LoadCampaign(string path)
@@ -66,12 +75,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     public void SaveCampaign()
     {
-        if (_currentCampaign == null)
-        {
-            Debug.Log("CampaignManager.SaveCampaign(): Saving empty campaign");
-            _currentCampaign = new Campaign();
-        }
-
         SavePrefabs();
         SaveTiles();
         _currentCampaign.Save();
@@ -80,14 +83,21 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     public void SaveCampaignAs(string filePath)
     {
         if (_currentCampaign == null)
-        {
-            Debug.Log("CampaignManager.SaveCampaign(): Saving empty campaign");
-            _currentCampaign = new Campaign();
-        }
+            _currentCampaign = new Campaign()
+            {
+                filePath = filePath
+            };
 
-        SavePrefabs();
-        SaveTiles();
-        _currentCampaign.SaveAs(filePath);
+        SaveCampaign();
+    }
+
+    public string SaveTempCampaign()
+    {
+        _currentCampaign = new Campaign();
+        string filePath = _currentCampaign.SetTempFilePath();
+        SaveCampaign();
+
+        return filePath;
     }
     #endregion
 
@@ -155,6 +165,30 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             Destroy(child.gameObject);
         }
     }
+
+    public bool CurrentDataIsSaved()
+    {
+        bool isSaved = true;
+
+        if(_currentCampaign == null)
+        {
+            if(_prefabManager.prefabContainer.childCount > 0)
+            {
+                isSaved = false;
+            }
+
+            if(_terrainManager.tileMap.GetUsedTilesCount() > 0)
+            {
+                isSaved = false;
+            }
+        }
+        else
+        {
+            SaveCampaign();
+        }
+
+        return isSaved;
+    }
     #endregion
 
     #region RecentCampaigns
@@ -183,7 +217,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void AddToRecentCampaigns(string path)
     {
-        if (!recentCampaigns.filePaths.Contains(path))
+        if (!recentCampaigns.filePaths.Contains(path) && path != string.Empty)
         {
             recentCampaigns.filePaths.Add(path);
             OnRecentCampaignsUpdated.Invoke();
