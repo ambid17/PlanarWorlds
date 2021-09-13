@@ -186,28 +186,37 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
         if (Input.GetMouseButtonDown(1))
 		{
-            // destroy the current object, set target object to null, call on target change
-            if(_targetObjects.Count > 0)
+            CancelPrefabPlacement();
+        }
+    }
+
+    private void CancelPrefabPlacement()
+    {
+        // destroy the current object, set target object to null, call on target change
+        if (_targetObjects.Count > 0)
+        {
+            foreach (GameObject go in _targetObjects)
             {
-                foreach(GameObject go in _targetObjects)
-                {
-                    Destroy(go);
-                }
-                OnTargetObjectChanged(null, true);
+                Destroy(go);
             }
+            OnTargetObjectChanged(null, true);
         }
     }
 
 	private void TryPlacePrefab()
     {
-        if (_uiManager.isEditingValues
-            || EventSystem.current.IsPointerOverGameObject())
+        if (_uiManager.isEditingValues)
             return;
 
         UpdatePrefabPosition();
 
         if (Input.GetMouseButtonDown(0) )
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                CancelPrefabPlacement();
+                return;
+            }
             List<GameObject> newTargets = Duplicate();
 
             // Change the non-duplicated object's layer so it can be targeted
@@ -220,6 +229,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void UpdatePrefabPosition()
     {
+        if (_targetObjects.Count == 0)
+            return;
+
         // Build a ray using the current mouse cursor position
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -242,6 +254,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void TryRotateObject()
     {
+        if (_targetObjects.Count == 0)
+            return;
+
         Vector2 mouseScrollDelta = Input.mouseScrollDelta;
 
         Vector3 rotation = _targetObjects[0].transform.rotation.eulerAngles;
