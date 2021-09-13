@@ -72,6 +72,11 @@ public class FileMenu : MonoBehaviour
 
     private void OnOpen()
     {
+        if (!_campaignManager.CurrentDataIsSaved())
+        {
+            InformOfSave();
+        }
+
         StartCoroutine(ShowLoadDialogCoroutine());
     }
 
@@ -79,6 +84,11 @@ public class FileMenu : MonoBehaviour
     {
         if (index == 0)
             return; // This is the empty item, it is only here as a placeholder
+
+        if (!_campaignManager.CurrentDataIsSaved())
+        {
+            InformOfSave();
+        }
 
         // This is a shitty hack. I was too lazy to learn how to attach a script to the dropdown items
         // Instead, I truncate the text field, and hide the file path on the next line
