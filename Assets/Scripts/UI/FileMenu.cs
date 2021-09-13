@@ -44,7 +44,7 @@ public class FileMenu : MonoBehaviour
         saveButton.onClick.AddListener(OnSave);
         saveAsButton.onClick.AddListener(OnSaveAs);
 
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("Campaigns", ".json"));
+        FileBrowser.SetFilters(false, new FileBrowser.Filter("Campaigns", ".plane"));
 
         _defaultPath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
@@ -225,14 +225,14 @@ public class FileMenu : MonoBehaviour
         string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
         int fileCounter = 1;
-        string fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.json");
+        string fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.plane");
 
         while (File.Exists(fullFilePath))
         {
             fileCounter++;
-            fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.json");
+            fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.plane");
         }
 
-        return $"Campaign{fileCounter}.json";
+        return $"Campaign{fileCounter}.plane";
     }
 }
