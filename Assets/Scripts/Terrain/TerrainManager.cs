@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 {
+    public Tile[] tiles;
     public LayerMask terrainLayerMask;
     public Tilemap tileMap;
     public Tilemap highlightTileMap;

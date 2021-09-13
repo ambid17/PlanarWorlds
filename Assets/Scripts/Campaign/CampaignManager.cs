@@ -6,87 +6,226 @@ using System.Linq;
 using System.IO;
 using System;
 using RTG;
+using UnityEngine.Tilemaps;
+using System.Linq;
+using UnityEngine.Events;
 
 public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {
-    public GameObject documentPrefab;
-    public Transform documentContainer;
+    public RecentCampaigns recentCampaigns;
+    public event Action OnRecentCampaignsUpdated;
 
-    private Campaign _campaign;
-    private CampaignUiHeader _campaignHeader;
+    private Campaign _currentCampaign;
+    public Campaign CurrentCampaign { get => _currentCampaign; }
+
+    private PrefabManager _prefabManager;
+    private TerrainManager _terrainManager;
 
     protected override void Awake()
     {
         base.Awake();
-        _campaignHeader = GetComponentInChildren<CampaignUiHeader>(true);
     }
 
     private void Start()
     {
+        _prefabManager = PrefabManager.GetInstance();
+        _terrainManager = TerrainManager.GetInstance();
+
+        LoadRecentCampaigns();
     }
 
+    private void OnApplicationQuit()
+    {
+        if(_currentCampaign != null)
+        {
+            SaveCampaign();
+        }
+    }
 
     #region Campaign Utils
-    public void CreateCampaign()
+    public void NewCampaign(string path)
     {
-        _campaign = new Campaign();
+        if (_currentCampaign != null)
+        {
+            SaveCampaign();
+        }
+
+        ClearOldData();
+        _currentCampaign = new Campaign()
+        {
+            filePath = path
+        };
+
+        AddToRecentCampaigns(path);
     }
 
-    public void UpdateCampaignName(string name)
+    public void LoadCampaign(string path)
     {
-        _campaign.UpdateName(name);
-    }
+        if (_currentCampaign != null)
+        {
+            SaveCampaign();
+        }
 
-    public void LoadCampaign(string name)
-    {
-        _campaign = Campaign.LoadFromName(name);
-
-        _campaignHeader.SetCampaignNameInput(_campaign.campaignName);
-
-        InitializePrefabs();
+        _currentCampaign = Campaign.LoadFromPath(path);
+        ClearOldData();
+        LoadPrefabs();
+        LoadTiles();
+        AddToRecentCampaigns(path);
     }
 
     public void SaveCampaign()
     {
-        PopulatePrefabs();
-        _campaign.Save();
+        SavePrefabs();
+        SaveTiles();
+        _currentCampaign.Save();
+        AddToRecentCampaigns(_currentCampaign.filePath);
     }
 
-    public void LoadPrefabFromSave(SerializedPrefab prefab)
+    public void SaveCampaignAs(string filePath)
     {
-        //PrefabItem prefabItem = GetPrefabItem(prefab);
-        //GameObject instance = Instantiate(prefabItem.prefab, prefabParent);
-        //instance.layer = Constants.PrefabLayer;
-        //instance.transform.position = prefab.position;
-        //instance.transform.rotation = Quaternion.Euler(prefab.rotation);
-        //instance.transform.localScale = prefab.scale;
+        if (_currentCampaign == null)
+        {
+            _currentCampaign = new Campaign()
+            {
+                filePath = filePath
+            };
+        }
+        else
+        {
+            _currentCampaign.filePath = filePath;
+        }
+            
+
+        SaveCampaign();
+    }
+
+    public string SaveTempCampaign()
+    {
+        _currentCampaign = new Campaign();
+        string filePath = _currentCampaign.SetTempFilePath();
+        SaveCampaign();
+
+        return filePath;
     }
     #endregion
 
-
-    #region Prefab Utils
-    private void InitializePrefabs()
+    #region Save Utils
+    public void SavePrefabs()
     {
-        foreach (SerializedPrefab campaignPrefab in _campaign.prefabs)
+        _currentCampaign.prefabs = new List<PrefabModel>();
+        foreach (Transform child in _prefabManager.prefabContainer)
         {
-            //_prefabManager.LoadPrefabFromSave(campaignPrefab);
+            PrefabModel newPrefab = new PrefabModel();
+
+            newPrefab.position = child.position;
+            newPrefab.rotation = child.rotation.eulerAngles;
+            newPrefab.scale = child.localScale;
+            newPrefab.prefabId = child.GetComponent<PrefabModelContainer>().prefabId;
+
+            _currentCampaign.prefabs.Add(newPrefab);
         }
     }
 
-    public void PopulatePrefabs()
+    private void SaveTiles()
     {
-        //_campaign.prefabs = new List<SerializedPrefab>();
-        //foreach (Transform child in _prefabManager.prefabParent)
-        //{
-        //    SerializedPrefab newPrefab = new SerializedPrefab();
+        _currentCampaign.tiles = new List<TileModel>();
 
-        //    newPrefab.position = child.position;
-        //    newPrefab.rotation = child.rotation.eulerAngles;
-        //    newPrefab.scale = child.localScale;
-        //    _campaign.prefabs.Add(newPrefab);
-        //}
+        foreach(Vector3Int position in _terrainManager.tileMap.cellBounds.allPositionsWithin)
+        {
+            if (!_terrainManager.tileMap.HasTile(position))
+                continue;
+
+            TileModel tile = new TileModel();
+            tile.tileName = _terrainManager.tileMap.GetTile(position).name;
+            tile.tilePosition = position;
+
+            _currentCampaign.tiles.Add(tile);
+        }
     }
     #endregion
 
+    #region Load Utils
+    private void LoadPrefabs()
+    {
+        foreach (PrefabModel campaignPrefab in _currentCampaign.prefabs)
+        {
+            _prefabManager.LoadPrefabFromSave(campaignPrefab);
+        }
+    }
 
+    private void LoadTiles()
+    {
+        foreach(TileModel tile in _currentCampaign.tiles)
+        {
+            Tile tileToSet = _terrainManager.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
+            _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
+        }
+    }
+
+    private void ClearOldData()
+    {
+        // Clear all of the current tiles
+        _terrainManager.tileMap.ClearAllTiles();
+
+        // Delete all of the current prefabs
+        foreach (Transform child in _prefabManager.prefabContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    public bool CurrentDataIsSaved()
+    {
+        bool isSaved = true;
+
+        if(_currentCampaign == null)
+        {
+            if(_prefabManager.prefabContainer.childCount > 0)
+            {
+                isSaved = false;
+            }
+
+            if(_terrainManager.tileMap.GetUsedTilesCount() > 0)
+            {
+                isSaved = false;
+            }
+        }
+        else
+        {
+            SaveCampaign();
+        }
+
+        return isSaved;
+    }
+    #endregion
+
+    #region RecentCampaigns
+    private void LoadRecentCampaigns()
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, Constants.recentCampainsFileName);
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                string fileContents = File.ReadAllText(filePath);
+                recentCampaigns = JsonUtility.FromJson<RecentCampaigns>(fileContents);
+                OnRecentCampaignsUpdated?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{e.Message}\n{e.StackTrace}");
+            }
+        }
+        else
+        {
+            recentCampaigns = new RecentCampaigns();
+        }
+    }
+
+    private void AddToRecentCampaigns(string path)
+    {
+        recentCampaigns.Add(path);
+        OnRecentCampaignsUpdated.Invoke();
+    }
+    #endregion
 }

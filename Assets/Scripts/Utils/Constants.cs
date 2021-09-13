@@ -16,4 +16,6 @@ public class Constants
     public static int defaultMapSize = 50;
     public static int defaultBrushSize = 1;
     public static float rotationSpeed = 15;
+
+    public static string recentCampainsFileName = "recentCampaigns.json";
 }
