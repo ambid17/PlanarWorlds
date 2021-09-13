@@ -12315,6 +12315,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 254787bb691dcc14d94e8e02fb6ee0cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorRectTransform: {fileID: 1456868275}
+  hierarchyRectTransform: {fileID: 242378440}
   layerMask:
     serializedVersion: 2
     m_Bits: 192

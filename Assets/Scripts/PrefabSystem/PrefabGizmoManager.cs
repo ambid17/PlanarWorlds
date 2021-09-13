@@ -12,6 +12,9 @@ public enum TargetingType
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 {
+    public RectTransform inspectorRectTransform;
+    public RectTransform hierarchyRectTransform;
+
     [SerializeField]
     private LayerMask layerMask;
 
@@ -36,6 +39,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
     private Camera mainCamera;
+
     #endregion
 
     void Start()
@@ -78,6 +82,8 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         if (_uiManager.EditMode != EditMode.Prefab || _uiManager.isEditingValues || _uiManager.isPaused)
             return;
 
+        CheckValidClick();
+
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
         if (_currentTargetingType != TargetingType.PrefabPlacement)
         {
@@ -102,6 +108,28 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     }
 
     #region Prefab Selection
+    private void CheckValidClick()
+    {
+        // If we click on the UI:
+        // deselect the current object if we click on anything other than:
+        // - the inspector
+        // - the hierarchy
+        if(Input.GetMouseButtonDown(0)
+            && RTGizmosEngine.Get.HoveredGizmo == null
+            && EventSystem.current.IsPointerOverGameObject())
+        {
+            Vector2 mousePosition = inspectorRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnInspector= inspectorRectTransform.rect.Contains(mousePosition);
+
+            mousePosition = hierarchyRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnHierarchy = hierarchyRectTransform.rect.Contains(mousePosition);
+
+            if(!mouseIsOnHierarchy && !mouseIsOnInspector)
+            {
+                OnTargetObjectChanged(null, false);
+            }
+        }
+    }
     private void TrySelectObject()
     {
         if (DidValidClick())
