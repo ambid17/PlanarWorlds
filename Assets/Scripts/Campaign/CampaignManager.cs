@@ -219,34 +219,13 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         else
         {
             recentCampaigns = new RecentCampaigns();
-            recentCampaigns.filePaths = new List<string>();
         }
     }
 
     private void AddToRecentCampaigns(string path)
     {
-        path = path.Replace("\\", "/");
-        if (!recentCampaigns.filePaths.Contains(path) && path != string.Empty)
-        {
-            recentCampaigns.filePaths.Add(path);
-            OnRecentCampaignsUpdated.Invoke();
-        }
-
-        SaveRecentCampaigns();
-    }
-
-    private void SaveRecentCampaigns()
-    {
-        string filePath = Path.Combine(Application.persistentDataPath, Constants.recentCampainsFileName);
-        string fileContents = JsonUtility.ToJson(recentCampaigns);
-        try
-        {
-            File.WriteAllText(filePath, fileContents);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"{e.Message}\n{e.StackTrace}");
-        }
+        recentCampaigns.Add(path);
+        OnRecentCampaignsUpdated.Invoke();
     }
     #endregion
 }

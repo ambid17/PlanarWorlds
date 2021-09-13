@@ -66,11 +66,11 @@ public class FileMenu : MonoBehaviour
         List<string> options = new List<string>();
         options.Add(string.Empty);
 
-        foreach (string filePath in _campaignManager.recentCampaigns.filePaths)
+        foreach (CampaignAccess access in _campaignManager.recentCampaigns.accesses)
         {
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string fileName = Path.GetFileNameWithoutExtension(access.filePath);
 
-            string itemText = $"{fileName} \n{filePath}";
+            string itemText = $"{fileName} \n{access.filePath}";
             options.Add(itemText);
         }
 
@@ -79,12 +79,12 @@ public class FileMenu : MonoBehaviour
 
     private void OnNew()
     {
-        FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save New", "Save New");
+        FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
     }
 
     private void OnOpen()
     {
-        FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Open", "Open");
+        FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, string.Empty, "Open", "Open");
     }
 
     private void OnOpenRecent(int index)
@@ -115,7 +115,7 @@ public class FileMenu : MonoBehaviour
 
     private void OnSaveAs()
     {
-        FileBrowser.ShowSaveDialog((paths) => { Save(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, _defaultFileName, "Save As", "Save As");
+        FileBrowser.ShowSaveDialog((paths) => { Save(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }
 
     private void InformOfSave()
@@ -150,5 +150,22 @@ public class FileMenu : MonoBehaviour
 
         _campaignManager.NewCampaign(paths[0]);
         gameObject.SetActive(false);
+    }
+
+
+    public string GetTempFileName()
+    {
+        string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
+
+        int fileCounter = 1;
+        string fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.json");
+
+        while (File.Exists(fullFilePath))
+        {
+            fileCounter++;
+            fullFilePath = Path.Combine(baseFilePath, $"Campaign{fileCounter}.json");
+        }
+
+        return $"Campaign{fileCounter}.json";
     }
 }
