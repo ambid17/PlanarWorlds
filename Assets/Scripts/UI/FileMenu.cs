@@ -79,12 +79,12 @@ public class FileMenu : MonoBehaviour
         recentCampaignsDropdown.AddOptions(options);
     }
 
-    private void OnNew()
+    public void OnNew()
     {
         FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
     }
 
-    private void OnOpen()
+    public void OnOpen()
     {
         FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, string.Empty, "Open", "Open");
     }
@@ -111,7 +111,7 @@ public class FileMenu : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void OnSave()
+    public void OnSave()
     {
         if (_campaignManager.CurrentCampaign != null)
             _campaignManager.SaveCampaign();
@@ -119,7 +119,7 @@ public class FileMenu : MonoBehaviour
             OnSaveAs();
     }
 
-    private void OnSaveAs()
+    public void OnSaveAs()
     {
         FileBrowser.ShowSaveDialog((paths) => { Save(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }

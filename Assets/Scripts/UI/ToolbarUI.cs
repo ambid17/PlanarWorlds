@@ -19,7 +19,7 @@ public class ToolbarUI : MonoBehaviour
 
     void Update()
     {
-        
+        CheckFileMenuHotkeys();
     }
 
     private void FileButtonClicked()
@@ -30,5 +30,32 @@ public class ToolbarUI : MonoBehaviour
     public void UpdateCampaignName(string newName)
     {
         campaignNameText.text = newName;
+    }
+
+    private void CheckFileMenuHotkeys()
+    {
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                fileMenu.OnSave();
+            }
+
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                fileMenu.OnNew();
+            }
+
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                fileMenu.OnOpen();
+            }
+
+            if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.S))
+            {
+                fileMenu.OnSaveAs();
+            }
+        }
+        
     }
 }
