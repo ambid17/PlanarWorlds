@@ -14,9 +14,13 @@ public class HierarchyItem : MonoBehaviour
     private Color defaultColor = new Color(0.17f, 0.25f, 0.33f, 0);
     private Color selectedColor = new Color(0.17f, 0.25f, 0.33f, 1);
 
+    public GameObject reference;
+    private Transform prefabContainer;
+
     void Start()
     {
         backgroundImage.color = defaultColor;
+        objectNameInput.onEndEdit.AddListener(delegate { UpdateObjectName(); });
     }
 
     void Update()
@@ -24,14 +28,30 @@ public class HierarchyItem : MonoBehaviour
         
     }
 
-    public void Init(string name)
+    public void Init(GameObject reference, Transform container)
     {
-        objectNameInput.text = name;
+        this.reference = reference;
+        prefabContainer = container;
+
+        objectNameInput.text = reference.name;
+        SetDepth();
     }
 
-    public void SetDepth(int hierarchyDepth)
+    public void SetDepth()
     {
+        int hierarchyDepth = 0;
+
+        while (reference.transform.parent != prefabContainer)
+        {
+            hierarchyDepth++;
+        }
+        
         content.offsetMin = new Vector2(hierarchyDepth * 10, 0);
+    }
+
+    private void UpdateObjectName()
+    {
+        reference.name = objectNameInput.text;
     }
 
     public void Select()

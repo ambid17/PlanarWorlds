@@ -79,7 +79,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             LoadPrefabs();
             LoadTiles();
             AddToRecentCampaigns(path);
-            _hierarchyManager.ManuallyLoad();
         }
     }
 
@@ -131,6 +130,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             newPrefab.rotation = child.rotation.eulerAngles;
             newPrefab.scale = child.localScale;
             newPrefab.prefabId = child.GetComponent<PrefabModelContainer>().prefabId;
+            newPrefab.name = child.name;
 
             _currentCampaign.prefabs.Add(newPrefab);
         }

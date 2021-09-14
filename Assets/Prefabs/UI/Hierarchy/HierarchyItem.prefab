@@ -178,7 +178,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 06dec0b1685f62c4d85c8ecce2b95366, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -793,3 +793,4 @@ MonoBehaviour:
   objectNameInput: {fileID: 8309541441070059986}
   content: {fileID: 8309541441341553590}
   toggleArrow: {fileID: 8309541441116204938}
+  reference: {fileID: 0}

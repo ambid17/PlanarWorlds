@@ -21,6 +21,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private InspectorManager _inspectorManager;
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
+    private HierarchyManager _hierarchyManager;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -49,6 +50,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _inspectorManager = InspectorManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
         _uiManager = UIManager.GetInstance();
+        _hierarchyManager = HierarchyManager.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -160,11 +162,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
         if(newTargetObject == null)
         {
+            _hierarchyManager.DeselectItems(_targetObjects);
             _targetObjects.Clear();
         }
 
         if (shouldClearMultiSelect && !isMultiSelecting)
         {
+            _hierarchyManager.DeselectItems(_targetObjects);
             _targetObjects.Clear();
         }
         
@@ -188,6 +192,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             _inspectorManager.UpdateInputFields();
         }
 
+        _hierarchyManager.SelectItems(_targetObjects);
         _inspectorManager.ShowUiForTargetType(_currentTargetingType);
         ToggleGizmos();
         ToggleZoomAbility();
@@ -231,6 +236,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             foreach (GameObject go in _targetObjects)
             {
+                _hierarchyManager.RemoveItem(go);
                 Destroy(go);
             }
             OnTargetObjectChanged(null, true);
@@ -394,6 +400,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             {
                 foreach(GameObject go in _targetObjects)
                 {
+                    _hierarchyManager.RemoveItem(go);
                     Destroy(go);
                 }
                 OnTargetObjectChanged(null, true);
@@ -472,6 +479,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             duplicateObject.name = go.name;
 
             toReturn.Add(duplicateObject);
+            _hierarchyManager.AddItem(duplicateObject);
         }
         
         return toReturn;

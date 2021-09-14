@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public class HierarchyUI : MonoBehaviour
 {
@@ -27,14 +28,54 @@ public class HierarchyUI : MonoBehaviour
 
     public void ManuallyLoad()
     {
-        hierarchyItems.Clear();
+        //hierarchyItems.Clear();
 
-        foreach(Transform child in _prefabManager.prefabContainer)
+        //foreach(Transform child in _prefabManager.prefabContainer)
+        //{
+        //    GameObject go = Instantiate(HierarchyItemPrefab, scrollViewContent);
+        //    HierarchyItem item = go.GetComponent<HierarchyItem>();
+        //    item.Init(child.name);
+        //    hierarchyItems.Add(item);
+        //}
+    }
+
+    public void AddItem(GameObject reference)
+    {
+        GameObject go = Instantiate(HierarchyItemPrefab, scrollViewContent);
+        HierarchyItem item = go.GetComponent<HierarchyItem>();
+        item.Init(reference, _prefabManager.prefabContainer);
+        hierarchyItems.Add(item);
+    }
+
+    public void RemoveItem(GameObject reference)
+    {
+        List<HierarchyItem> itemsToRemove = hierarchyItems.Where(item => item.reference == reference).ToList();
+
+        foreach(HierarchyItem item in itemsToRemove)
         {
-            GameObject go = Instantiate(HierarchyItemPrefab, scrollViewContent);
-            HierarchyItem item = go.GetComponent<HierarchyItem>();
-            item.Init(child.name);
-            hierarchyItems.Add(item);
+            hierarchyItems.Remove(item);
+            Destroy(item.gameObject);
+        }
+    }
+
+    public void SelectItems(List<GameObject> references)
+    {
+        foreach(GameObject reference in references)
+        {
+            hierarchyItems
+                .FirstOrDefault(item => item.reference == reference)
+                .Select();
+        }
+    }
+
+    public void DeselectItems(List<GameObject> references)
+    {
+        foreach (GameObject reference in references)
+        {
+            HierarchyItem item = hierarchyItems
+                .FirstOrDefault(item => item.reference == reference);
+            if(item)
+                item.Deselect();
         }
     }
 }

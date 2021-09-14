@@ -24,4 +24,23 @@ public class HierarchyManager : StaticMonoBehaviour<HierarchyManager>
         hierarchyUI.ManuallyLoad();
     }
 
+    public void AddItem(GameObject reference)
+    {
+        hierarchyUI.AddItem(reference);
+    }
+
+    public void RemoveItem(GameObject reference)
+    {
+        hierarchyUI.RemoveItem(reference);
+    }
+
+    public void SelectItems(List<GameObject> references)
+    {
+        hierarchyUI.SelectItems(references);
+    }
+
+    public void DeselectItems(List<GameObject> references)
+    {
+        hierarchyUI.DeselectItems(references);
+    }
 }

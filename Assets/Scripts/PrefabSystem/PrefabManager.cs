@@ -8,17 +8,24 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     public Transform prefabContainer;
     public PrefabList prefabList;
 
+    private HierarchyManager _hierarchyManager;
+
 
     protected override void Awake()
     {
         base.Awake();
     }
 
+    private void Start()
+    {
+        _hierarchyManager = HierarchyManager.GetInstance();
+    }
+
     public void LoadPrefabFromSave(PrefabModel model)
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
-        GameObject instance = CreatePrefabInstance(prefab.gameObject, prefab.prefabId, prefab.prefabName);
+        GameObject instance = CreatePrefabInstance(prefab.gameObject, prefab.prefabId, model.name);
 
         instance.transform.position = model.position;
         instance.transform.rotation = Quaternion.Euler(model.rotation);
@@ -38,7 +45,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         SetObjectShader(instance);
         CreateObjectCollider(instance);
 
-
+        _hierarchyManager.AddItem(instance);
         return instance;
     }
 
