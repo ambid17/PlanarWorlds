@@ -42,12 +42,12 @@ public class TerrainInspectorUI : MonoBehaviour
         foreach (Tile tile in tiles)
         {
             GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-            ImageTabButton toggleButton = newButton.GetComponent<ImageTabButton>();
-            toggleButton.Setup(tile.sprite, () => SetCurrentTile(tile, toggleButton));
+            ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
+            tabButton.Setup(tile.sprite, () => SetCurrentTile(tile, tabButton));
         }
     }
 
-    private void SetCurrentTile(Tile tile, ImageTabButton toggleButton)
+    private void SetCurrentTile(Tile tile, ImageTabButton tabButton)
     {
         if (_currentSelectedButton)
         {
@@ -57,7 +57,7 @@ public class TerrainInspectorUI : MonoBehaviour
         _terrainManager.SetCurrentTile(tile);
         _terrainManager.SetCurrentTileGrid(null);
 
-        _currentSelectedButton = toggleButton;
+        _currentSelectedButton = tabButton;
     }
 
     private void CreateTileGridButtons()
@@ -67,13 +67,13 @@ public class TerrainInspectorUI : MonoBehaviour
             if (tileGrid != null)
             {
                 GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-                ImageTabButton toggleButton = newButton.GetComponent<ImageTabButton>();
-                toggleButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, toggleButton));
+                ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
+                tabButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, tabButton));
             }
         }
     }
 
-    private void SetCurrentTileGrid(TileGrid tileGrid, ImageTabButton toggleButton)
+    private void SetCurrentTileGrid(TileGrid tileGrid, ImageTabButton tabButton)
     {
         if (_currentSelectedButton)
         {
@@ -83,7 +83,7 @@ public class TerrainInspectorUI : MonoBehaviour
         _terrainManager.SetCurrentTileGrid(tileGrid);
         _terrainManager.SetCurrentTile(null);
 
-        _currentSelectedButton = toggleButton;
+        _currentSelectedButton = tabButton;
     }
 
     private void InitModeButtons()

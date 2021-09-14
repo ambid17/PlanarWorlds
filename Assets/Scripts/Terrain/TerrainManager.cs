@@ -100,6 +100,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void HandleDrag(Vector3 hitPoint)
     {
+        // Begin drag with LMB
         if (Input.GetMouseButtonDown(0))
         {
             isValidDrag = true;
@@ -121,7 +122,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             ResetDrag();
         }
 
-        // Paint shadow tiles while drag is in progress
+        // Paint shadow tiles (Indicate mode) while drag is in progress
         if (isValidDrag)
             DragPaintTiles(dragEndPosition: hitPoint, DragState.Indicate);
     }
@@ -133,7 +134,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         Vector3Int offset = TerrainUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
 
-        // Keep track of tile positions we have selected
+        // Keep track of tile positions we have dragged over
         List<Vector3Int> newDraggedPositions = new List<Vector3Int>();
 
         for (int x = 0; x <= offset.x; x++)
