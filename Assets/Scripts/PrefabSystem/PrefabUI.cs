@@ -40,6 +40,6 @@ public class PrefabUI : MonoBehaviour
         
         instance.layer = Constants.PrefabPlacementLayer;
 
-        _prefabGizmoManager.OnTargetObjectChanged(instance, true);
+        _prefabGizmoManager.ForceSelectObject(instance);
     }
 }

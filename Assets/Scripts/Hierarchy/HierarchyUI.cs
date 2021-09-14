@@ -62,9 +62,10 @@ public class HierarchyUI : MonoBehaviour
     {
         foreach(GameObject reference in references)
         {
-            hierarchyItems
-                .FirstOrDefault(item => item.reference == reference)
-                .Select();
+            HierarchyItem item = hierarchyItems
+                .FirstOrDefault(item => item.reference == reference);
+            if (item)
+                item.Select();
         }
     }
 
