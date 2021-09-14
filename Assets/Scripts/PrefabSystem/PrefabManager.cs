@@ -21,17 +21,35 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         _hierarchyManager = HierarchyManager.GetInstance();
     }
 
-    public void LoadPrefabFromSave(PrefabModel model)
+    public void LoadPrefabFromSave(PrefabModel model, bool isParent)
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
-        GameObject instance = CreatePrefabInstance(prefab.gameObject, prefab.prefabId, model.name);
-
+        GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
         instance.transform.position = model.position;
         instance.transform.rotation = Quaternion.Euler(model.rotation);
         instance.transform.localScale = model.scale;
-
         instance.layer = Constants.PrefabParentLayer;
+        instance.name = model.name;
+
+        PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
+        container.prefabId = model.prefabId;
+
+        SetObjectShader(instance);
+        CreateObjectCollider(instance);
+
+        if (model.children != null)
+        {
+            foreach (PrefabModel child in model.children)
+            {
+                LoadPrefabFromSave(child, false);
+            }
+        }
+
+        if (isParent)
+        {
+            _hierarchyManager.AddItem(instance);
+        }
     }
 
     public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId, string name)

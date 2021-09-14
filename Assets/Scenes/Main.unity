@@ -2818,7 +2818,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 826, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &155014210
@@ -14524,7 +14524,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hierarchyUI: {fileID: 1050530247}
-  prefabContainer: {fileID: 500142830}
 --- !u!1 &804149604
 GameObject:
   m_ObjectHideFlags: 0
@@ -18664,6 +18663,8 @@ MonoBehaviour:
   searchInput: {fileID: 6858278}
   HierarchyItemPrefab: {fileID: 8309541442185500403, guid: 55166726534872d439f33980dddba302, type: 3}
   scrollViewContent: {fileID: 1618043030}
+  scrollViewRect: {fileID: 0}
+  scrollRect: {fileID: 0}
 --- !u!1 &1055940248
 GameObject:
   m_ObjectHideFlags: 0
@@ -18701,8 +18702,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 413, y: 0}
-  m_SizeDelta: {x: 786, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1055940250
 MonoBehaviour:
@@ -25540,7 +25541,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 826, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1287343163
@@ -32346,8 +32347,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 413, y: 0}
-  m_SizeDelta: {x: 786, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1702696180
 MonoBehaviour:

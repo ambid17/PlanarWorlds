@@ -19,11 +19,6 @@ public class HierarchyManager : StaticMonoBehaviour<HierarchyManager>
         
     }
 
-    public void ManuallyLoad()
-    {
-        hierarchyUI.ManuallyLoad();
-    }
-
     public void AddItem(GameObject reference)
     {
         hierarchyUI.AddItem(reference);

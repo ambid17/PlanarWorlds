@@ -120,15 +120,8 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         _currentCampaign.prefabs = new List<PrefabModel>();
         foreach (Transform child in _prefabManager.prefabContainer)
         {
-            PrefabModel newPrefab = new PrefabModel();
-
-            newPrefab.position = child.position;
-            newPrefab.rotation = child.rotation.eulerAngles;
-            newPrefab.scale = child.localScale;
-            newPrefab.prefabId = child.GetComponent<PrefabModelContainer>().prefabId;
-            newPrefab.name = child.name;
-
-            _currentCampaign.prefabs.Add(newPrefab);
+            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
+            _currentCampaign.prefabs.Add(container.GetPrefabModel());
         }
     }
 
@@ -155,7 +148,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         foreach (PrefabModel campaignPrefab in _currentCampaign.prefabs)
         {
-            _prefabManager.LoadPrefabFromSave(campaignPrefab);
+            _prefabManager.LoadPrefabFromSave(campaignPrefab, true);
         }
     }
 
