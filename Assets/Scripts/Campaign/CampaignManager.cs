@@ -170,6 +170,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void ClearOldData()
     {
+        _hierarchyManager.Clear();
         // Clear all of the current tiles
         _terrainManager.tileMap.ClearAllTiles();
 

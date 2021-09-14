@@ -79,4 +79,14 @@ public class HierarchyUI : MonoBehaviour
                 item.Deselect();
         }
     }
+
+    public void Clear()
+    {
+        foreach (HierarchyItem item in hierarchyItems)
+        {
+            Destroy(item.gameObject);
+        }
+
+        hierarchyItems.Clear();
+    }
 }

@@ -43,4 +43,9 @@ public class HierarchyManager : StaticMonoBehaviour<HierarchyManager>
     {
         hierarchyUI.DeselectItems(references);
     }
+
+    public void Clear()
+    {
+        hierarchyUI.Clear();
+    }
 }
