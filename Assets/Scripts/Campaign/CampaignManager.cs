@@ -38,11 +38,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void OnApplicationQuit()
     {
-        if (_currentCampaign != null)
-        {
-            SaveCampaign();
-        }
-        else
+        if (!CurrentDataIsSaved())
         {
             SaveTempCampaign();
         }
