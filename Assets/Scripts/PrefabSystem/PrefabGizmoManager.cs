@@ -79,7 +79,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
-        if (_uiManager.EditMode != EditMode.Prefab || !_uiManager.UserCanInput)
+        if (_uiManager.EditMode != EditMode.Prefab || _uiManager.UserCantInput)
             return;
 
         CheckValidClick();
@@ -469,6 +469,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             duplicateObject.transform.localScale = go.transform.localScale;
             duplicateObject.layer = go.layer;
             duplicateObject.transform.parent = go.transform.parent;
+            duplicateObject.name = go.name;
 
             toReturn.Add(duplicateObject);
         }

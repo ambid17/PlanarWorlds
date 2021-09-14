@@ -18,7 +18,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
-        GameObject instance = CreatePrefabInstance(prefab.gameObject, prefab.prefabId);
+        GameObject instance = CreatePrefabInstance(prefab.gameObject, prefab.prefabId, prefab.prefabName);
 
         instance.transform.position = model.position;
         instance.transform.rotation = Quaternion.Euler(model.rotation);
@@ -27,9 +27,10 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         instance.layer = Constants.PrefabParentLayer;
     }
 
-    public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId)
+    public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId, string name)
     {
         GameObject instance = Instantiate(prefabToInstantiate, prefabContainer);
+        instance.name = name;
 
         PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
         container.prefabId = prefabId;

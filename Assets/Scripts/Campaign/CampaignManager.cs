@@ -20,6 +20,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
+    private HierarchyManager _hierarchyManager;
 
     protected override void Awake()
     {
@@ -30,6 +31,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         _prefabManager = PrefabManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
+        _hierarchyManager = HierarchyManager.GetInstance();
 
         LoadRecentCampaigns();
     }
@@ -77,6 +79,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             LoadPrefabs();
             LoadTiles();
             AddToRecentCampaigns(path);
+            _hierarchyManager.ManuallyLoad();
         }
     }
 

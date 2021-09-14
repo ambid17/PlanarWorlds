@@ -14,4 +14,6 @@ public class PrefabModel
     public Vector3 scale;
     [SerializeField]
     public int prefabId;
+    [SerializeField]
+    public string name;
 }

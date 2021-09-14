@@ -91,7 +91,8 @@ public class PrefabListGenerator : EditorWindow
             {
                 gameObject = prefabs[i],
                 previewTexture = previews[i],
-                prefabId = i
+                prefabId = i,
+                prefabName = prefabs[i].name
             };
         }
 
