@@ -1,11 +1,12 @@
 using System;
+using TMPro;
+using UnityEngine.UI;
 
 public class TabButton : ButtonBase
 {
     public override void SetupAction(Action callback)
     {
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => callback());
+        base.SetupAction(callback);
         button.onClick.AddListener(Select);
     }
 

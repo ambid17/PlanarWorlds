@@ -18,6 +18,11 @@ public class ButtonBase : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public virtual void Awake()
     {
+        GetComponents();
+    }
+
+    public void GetComponents()
+    {
         buttonText = GetComponentInChildren<TMP_Text>();
         button = GetComponent<Button>();
         buttonImage = GetComponent<Image>();
@@ -25,6 +30,15 @@ public class ButtonBase : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public virtual void SetupAction(Action callback)
     {
+        // So we can call this before the object is enabled (before Awake)
+        if (button == null 
+            || buttonImage == null 
+            || buttonText == null)
+        {
+            GetComponents();
+        }
+
+        button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => callback());
     }
 
