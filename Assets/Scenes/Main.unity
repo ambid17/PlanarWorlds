@@ -9808,6 +9808,9 @@ MonoBehaviour:
   _highlightTileSelector: {fileID: 797217224}
   isDragEnabled: 0
   isValidDrag: 0
+  tileMapCollider: {fileID: 933569559}
+  shadowTileMapCollider: {fileID: 1913838036}
+  highlightTileMapCollider: {fileID: 328437128}
 --- !u!1 &807779931
 GameObject:
   m_ObjectHideFlags: 0

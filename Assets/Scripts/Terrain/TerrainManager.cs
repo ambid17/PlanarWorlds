@@ -49,11 +49,16 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             || (isDragEnabled && isValidDrag);
     }
 
+    [HideInInspector]
     public bool isDragEnabled;
+    [HideInInspector]
     public bool isValidDrag;
-
     private Vector3 _dragStartPosition;
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
+
+    public BoxCollider tileMapCollider;
+    public BoxCollider highlightTileMapCollider;
+    public BoxCollider shadowTileMapCollider;
 
     void Start()
     {
@@ -304,6 +309,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (clearAllTiles)
             tileMap.ClearAllTiles();
 
+        SetTileMapColliderSizes(new Vector3(_mapSize.x, _mapSize.y));
+
         for (int x = 0; x < _mapSize.x; x++)
         {
             for (int y = 0; y < _mapSize.y; y++)
@@ -314,6 +321,13 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
                 tileMap.SetTileFlags(tilePos, TileFlags.None);
             }
         }
+    }
+
+    private void SetTileMapColliderSizes(Vector3 colliderSize)
+    {
+        tileMapCollider.size = colliderSize;
+        highlightTileMapCollider.size = colliderSize;
+        shadowTileMapCollider.size = colliderSize;
     }
 
     private void EditModeChanged(EditMode newEditMode)
