@@ -12,6 +12,13 @@ public static class TilemapExtensions
         }
     }
 
+    /// <summary>
+    ///     Constrain tile within a certain Bounding box <see cref="Bounds"/>
+    /// </summary>
+    /// <param name="self"></param>
+    /// <param name="cellPosition"></param>
+    /// <param name="tile"></param>
+    /// <param name="bounds"></param>
     public static void SetTile(this Tilemap self, Vector3Int cellPosition, Tile tile, Bounds bounds)
     {
         if (!bounds.Contains(self.CellToWorld(cellPosition)))

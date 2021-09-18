@@ -56,11 +56,11 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private Vector3 _dragStartPosition;
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
 
-    public BoxCollider tileMapCollider;
-    public BoxCollider highlightTileMapCollider;
-    public BoxCollider shadowTileMapCollider;
+    private BoxCollider _tileMapCollider;
+    private BoxCollider _highlightTileMapCollider;
+    private BoxCollider _shadowTileMapCollider;
 
-    void Start()
+    private void Start()
     {
         _brushSize = Constants.defaultBrushSize;
         _mapSize = new Vector2(Constants.defaultMapSize, Constants.defaultMapSize);
@@ -70,7 +70,16 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         _uiManager = UIManager.GetInstance();
 
+        GetComponents();
+
         UIManager.OnEditModeChanged += EditModeChanged;
+    }
+
+    private void GetComponents()
+    {
+        _tileMapCollider = tileMap.gameObject.GetComponent<BoxCollider>();
+        _highlightTileMapCollider = highlightTileMap.gameObject.GetComponent<BoxCollider>();
+        _shadowTileMapCollider = shadowTileMap.gameObject.GetComponent<BoxCollider>();
     }
 
     private void Update()
@@ -228,9 +237,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         foreach (Vector3Int tilePosition in tilePositionsForBrush)
         {
             if (_currentEditMode == TerrainEditMode.Paint)
-                tileMap.SetTile(tilePosition, _currentTile, tileMapCollider.bounds);
+                tileMap.SetTile(tilePosition, _currentTile, _tileMapCollider.bounds);
             else if (_currentEditMode == TerrainEditMode.Erase)
-                tileMap.SetTile(tilePosition, null, tileMapCollider.bounds);
+                tileMap.SetTile(tilePosition, null, _tileMapCollider.bounds);
         }
     }
 
@@ -271,7 +280,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         foreach (KeyValuePair<Vector3Int, Tile> keyValuePair in tilesForBrush)
         {
-            highlightTileMap.SetTile(keyValuePair.Key, keyValuePair.Value);
+            highlightTileMap.SetTile(keyValuePair.Key, keyValuePair.Value,
+                _highlightTileMapCollider.bounds);
         }
     }
 
@@ -296,7 +306,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void PaintShadowTile(Vector3Int tilePosition, Tile tileToPaint)
     {
-        shadowTileMap.SetTile(tilePosition, tileToPaint);
+        shadowTileMap.SetTile(tilePosition, tileToPaint, _shadowTileMapCollider.bounds);
         shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
         shadowTileMap.SetColor(tilePosition, Constants.shadowTileColor);
     }
@@ -325,9 +335,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void SetTileMapColliderSizes(Vector2 colliderSize)
     {
-        tileMapCollider.size = colliderSize;
-        highlightTileMapCollider.size = colliderSize;
-        shadowTileMapCollider.size = colliderSize;
+        _tileMapCollider.size = colliderSize;
+        _highlightTileMapCollider.size = colliderSize;
+        _shadowTileMapCollider.size = colliderSize;
     }
 
     private void EditModeChanged(EditMode newEditMode)
