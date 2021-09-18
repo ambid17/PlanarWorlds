@@ -321,13 +321,13 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (clearAllTiles)
             tileMap.ClearAllTiles();
 
-        FillTiles();
+        FillTiles(_mapSize);
     }
 
-    private void FillTiles()
+    private void FillTiles(Vector2 fillRange)
     {
-        int xRange = Mathf.FloorToInt(_mapSize.x / 2);
-        int yRange = Mathf.FloorToInt(_mapSize.y / 2);
+        int xRange = Mathf.FloorToInt(fillRange.x / 2);
+        int yRange = Mathf.FloorToInt(fillRange.y / 2);
 
         for (int x = -xRange; x < xRange; x++)
         {
