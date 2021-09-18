@@ -154,7 +154,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         {
             for (int y = 0; y <= offset.y; y++)
             {
-                // Default to null for erasing 
                 Tile tileToPaint = null;
 
                 // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
@@ -209,6 +208,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         else
             _mapSize.y = size;
 
+        // Resize box colliders to fit new map size
         SetTileMapColliderSizes(_mapSize);
     }
 
@@ -321,9 +321,17 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (clearAllTiles)
             tileMap.ClearAllTiles();
 
-        for (int x = 0; x < _mapSize.x; x++)
+        FillTiles();
+    }
+
+    private void FillTiles()
+    {
+        int xRange = Mathf.FloorToInt(_mapSize.x / 2);
+        int yRange = Mathf.FloorToInt(_mapSize.y / 2);
+
+        for (int x = -xRange; x < xRange; x++)
         {
-            for (int y = 0; y < _mapSize.y; y++)
+            for (int y = -yRange; y < yRange; y++)
             {
                 Vector3Int tilePos = new Vector3Int(x, y, 0);
                 tileMap.SetTile(tilePos, _currentTile);
