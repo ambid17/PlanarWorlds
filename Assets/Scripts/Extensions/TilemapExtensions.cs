@@ -11,4 +11,12 @@ public static class TilemapExtensions
             self.SetTile(position, null);
         }
     }
+
+    public static void SetTile(this Tilemap self, Vector3Int cellPosition, Tile tile, Bounds bounds)
+    {
+        if (!bounds.Contains(self.CellToWorld(cellPosition)))
+            return;
+
+        self.SetTile(cellPosition, tile);
+    }
 }

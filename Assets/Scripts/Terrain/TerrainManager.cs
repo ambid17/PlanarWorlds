@@ -228,9 +228,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         foreach (Vector3Int tilePosition in tilePositionsForBrush)
         {
             if (_currentEditMode == TerrainEditMode.Paint)
-                tileMap.SetTile(tilePosition, _currentTile);
+                tileMap.SetTile(tilePosition, _currentTile, tileMapCollider.bounds);
             else if (_currentEditMode == TerrainEditMode.Erase)
-                tileMap.SetTile(tilePosition, null);
+                tileMap.SetTile(tilePosition, null, tileMapCollider.bounds);
         }
     }
 
@@ -309,7 +309,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if (clearAllTiles)
             tileMap.ClearAllTiles();
 
-        SetTileMapColliderSizes(new Vector3(_mapSize.x, _mapSize.y));
+        SetTileMapColliderSizes(_mapSize);
 
         for (int x = 0; x < _mapSize.x; x++)
         {
@@ -323,7 +323,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         }
     }
 
-    private void SetTileMapColliderSizes(Vector3 colliderSize)
+    private void SetTileMapColliderSizes(Vector2 colliderSize)
     {
         tileMapCollider.size = colliderSize;
         highlightTileMapCollider.size = colliderSize;
