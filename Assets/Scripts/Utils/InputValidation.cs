@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class InputValidation
 {
@@ -25,5 +24,19 @@ public class InputValidation
         }
 
         return result;
+    }
+
+    public static char ValidateCharAsUnsignedInt(char addedChar)
+    {
+        return ValidateChar(addedChar, Constants.UnsignedIntegerPattern);
+    }
+
+    private static char ValidateChar(char addedChar, string validationPattern)
+    {
+        if (Regex.IsMatch(addedChar.ToString(), validationPattern))
+            return addedChar;
+
+        // Return empty char if pattern isn't matched
+        return '\0';
     }
 }

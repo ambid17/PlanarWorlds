@@ -32,16 +32,27 @@ public class TerrainSettingsUI : MonoBehaviour
         brushSizeInput.onValueChanged.AddListener(delegate { BrushSizeUpdated(); });
         brushSizeInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
         brushSizeInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        InitInputFieldValidation(brushSizeInput);
 
         mapSizeXInput.onValueChanged.AddListener(delegate { MapSizeUpdated(TransformAxis.X); });
         mapSizeXInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
         mapSizeXInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        InitInputFieldValidation(mapSizeXInput);
 
         mapSizeYInput.onValueChanged.AddListener(delegate { MapSizeUpdated(TransformAxis.Y); });
         mapSizeYInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
         mapSizeYInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        InitInputFieldValidation(mapSizeYInput);
 
         fillButton.onClick.AddListener(() => _terrainManager.GenerateDefaultMap(false));
+    }
+
+    private void InitInputFieldValidation(TMP_InputField inputField)
+    {
+        inputField.onValidateInput += (string input, int charIndex, char addedChar) =>
+        {
+            return InputValidation.ValidateCharAsUnsignedInt(addedChar);
+        };
     }
 
     private void BrushSizeUpdated()

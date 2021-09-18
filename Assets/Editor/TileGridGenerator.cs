@@ -30,7 +30,7 @@ public class TileGridGenerator : MonoBehaviour
 
             EditorUtility.SetDirty(newTileGrid);
 
-            string assetName = $"{Constants.tileGridDir}/TileGrid_{GUID.Generate()}";
+            string assetName = $"{Constants.TileGridDir}/TileGrid_{GUID.Generate()}";
 
             // Associate the new SO with an asset so it can persist 
             AssetDatabase.CreateAsset(newTileGrid, $"{assetName}.asset");

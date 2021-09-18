@@ -112,6 +112,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         }
     }
 
+    #region DragPaint
     private void HandleDrag(Vector3 hitPoint)
     {
         // Begin drag with LMB
@@ -123,9 +124,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         // Cancel drag if RMB is pressed
         if (Input.GetMouseButtonDown(1))
-        {
             ResetDrag();
-        }
 
         // Paint when LMB is released 
         if (Input.GetMouseButtonUp(0))
@@ -195,6 +194,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         shadowTileMap.ClearAllTiles();
         isValidDrag = false;
     }
+    #endregion
 
     public void SetBrushSize(int brushSize)
     {
@@ -208,6 +208,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             _mapSize.x = size;
         else
             _mapSize.y = size;
+
+        SetTileMapColliderSizes(_mapSize);
     }
 
     public void SetCurrentEditMode(TerrainEditMode newEditMode)
@@ -308,7 +310,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         shadowTileMap.SetTile(tilePosition, tileToPaint, _shadowTileMapCollider.bounds);
         shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
-        shadowTileMap.SetColor(tilePosition, Constants.shadowTileColor);
+        shadowTileMap.SetColor(tilePosition, Constants.ShadowTileColor);
     }
 
     public void GenerateDefaultMap(bool clearAllTiles)
@@ -318,8 +320,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
         if (clearAllTiles)
             tileMap.ClearAllTiles();
-
-        SetTileMapColliderSizes(_mapSize);
 
         for (int x = 0; x < _mapSize.x; x++)
         {
