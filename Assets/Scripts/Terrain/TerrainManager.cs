@@ -296,12 +296,13 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         shadowTileMap.SetColor(tilePosition, Constants.shadowTileColor);
     }
 
-    public void GenerateDefaultMap()
+    public void GenerateDefaultMap(bool clearAllTiles)
     {
         if (!_currentTile)
             return;
 
-        tileMap.ClearAllTiles();
+        if (clearAllTiles)
+            tileMap.ClearAllTiles();
 
         for (int x = 0; x < _mapSize.x; x++)
         {

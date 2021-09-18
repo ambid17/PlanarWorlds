@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using Michsky.UI.ModernUIPack;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class TerrainSettingsUI : MonoBehaviour
@@ -44,7 +41,7 @@ public class TerrainSettingsUI : MonoBehaviour
         mapSizeYInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
         mapSizeYInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
 
-        fillButton.onClick.AddListener(() => _terrainManager.GenerateDefaultMap());
+        fillButton.onClick.AddListener(() => _terrainManager.GenerateDefaultMap(false));
     }
 
     private void BrushSizeUpdated()
