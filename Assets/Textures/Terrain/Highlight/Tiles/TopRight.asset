@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: highlightTile_Quartered_0
+  m_Name: TopRight
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -6074780576124511489, guid: 1edfa05c3784d6548af612ddca8757c8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ef81523b67fcb254dad5df53ebece2a8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

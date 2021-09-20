@@ -8,15 +8,16 @@ public enum TerrainEditMode
 
 public class TerrainInspectorUI : MonoBehaviour
 {
-    public Tile[] tiles;
-    public TileGrid[] tileGrids;
+    private Tile[] _tiles;
+    private TileGrid[] _tileGrids;
 
-    public GameObject buttonPrefab;
+    public GameObject tileButtonPrefab;
 
     public TabButton paintButton;
     public TabButton eraseButton;
 
     public GameObject tileSelectorParent;
+    public GameObject tileGridSelectorParent;
 
     private TerrainManager _terrainManager;
     private ImageTabButton _currentSelectedButton;
@@ -24,6 +25,8 @@ public class TerrainInspectorUI : MonoBehaviour
     void Awake()
     {
         _terrainManager = TerrainManager.GetInstance();
+        _tiles = _terrainManager.tileList.tiles;
+        _tileGrids = _terrainManager.tileGrids;
     }
 
     void Start()
@@ -31,16 +34,43 @@ public class TerrainInspectorUI : MonoBehaviour
         CreateTileButtons();
         CreateTileGridButtons();
         InitModeButtons();
+        ToggleTileSelector(false);
     }
 
     private void CreateTileButtons()
     {
-        foreach (Tile tile in tiles)
+        foreach (Tile tile in _tiles)
         {
-            GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
+            GameObject newButton = Instantiate(tileButtonPrefab, tileSelectorParent.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
             tabButton.Setup(tile.sprite, () => SetCurrentTile(tile, tabButton));
         }
+    }
+
+    private void CreateTileGridButtons()
+    {
+        foreach (TileGrid tileGrid in _tileGrids)
+        {
+            if (tileGrid != null)
+            {
+                GameObject newButton = Instantiate(tileButtonPrefab, tileGridSelectorParent.transform);
+                ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
+                tabButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, tabButton));
+            }
+        }
+    }
+
+    private void InitModeButtons()
+    {
+        paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
+        eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
+
+        paintButton.Select();
+    }
+
+    private void ChangeEditMode(TerrainEditMode newMode)
+    {
+        _terrainManager.SetCurrentEditMode(newMode);
     }
 
     private void SetCurrentTile(Tile tile, ImageTabButton tabButton)
@@ -56,19 +86,6 @@ public class TerrainInspectorUI : MonoBehaviour
         _currentSelectedButton = tabButton;
     }
 
-    private void CreateTileGridButtons()
-    {
-        foreach (TileGrid tileGrid in tileGrids)
-        {
-            if (tileGrid != null)
-            {
-                GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-                ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
-                tabButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, tabButton));
-            }
-        }
-    }
-
     private void SetCurrentTileGrid(TileGrid tileGrid, ImageTabButton tabButton)
     {
         if (_currentSelectedButton)
@@ -82,16 +99,9 @@ public class TerrainInspectorUI : MonoBehaviour
         _currentSelectedButton = tabButton;
     }
 
-    private void InitModeButtons()
+    public void ToggleTileSelector(bool isTileGrid)
     {
-        paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
-        eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
-
-        paintButton.Select();
-    }
-
-    private void ChangeEditMode(TerrainEditMode newMode)
-    {
-        _terrainManager.SetCurrentEditMode(newMode);
+        tileSelectorParent.SetActive(!isTileGrid);
+        tileGridSelectorParent.SetActive(isTileGrid);
     }
 }

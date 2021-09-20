@@ -12,13 +12,15 @@ public enum DragState
 
 public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 {
-    public Tile[] tiles;
+    public TileList tileList;
+    public TileGrid[] tileGrids;
+
     public LayerMask terrainLayerMask;
+
     public Tilemap tileMap;
     public Tilemap highlightTileMap;
     public Tilemap shadowTileMap;
 
-    private Vector3Int _lastShadowTilePosition;
     [SerializeField]
     private HighlightTileSelector _highlightTileSelector;
 
@@ -32,15 +34,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         get => _brushSize;
     }
 
-    private Vector2 _mapSize;
-    public Vector2 MapSize
-    {
-        get => _mapSize;
-    }
-    private Vector2 _previousMapSize;
-
     private Camera mainCamera;
-    private PrefabGizmoManager _prefabGizmoManager;
     private UIManager _uiManager;
 
     private bool CanModifyTerrain
@@ -62,14 +56,12 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private BoxCollider _highlightTileMapCollider;
     private BoxCollider _shadowTileMapCollider;
 
-    private void Start()
+    private void Awake()
     {
+        base.Awake();
         _brushSize = Constants.defaultBrushSize;
-        _mapSize = new Vector2(Constants.defaultMapSize, Constants.defaultMapSize);
-        _previousMapSize = _mapSize;
 
         mainCamera = Camera.main;
-        _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         _uiManager = UIManager.GetInstance();
 
         GetComponents();
@@ -269,7 +261,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         Vector3Int dragEndPosition = tileMap.WorldToCell(hitPoint);
 
         Dictionary<Vector3Int, Tile> tilesForBrush;
-        if (isDragEnabled)
+        if (isDragEnabled && isValidDrag)
         {
             tilesForBrush = _highlightTileSelector
             .GetHighlightTilesForDrag(startPosition, dragEndPosition);
@@ -313,13 +305,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         shadowTileMap.SetTile(tilePosition, tileToPaint, _shadowTileMapCollider.bounds);
         shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
         shadowTileMap.SetColor(tilePosition, Constants.ShadowTileColor);
-    }
-
-    private void SetTileMapColliderSizes(Vector2 colliderSize)
-    {
-        _tileMapCollider.size = colliderSize;
-        _highlightTileMapCollider.size = colliderSize;
-        _shadowTileMapCollider.size = colliderSize;
     }
 
     private void EditModeChanged(EditMode newEditMode)

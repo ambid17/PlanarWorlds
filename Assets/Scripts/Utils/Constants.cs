@@ -16,7 +16,7 @@ public class Constants
     public static float rotationSpeed = 15;
 
 
-    public static Color ShadowTileColor = new Color(1, 1, 1, 0.3f);
+    public static Color ShadowTileColor = new Color(1, 1, 1, 0.6f);
 
     public static string UnsignedIntegerPattern = @"^[0-9]*$";
 
