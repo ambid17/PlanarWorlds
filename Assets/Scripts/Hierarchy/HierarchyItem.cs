@@ -17,6 +17,8 @@ public class HierarchyItem : MonoBehaviour
     public GameObject toggleArrow;
     public Button expandButton;
     public Button selectButton;
+    public PointerEventListener clickListener;
+
 
     private Color defaultColor = new Color(0.17f, 0.25f, 0.33f, 0);
     private Color selectedColor = new Color(0.17f, 0.25f, 0.33f, 1);
@@ -44,6 +46,11 @@ public class HierarchyItem : MonoBehaviour
 
         isExpanded = false;
         children = new List<HierarchyItem>();
+
+        // HierarchyField.cs:131
+        //clickListener.PointerClick +=
+        //clickListener.PointerDown +=
+        //clickListener.PointerUp +=
     }
     
     public void Init(GameObject reference, Transform prefabContainer)
