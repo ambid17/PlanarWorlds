@@ -15,12 +15,8 @@ public class TerrainInspectorUI : MonoBehaviour
 
     public TabButton paintButton;
     public TabButton eraseButton;
-    public TabButton settingsButton;
-    public ToggleButton dragButton;
 
     public GameObject tileSelectorParent;
-
-    public TerrainSettingsUI terrainSettingsUI;
 
     private TerrainManager _terrainManager;
     private ImageTabButton _currentSelectedButton;
@@ -90,31 +86,12 @@ public class TerrainInspectorUI : MonoBehaviour
     {
         paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
         eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
-        settingsButton.SetupAction(() => ToggleSettingsMenu(true));
-        dragButton.SetupAction(ToggleDragTerrain);
 
-        ToggleSettingsMenu(false);
         paintButton.Select();
-    }
-
-    private void ToggleSettingsMenu(bool shouldBeActive)
-    {
-        terrainSettingsUI.ToggleSettingsMenu(shouldBeActive);
-
-        paintButton.Unselect();
-        eraseButton.Unselect();
-        settingsButton.Unselect();
     }
 
     private void ChangeEditMode(TerrainEditMode newMode)
     {
         _terrainManager.SetCurrentEditMode(newMode);
-        ToggleSettingsMenu(false);
-    }
-
-    private void ToggleDragTerrain()
-    {
-        _terrainManager.isDragEnabled = !_terrainManager.isDragEnabled;
-        _terrainManager.isValidDrag = false;
     }
 }

@@ -232,7 +232,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     private void AddToRecentCampaigns(string path)
     {
         recentCampaigns.Add(path);
-        OnRecentCampaignsUpdated.Invoke();
+        OnRecentCampaignsUpdated?.Invoke();
     }
     #endregion
 }
