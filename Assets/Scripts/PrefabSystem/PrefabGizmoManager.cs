@@ -12,10 +12,12 @@ public enum TargetingType
 
 public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 {
+    public RectTransform inspectorRectTransform;
+    public RectTransform hierarchyRectTransform;
+
     [SerializeField]
     private LayerMask layerMask;
 
-    [SerializeField]
     private InspectorManager _inspectorManager;
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
@@ -25,19 +27,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private ObjectTransformGizmo scaleGizmo;
     private ObjectTransformGizmo activeGizmo;
 
-
     #region State management variables
     private TransformType currentTransformType;
     private Color currentColor;
 
-    private GameObject _targetObject;
-    public GameObject TargetObject { get => _targetObject; }
+    private List<GameObject> _targetObjects;
+    public List<GameObject> TargetObjects { get => _targetObjects; }
 
     [SerializeField]
     private TargetingType _currentTargetingType;
     public TargetingType CurrentTargetingType { get => _currentTargetingType; }
 
     private Camera mainCamera;
+
     #endregion
 
     void Start()
@@ -68,14 +70,19 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         activeGizmo = positionGizmo;
 
         _currentTargetingType = TargetingType.None;
+        ToggleZoomAbility();
 
         UIManager.OnEditModeChanged += EditModeChanged;
+
+        _targetObjects = new List<GameObject>();
     }
 
     void Update()
     {
-        if (_uiManager.EditMode != EditMode.Prefab || _uiManager.isEditingValues || _uiManager.isPaused)
+        if (_uiManager.EditMode != EditMode.Prefab || !_uiManager.UserCanInput)
             return;
+
+        CheckValidClick();
 
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
         if (_currentTargetingType != TargetingType.PrefabPlacement)
@@ -101,11 +108,33 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     }
 
     #region Prefab Selection
+    private void CheckValidClick()
+    {
+        // If we click on the UI:
+        // deselect the current object if we click on anything other than:
+        // - the inspector
+        // - the hierarchy
+        if(Input.GetMouseButtonDown(0)
+            && RTGizmosEngine.Get.HoveredGizmo == null
+            && EventSystem.current.IsPointerOverGameObject())
+        {
+            Vector2 mousePosition = inspectorRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnInspector= inspectorRectTransform.rect.Contains(mousePosition);
+
+            mousePosition = hierarchyRectTransform.InverseTransformPoint(Input.mousePosition);
+            bool mouseIsOnHierarchy = hierarchyRectTransform.rect.Contains(mousePosition);
+
+            if(!mouseIsOnHierarchy && !mouseIsOnInspector)
+            {
+                OnTargetObjectChanged(null, false);
+            }
+        }
+    }
     private void TrySelectObject()
     {
-        if (DidClickValidObject())
+        if (DidValidClick())
         {
-            GameObject pickedObject = null;
+            GameObject selectedObject = null;
 
             // Build a ray using the current mouse cursor position
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -113,68 +142,74 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             // Check if the ray intersects a game object. If it does, return it
             if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, layerMask))
             {
-                pickedObject = rayHit.collider.gameObject;
+                selectedObject = rayHit.collider.gameObject;
             }
-
-
-            if (pickedObject != _targetObject)
+            
+            if (!_targetObjects.Contains(selectedObject))
             {
-                OnTargetObjectChanged(pickedObject);
+                OnTargetObjectChanged(selectedObject, false);
             }
         }
     }
 
-    public void OnTargetObjectChanged(GameObject newTargetObject)
+    public void OnTargetObjectChanged(GameObject newTargetObject, bool shouldClearMultiSelect)
     {
+        bool isMultiSelecting = Input.GetKey(KeyCode.LeftShift);
+
         ToggleOutlineRender(false);
-        _targetObject = newTargetObject;
+
+        if(newTargetObject == null)
+        {
+            _targetObjects.Clear();
+        }
+
+        if (shouldClearMultiSelect && !isMultiSelecting)
+        {
+            _targetObjects.Clear();
+        }
+        
 
         _currentTargetingType = TargetingType.None;
 
-        if (_targetObject != null)
+        if (newTargetObject != null)
         {
-            if(_targetObject.layer == Constants.PrefabParentLayer)
+            _targetObjects.Add(newTargetObject);
+
+            if (newTargetObject.layer == Constants.PrefabParentLayer)
             {
                 _currentTargetingType = TargetingType.Prefab;
-
-                activeGizmo.SetTargetObject(_targetObject);
-
-                // Access the move gizmo behaviour and specify the vertex snap target objects
-                MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
-
-                // Vertex snapping won't function properly if the meshes are children of an empty parent
-                List<GameObject> snapTargets = new List<GameObject>() { _targetObject };
-                moveGizmo.SetVertexSnapTargetObjects(snapTargets);
-
-                ToggleOutlineRender(true);
             }
-            else if (_targetObject.layer == Constants.PrefabPlacementLayer)
+            else if (newTargetObject.layer == Constants.PrefabPlacementLayer)
             {
                 _currentTargetingType = TargetingType.PrefabPlacement;
-                ToggleOutlineRender(true);
             }
+
+            ToggleOutlineRender(true);
+            _inspectorManager.UpdateInputFields();
         }
 
-        _inspectorManager.ShowUiForTarget(_currentTargetingType);
+        _inspectorManager.ShowUiForTargetType(_currentTargetingType);
         ToggleGizmos();
-        UpdateAllInputFields();
+        ToggleZoomAbility();
     }
 
     private void ToggleOutlineRender(bool shouldRender)
     {
-        if (_targetObject != null)
+        if (_targetObjects.Count > 0)
         {
-            Renderer[] renderers= _targetObject.GetComponentsInChildren<Renderer>();
-
-            foreach(Renderer renderer in renderers)
+            foreach(GameObject _targetObject in _targetObjects)
             {
-                Material[] materials = renderer.materials;
-                foreach (Material material in materials)
+                Renderer[] renderers = _targetObject.GetComponentsInChildren<Renderer>();
+
+                foreach (Renderer renderer in renderers)
                 {
-                    material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 0);
+                    Material[] materials = renderer.materials;
+                    foreach (Material material in materials)
+                    {
+                        material.SetFloat("_OutlineWidth", shouldRender ? 1.015f : 0);
+                    }
                 }
             }
-                
         }
     }
     #endregion
@@ -185,44 +220,56 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
         if (Input.GetMouseButtonDown(1))
 		{
-            // destroy the current object, set target object to null, call on target change
-            if(_targetObject != null)
+            CancelPrefabPlacement();
+        }
+    }
+
+    private void CancelPrefabPlacement()
+    {
+        // destroy the current object, set target object to null, call on target change
+        if (_targetObjects.Count > 0)
+        {
+            foreach (GameObject go in _targetObjects)
             {
-                Destroy(_targetObject);
-                OnTargetObjectChanged(null);
+                Destroy(go);
             }
+            OnTargetObjectChanged(null, true);
         }
     }
 
 	private void TryPlacePrefab()
     {
-        if (_uiManager.isEditingValues
-            || EventSystem.current.IsPointerOverGameObject())
-            return;
-
         UpdatePrefabPosition();
 
         if (Input.GetMouseButtonDown(0) )
         {
-            GameObject newTarget = Duplicate();
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                CancelPrefabPlacement();
+                return;
+            }
+            List<GameObject> newTargets = Duplicate();
 
             // Change the non-duplicated object's layer so it can be targeted
-            _targetObject.layer = Constants.PrefabParentLayer;
+            _targetObjects[0].layer = Constants.PrefabParentLayer;
 
             // THEN change the target object, so we keep the PrefabPlacementLayer
-            OnTargetObjectChanged(newTarget);
+            OnTargetObjectChanged(newTargets[0], true);
         }
     }
 
     private void UpdatePrefabPosition()
     {
+        if (_targetObjects.Count == 0)
+            return;
+
         // Build a ray using the current mouse cursor position
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         // Check if the ray intersects the tilemap. If it does, snap the object to the terrain
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainManager.terrainLayerMask))
         {
-            BoxCollider myCollider = _targetObject.GetComponent<BoxCollider>();
+            BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
 
             Vector3 snappedPosition = rayHit.point;
 
@@ -232,15 +279,18 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
                 //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
             }
 
-            _targetObject.transform.position = snappedPosition;
+            _targetObjects[0].transform.position = snappedPosition;
         }
     }
 
     private void TryRotateObject()
     {
+        if (_targetObjects.Count == 0)
+            return;
+
         Vector2 mouseScrollDelta = Input.mouseScrollDelta;
 
-        Vector3 rotation = _targetObject.transform.rotation.eulerAngles;
+        Vector3 rotation = _targetObjects[0].transform.rotation.eulerAngles;
         if (mouseScrollDelta.y > 0)
         {
             rotation.y += Constants.rotationSpeed;
@@ -250,26 +300,26 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             rotation.y -= Constants.rotationSpeed;
         }
 
-        _targetObject.transform.rotation = Quaternion.Euler(rotation);
+        _targetObjects[0].transform.rotation = Quaternion.Euler(rotation);
     }
     #endregion
 
     #region Hotkeys
     private void TryChangeMode()
     {
-        if (Input.GetKeyDown(Constants.positionHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectPosition))
         {
             ChangeGimzoMode(TransformType.Position);
             _inspectorManager.GizmoModeChanged(TransformType.Position);
         }
 
-        if (Input.GetKeyDown(Constants.rotationHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectRotation))
         {
             ChangeGimzoMode(TransformType.Rotation);
             _inspectorManager.GizmoModeChanged(TransformType.Rotation);
         }
 
-        if (Input.GetKeyDown(Constants.scaleHotkey))
+        if (HotKeyManager.GetKeyDown(HotkeyConstants.SelectScale))
         {
             ChangeGimzoMode(TransformType.Scale);
             _inspectorManager.GizmoModeChanged(TransformType.Scale);
@@ -293,9 +343,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
                 break;
         }
 
-        if (_targetObject != null)
+        if (_targetObjects.Count > 0)
         {
-            activeGizmo.SetTargetObject(_targetObject);
+            activeGizmo.SetTargetObjects(_targetObjects);
         }
 
         ToggleGizmos();
@@ -303,19 +353,36 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void ToggleGizmos()
     {
-        bool gizmosCanShow = _targetObject != null && _currentTargetingType == TargetingType.Prefab;
+        bool gizmosCanShow = _targetObjects.Count > 0 && _currentTargetingType == TargetingType.Prefab;
         positionGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Position);
         rotationGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Rotation);
         scaleGizmo.Gizmo.SetEnabled(gizmosCanShow && currentTransformType == TransformType.Scale);
+
+        if (_targetObjects.Count > 0)
+        {
+            activeGizmo.SetTargetObjects(_targetObjects);
+
+            // Access the move gizmo behaviour and specify the vertex snap target objects
+            MoveGizmo moveGizmo = positionGizmo.Gizmo.MoveGizmo;
+
+            // Vertex snapping won't function properly if the meshes are children of an empty parent
+            moveGizmo.SetVertexSnapTargetObjects(_targetObjects);
+        }
     }
 
     private void TryDuplicate()
     {
-        if (HotKeyManager.GetModifiedKeyDown(HotkeyConstants.Duplicate) && _targetObject != null)
+        if (HotKeyManager.GetModifiedKeyDown(HotkeyConstants.Duplicate) && _targetObjects.Count > 0)
         {
-            GameObject duplicateObject = Duplicate();
+            List<GameObject> duplicateObjects = Duplicate();
 
-            OnTargetObjectChanged(duplicateObject);
+            ToggleOutlineRender(false);
+            _targetObjects.Clear();
+
+            foreach (GameObject go in duplicateObjects)
+            {
+                OnTargetObjectChanged(go, false);
+            }
         }
     }
 
@@ -323,19 +390,22 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         if(HotKeyManager.GetKeyDown(HotkeyConstants.DeletePrefab))
         {
-            if (_targetObject != null) 
+            if (_targetObjects.Count > 0) 
             {
-                Destroy(_targetObject);
-                OnTargetObjectChanged(null);
+                foreach(GameObject go in _targetObjects)
+                {
+                    Destroy(go);
+                }
+                OnTargetObjectChanged(null, true);
             }
         }
     }
 
     private void TryFocusObject()
     {
-        if(HotKeyManager.GetKeyDown(HotkeyConstants.Focus) && _targetObject != null)
+        if(HotKeyManager.GetKeyDown(HotkeyConstants.Focus) && _targetObjects.Count > 0)
         {
-            RTFocusCamera.Get.Focus(new List<GameObject>() { _targetObject });
+            RTFocusCamera.Get.Focus(_targetObjects);
         }
     }
 
@@ -366,25 +436,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void OnGizmoPostDragUpdate(Gizmo gizmo, int handleId)
     {
-        Vector3 value = new Vector3();
-
-        switch (currentTransformType)
+        if(currentTransformType == TransformType.Scale)
         {
-            case TransformType.Position:
-                value = _targetObject.transform.position;
-                break;
-            case TransformType.Rotation:
-                value = _targetObject.transform.rotation.eulerAngles;
-                break;
-            case TransformType.Scale:
-                ValidateScale();
-                value = _targetObject.transform.localScale;
-                break;
+            ValidateScale();
         }
 
-        _inspectorManager.UpdateInputFields(currentTransformType, value);
+        _inspectorManager.UpdateInputFields();
     }
-
     #endregion
 
     #region Utils
@@ -392,101 +450,104 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     // - We click the left mouse button
     // - We aren't clicking on a gizmo
     // - We aren't clicking on any UI
-    private bool DidClickValidObject()
+    private bool DidValidClick()
     {
         return Input.GetMouseButtonDown(0)
             && RTGizmosEngine.Get.HoveredGizmo == null
             && !EventSystem.current.IsPointerOverGameObject();
     }
 
-    private GameObject Duplicate()
+    private List<GameObject> Duplicate()
     {
-        GameObject duplicateObject = Instantiate(_targetObject);
-        duplicateObject.transform.position = _targetObject.transform.position;
-        duplicateObject.transform.rotation = _targetObject.transform.rotation;
-        duplicateObject.transform.localScale = _targetObject.transform.localScale;
-        duplicateObject.layer = _targetObject.layer;
-        duplicateObject.transform.parent = _targetObject.transform.parent;
+        List<GameObject> toReturn = new List<GameObject>();
 
-        return duplicateObject;
+        foreach(GameObject go in _targetObjects)
+        {
+            GameObject duplicateObject = Instantiate(go);
+            duplicateObject.transform.position = go.transform.position;
+            duplicateObject.transform.rotation = go.transform.rotation;
+            duplicateObject.transform.localScale = go.transform.localScale;
+            duplicateObject.layer = go.layer;
+            duplicateObject.transform.parent = go.transform.parent;
+
+            toReturn.Add(duplicateObject);
+        }
+        
+        return toReturn;
     }
 
     private void ValidateScale()
     {
-        Vector3 newScale = _targetObject.transform.localScale;
         Vector3 minimumScale = new Vector3(0.1f, 0.1f, 0.1f);
 
-        _targetObject.transform.localScale = Vector3.Max(newScale, minimumScale);
-    }
-
-    private void UpdateAllInputFields()
-    {
-        if (_targetObject == null)
-            return;
-
-        Vector3 value = _targetObject.transform.position;
-        _inspectorManager.UpdateInputFields(TransformType.Position, value);
-
-        value = _targetObject.transform.rotation.eulerAngles;
-        _inspectorManager.UpdateInputFields(TransformType.Rotation, value);
-
-        value = _targetObject.transform.localScale;
-        _inspectorManager.UpdateInputFields(TransformType.Scale, value);
-    }
-
-    public void UpdateTargetTransform(float value, TransformType transformType, TransformAxis transformAxis)
-    {
-        if (_targetObject == null)
-            return;
-
-        Vector3 newPosition = _targetObject.transform.position;
-        Vector3 newRotation = _targetObject.transform.eulerAngles;
-        Vector3 newScale = _targetObject.transform.localScale;
-
-        switch (transformType)
+        foreach (GameObject go in _targetObjects)
         {
-            case TransformType.Position when transformAxis == TransformAxis.X:
-                newPosition.x = value;
-                break;
-            case TransformType.Position when transformAxis == TransformAxis.Y:
-                newPosition.y = value;
-                break;
-            case TransformType.Position when transformAxis == TransformAxis.Z:
-                newPosition.z = value;
-                break;
-            case TransformType.Rotation when transformAxis == TransformAxis.X:
-                newRotation.x = value;
-                break;
-            case TransformType.Rotation when transformAxis == TransformAxis.Y:
-                newRotation.y = value;
-                break;
-            case TransformType.Rotation when transformAxis == TransformAxis.Z:
-                newRotation.z = value;
-                break;
-            case TransformType.Scale when transformAxis == TransformAxis.X:
-                newScale.x = value;
-                break;
-            case TransformType.Scale when transformAxis == TransformAxis.Y:
-                newScale.y = value;
-                break;
-            case TransformType.Scale when transformAxis == TransformAxis.Z:
-                newScale.z = value;
-                break;
+            Vector3 newScale = go.transform.localScale;
+            go.transform.localScale = Vector3.Max(newScale, minimumScale);
         }
-
-        _targetObject.transform.position = newPosition;
-        _targetObject.transform.rotation = Quaternion.Euler(newRotation);
-        _targetObject.transform.localScale = newScale;
-        activeGizmo.SetTargetObject(_targetObject);
     }
 
+    public void UpdateTargetTransforms(float value, TransformType transformType, TransformAxis transformAxis)
+    {
+        if (_targetObjects.Count == 0)
+            return;
+
+        foreach(GameObject go in _targetObjects)
+        {
+            Vector3 newPosition = go.transform.position;
+            Vector3 newRotation = go.transform.eulerAngles;
+            Vector3 newScale = go.transform.localScale;
+
+            switch (transformType)
+            {
+                case TransformType.Position when transformAxis == TransformAxis.X:
+                    newPosition.x = value;
+                    break;
+                case TransformType.Position when transformAxis == TransformAxis.Y:
+                    newPosition.y = value;
+                    break;
+                case TransformType.Position when transformAxis == TransformAxis.Z:
+                    newPosition.z = value;
+                    break;
+                case TransformType.Rotation when transformAxis == TransformAxis.X:
+                    newRotation.x = value;
+                    break;
+                case TransformType.Rotation when transformAxis == TransformAxis.Y:
+                    newRotation.y = value;
+                    break;
+                case TransformType.Rotation when transformAxis == TransformAxis.Z:
+                    newRotation.z = value;
+                    break;
+                case TransformType.Scale when transformAxis == TransformAxis.X:
+                    newScale.x = value;
+                    break;
+                case TransformType.Scale when transformAxis == TransformAxis.Y:
+                    newScale.y = value;
+                    break;
+                case TransformType.Scale when transformAxis == TransformAxis.Z:
+                    newScale.z = value;
+                    break;
+            }
+
+            go.transform.position = newPosition;
+            go.transform.rotation = Quaternion.Euler(newRotation);
+            go.transform.localScale = newScale;
+            activeGizmo.SetTargetObjects(_targetObjects);
+        }
+    }
 
     private void EditModeChanged(EditMode newEditMode)
     {
         if(newEditMode != EditMode.Prefab)
         {
-            OnTargetObjectChanged(null);
+            OnTargetObjectChanged(null, true);
         }
+    }
+
+    private void ToggleZoomAbility()
+    {
+        bool canZoom = _currentTargetingType != TargetingType.PrefabPlacement;
+        RTFocusCamera.Get.ZoomSettings.IsZoomEnabled = canZoom;
     }
     #endregion
 }

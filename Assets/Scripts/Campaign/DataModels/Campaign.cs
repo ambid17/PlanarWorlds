@@ -8,41 +8,21 @@ using UnityEngine;
 public class Campaign
 {
     [SerializeField]
-    public string campaignName;
+    public List<PrefabModel> prefabs;
     [SerializeField]
-    public List<SerializedPrefab> prefabs;
+    public List<TileModel> tiles;
+    [SerializeField]
+    public string filePath;
 
     public Campaign()
     {
-        campaignName = "testCampaign";
-        prefabs = new List<SerializedPrefab>();
-    }
-
-    public void UpdateName(string newName)
-    {
-        // If the file already exists, make sure to rename it
-        string currentFilePath = FilePathUtil.GetSaveFilePath(campaignName);
-        string newFilePath = FilePathUtil.GetSaveFilePath(newName);
-        if (File.Exists(currentFilePath))
-        {
-            try
-            {
-                File.Move(currentFilePath, newFilePath);
-
-            }catch(IOException e)
-            {
-                Debug.LogWarning($"Cannot rename file \n{e.Message}");
-            }
-        }
-
-        campaignName = newName;
-        Save();
+        prefabs = new List<PrefabModel>();
+        tiles = new List<TileModel>();
     }
 
     #region Serialization
     public void Save()
     {
-        string filePath = FilePathUtil.GetSaveFilePath(campaignName);
         string fileContents = JsonUtility.ToJson(this);
         try
         {
@@ -52,14 +32,14 @@ public class Campaign
         {
             Debug.LogError($"{e.Message}\n{e.StackTrace}");
         }
-        Debug.Log($"Finished Saving campaign {campaignName} to {filePath}");
+        Debug.Log($"Finished Saving campaign to {filePath}");
     }
 
-    public static Campaign LoadFromName(string campaignName)
+    public static Campaign LoadFromPath(string filePath)
     {
         Campaign campaign = new Campaign();
 
-        string filePath = FilePathUtil.GetSaveFilePath(campaignName);
+        Debug.Log($"Loading campaign from: {filePath}");
         if (File.Exists(filePath))
         {
             try
@@ -70,10 +50,35 @@ public class Campaign
             catch (Exception e)
             {
                 Debug.LogError($"{e.Message}\n{e.StackTrace}");
+                campaign = null;
             }
+        }
+        else
+        {
+            Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
+            campaign = null;
         }
 
         return campaign;
+    }
+
+    // Find the next unused campaign name
+    // i.e. : tempCampaign0, tempCampaign1, etc
+    public string SetTempFilePath()
+    {
+        string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
+
+        int fileCounter = 1;
+        string fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.plane");
+
+        while (File.Exists(fullFilePath))
+        {
+            fileCounter++;
+            fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.plane");
+        }
+
+        filePath = fullFilePath;
+        return fullFilePath;
     }
     #endregion
 }

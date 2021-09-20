@@ -20,7 +20,7 @@ public class FilePathUtil : MonoBehaviour
     {
         string campaignParentFolder = Path.Combine(Application.persistentDataPath, campaignFolderName);
         EnsureDirectoryExists(campaignParentFolder);
-        string saveFilePath = Path.Combine(campaignParentFolder, $"{campaignName}.json");
+        string saveFilePath = Path.Combine(campaignParentFolder, $"{campaignName}.plane");
         return saveFilePath;
     }
 
@@ -29,7 +29,7 @@ public class FilePathUtil : MonoBehaviour
         string campaignParentFolder = Path.Combine(Application.persistentDataPath, campaignFolderName);
         EnsureDirectoryExists(campaignParentFolder);
 
-        List<string> filePaths = Directory.EnumerateFiles(campaignParentFolder, "*.json", SearchOption.AllDirectories).ToList();
+        List<string> filePaths = Directory.EnumerateFiles(campaignParentFolder, "*.plane", SearchOption.AllDirectories).ToList();
 
         List<string> fileNames = new List<string>();
         foreach(string path in filePaths)

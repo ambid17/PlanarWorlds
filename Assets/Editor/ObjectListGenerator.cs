@@ -90,7 +90,8 @@ public class PrefabListGenerator : EditorWindow
             generatedPrefabs[i] = new Prefab()
             {
                 gameObject = prefabs[i],
-                previewTexture = previews[i]
+                previewTexture = previews[i],
+                prefabId = i
             };
         }
 

@@ -15,9 +15,13 @@ public class Constants
     public static int defaultBrushSize = 1;
     public static float rotationSpeed = 15;
 
+
     public static Color ShadowTileColor = new Color(1, 1, 1, 0.3f);
 
     public static string UnsignedIntegerPattern = @"^[0-9]*$";
 
     public static string TileGridDir = "Assets/ScriptableObjects/TileGrids";
+
+    public static string recentCampainsFileName = "recentCampaigns.json";
+
 }
