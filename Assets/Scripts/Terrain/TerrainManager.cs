@@ -55,6 +55,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public bool isValidDrag;
     private Vector3 _dragStartPosition;
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
+    private List<Vector3Int> _highlightedTilePositions = new List<Vector3Int>();
 
     private BoxCollider _tileMapCollider;
     private BoxCollider _highlightTileMapCollider;
@@ -200,18 +201,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         _brushSize = brushSize;
     }
 
-    public void SetMapSize(TransformAxis axis, int size)
-    {
-        _previousMapSize = _mapSize;
-        if (axis == TransformAxis.X)
-            _mapSize.x = size;
-        else
-            _mapSize.y = size;
-
-        // Resize box colliders to fit new map size
-        SetTileMapColliderSizes(_mapSize);
-    }
-
     public void SetCurrentEditMode(TerrainEditMode newEditMode)
     {
         _currentEditMode = newEditMode;
@@ -268,22 +257,34 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void HighlightSelection(Vector3 hitPoint)
     {
-        highlightTileMap.ClearAllTiles();
+        highlightTileMap.ClearTiles(_highlightedTilePositions);
         PaintHighlightTiles(hitPoint);
         PaintShadowTiles(hitPoint);
     }
 
     private void PaintHighlightTiles(Vector3 hitPoint)
     {
-        Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
+        Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
+        Vector3Int dragEndPosition = tileMap.WorldToCell(hitPoint);
 
-        Dictionary<Vector3Int, Tile> tilesForBrush = _highlightTileSelector
-            .GetHighlightTilesByBrushSize(centerPosition, _brushSize, isDragEnabled);
+        Dictionary<Vector3Int, Tile> tilesForBrush;
+        if (isDragEnabled)
+        {
+            tilesForBrush = _highlightTileSelector
+            .GetHighlightTilesForDrag(startPosition, dragEndPosition);
+        }
+        else
+        {
+            tilesForBrush = _highlightTileSelector
+            .GetHighlightTilesByBrushSize(dragEndPosition, _brushSize);
+        }
+        
 
         foreach (KeyValuePair<Vector3Int, Tile> keyValuePair in tilesForBrush)
         {
             highlightTileMap.SetTile(keyValuePair.Key, keyValuePair.Value,
                 _highlightTileMapCollider.bounds);
+            _highlightedTilePositions.Add(keyValuePair.Key);
         }
     }
 
@@ -311,34 +312,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         shadowTileMap.SetTile(tilePosition, tileToPaint, _shadowTileMapCollider.bounds);
         shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
         shadowTileMap.SetColor(tilePosition, Constants.ShadowTileColor);
-    }
-
-    public void GenerateDefaultMap(bool clearAllTiles)
-    {
-        if (!_currentTile)
-            return;
-
-        if (clearAllTiles)
-            tileMap.ClearAllTiles();
-
-        FillTiles(_mapSize);
-    }
-
-    private void FillTiles(Vector2 fillRange)
-    {
-        int xRange = Mathf.FloorToInt(fillRange.x / 2);
-        int yRange = Mathf.FloorToInt(fillRange.y / 2);
-
-        for (int x = -xRange; x < xRange; x++)
-        {
-            for (int y = -yRange; y < yRange; y++)
-            {
-                Vector3Int tilePos = new Vector3Int(x, y, 0);
-                tileMap.SetTile(tilePos, _currentTile);
-                // This allows us to change the opacity of the tile in PaintShadowTile
-                tileMap.SetTileFlags(tilePos, TileFlags.None);
-            }
-        }
     }
 
     private void SetTileMapColliderSizes(Vector2 colliderSize)

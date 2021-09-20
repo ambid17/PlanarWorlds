@@ -2,6 +2,7 @@
 
 public static class TerrainUtils
 {
+    // This method Gets the offset, and also swaps the start/end position, so that the start position is in the bottom left
     public static Vector3Int GetDragPaintOffset(ref Vector3Int startPosition, ref Vector3Int endPosition)
     {
         // Set a default offset, which will be overridden if either x or y are negative
