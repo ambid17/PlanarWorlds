@@ -21,6 +21,9 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public Tilemap highlightTileMap;
     public Tilemap shadowTileMap;
 
+    public TerrainInspectorUI _terrainInspectorUI;
+
+
     [SerializeField]
     private HighlightTileSelector _highlightTileSelector;
 
@@ -46,6 +49,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     [HideInInspector]
     public bool isDragEnabled;
+    [HideInInspector]
+    public bool isSmartDragEnabled;
     [HideInInspector]
     public bool isValidDrag;
     private Vector3 _dragStartPosition;
@@ -203,11 +208,13 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public void SetCurrentTile(Tile tile)
     {
         _currentTile = tile;
+        _currentTileGrid = null;
     }
 
     public void SetCurrentTileGrid(TileGrid tileGrid)
     {
         _currentTileGrid = tileGrid;
+        _currentTile = null;
     }
 
     public void PaintTile(Vector3 hitPoint)
@@ -314,5 +321,10 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
             highlightTileMap.ClearAllTiles();
             shadowTileMap.ClearAllTiles();
         }
+    }
+
+    public void ToggleTileSelector()
+    {
+        _terrainInspectorUI.ToggleTileSelector(isSmartDragEnabled);
     }
 }

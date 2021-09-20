@@ -56,12 +56,29 @@ public class TerrainMenu : MonoBehaviour
     private void OnDragClicked()
     {
         _terrainManager.isDragEnabled = !_terrainManager.isDragEnabled;
+
+        if (!_terrainManager.isDragEnabled && _terrainManager.isSmartDragEnabled) 
+        {
+            _terrainManager.isSmartDragEnabled = false;
+            smartDragSwitchManager.AnimateSwitch();
+        }
+
         _terrainManager.isValidDrag = false;
+        _terrainManager.ToggleTileSelector();
     }
 
     private void OnSmartDragClicked()
     {
+        _terrainManager.isSmartDragEnabled = !_terrainManager.isSmartDragEnabled;
 
+        if (_terrainManager.isSmartDragEnabled && !_terrainManager.isDragEnabled)
+        {
+            _terrainManager.isDragEnabled = true;
+            dragSwitchManager.AnimateSwitch();
+        }
+
+        _terrainManager.isValidDrag = false;
+        _terrainManager.ToggleTileSelector();
     }
 
     private void Close()

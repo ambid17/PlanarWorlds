@@ -22,6 +22,9 @@ public class TerrainInspectorUI : MonoBehaviour
     private TerrainManager _terrainManager;
     private ImageTabButton _currentSelectedButton;
 
+    private ImageTabButton _firstTilebutton;
+    private ImageTabButton _firstTileGridbutton;
+
     void Awake()
     {
         _terrainManager = TerrainManager.GetInstance();
@@ -39,16 +42,24 @@ public class TerrainInspectorUI : MonoBehaviour
 
     private void CreateTileButtons()
     {
+        bool isFirst = true;
         foreach (Tile tile in _tiles)
         {
             GameObject newButton = Instantiate(tileButtonPrefab, tileSelectorParent.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
             tabButton.Setup(tile.sprite, () => SetCurrentTile(tile, tabButton));
+
+            if (isFirst)
+            {
+                isFirst = false;
+                _firstTilebutton = tabButton;
+            }
         }
     }
 
     private void CreateTileGridButtons()
     {
+        bool isFirst = true;
         foreach (TileGrid tileGrid in _tileGrids)
         {
             if (tileGrid != null)
@@ -56,6 +67,12 @@ public class TerrainInspectorUI : MonoBehaviour
                 GameObject newButton = Instantiate(tileButtonPrefab, tileGridSelectorParent.transform);
                 ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
                 tabButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, tabButton));
+
+                if (isFirst)
+                {
+                    isFirst = false;
+                    _firstTileGridbutton = tabButton;
+                }
             }
         }
     }
@@ -81,8 +98,6 @@ public class TerrainInspectorUI : MonoBehaviour
         }
 
         _terrainManager.SetCurrentTile(tile);
-        _terrainManager.SetCurrentTileGrid(null);
-
         _currentSelectedButton = tabButton;
     }
 
@@ -94,14 +109,21 @@ public class TerrainInspectorUI : MonoBehaviour
         }
 
         _terrainManager.SetCurrentTileGrid(tileGrid);
-        _terrainManager.SetCurrentTile(null);
-
         _currentSelectedButton = tabButton;
     }
 
-    public void ToggleTileSelector(bool isTileGrid)
+    public void ToggleTileSelector(bool isSmartDragEnabled)
     {
-        tileSelectorParent.SetActive(!isTileGrid);
-        tileGridSelectorParent.SetActive(isTileGrid);
+        tileSelectorParent.SetActive(!isSmartDragEnabled);
+        tileGridSelectorParent.SetActive(isSmartDragEnabled);
+
+        if (isSmartDragEnabled)
+        {
+            SetCurrentTileGrid(_tileGrids[0], _firstTileGridbutton);
+        }
+        else
+        {
+            SetCurrentTile(_tiles[0], _firstTilebutton);
+        }
     }
 }
