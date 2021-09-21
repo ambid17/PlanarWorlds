@@ -1,61 +1,85 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Tilemaps;
-using Michsky.UI.ModernUIPack;
 
 public enum TerrainEditMode
 {
-    Paint, Erase, BoxPaint
+    Paint, Erase
 }
 
 public class TerrainInspectorUI : MonoBehaviour
 {
-    public GameObject buttonPrefab;
+    private Tile[] _tiles;
+    private TileGrid[] _tileGrids;
 
-    public ToggleButton paintButton;
-    public ToggleButton eraseButton;
-    public ToggleButton settingsButton;
+    public GameObject tileButtonPrefab;
+
+    public TabButton paintButton;
+    public TabButton eraseButton;
 
     public GameObject tileSelectorParent;
-
-    public TerrainSettingsUI terrainSettingsUI;
+    public GameObject tileGridSelectorParent;
 
     private TerrainManager _terrainManager;
-    private ImageToggleButton _currentSelectedButton;
+
+    private ImageTabButton _currentTileButton;
+    private Tile _currentTile;
+    private ImageTabButton _currentTileGridButton;
+    private TileGrid _currentTileGrid;
 
     void Awake()
     {
         _terrainManager = TerrainManager.GetInstance();
+        _tiles = _terrainManager.tileList.tiles;
+        _tileGrids = _terrainManager.tileGrids;
     }
 
     void Start()
     {
         CreateTileButtons();
+        CreateTileGridButtons();
         InitModeButtons();
+        ToggleTileSelector(false);
     }
 
     private void CreateTileButtons()
     {
-        foreach (Tile tile in _terrainManager.tiles)
+        bool isFirst = true;
+        foreach (Tile tile in _tiles)
         {
-            GameObject newButton = Instantiate(buttonPrefab, tileSelectorParent.transform);
-            ImageToggleButton toggleButton = newButton.GetComponent<ImageToggleButton>();
-            toggleButton.Setup(tile.sprite, () => SetCurrentTile(tile, toggleButton));
+            GameObject newButton = Instantiate(tileButtonPrefab, tileSelectorParent.transform);
+            ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
+            tabButton.Setup(tile.sprite, () => SetCurrentTile(tile, tabButton));
+
+            if (isFirst)
+            {
+                tabButton.Select();
+                _currentTile = tile;
+
+                isFirst = false;
+            }
         }
     }
 
-    private void SetCurrentTile(Tile tile, ImageToggleButton toggleButton)
+    private void CreateTileGridButtons()
     {
-        if (_currentSelectedButton)
+        bool isFirst = true;
+        foreach (TileGrid tileGrid in _tileGrids)
         {
-            _currentSelectedButton.Unselect();
+            if (tileGrid != null)
+            {
+                GameObject newButton = Instantiate(tileButtonPrefab, tileGridSelectorParent.transform);
+                ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
+                tabButton.Setup(tileGrid.Sprite, () => SetCurrentTileGrid(tileGrid, tabButton));
+
+                if (isFirst)
+                {
+                    tabButton.Select();
+                    _currentTileGrid = tileGrid;
+
+                    isFirst = false;
+                }
+            }
         }
-
-        _terrainManager.SetCurrentTile(tile);
-
-        _currentSelectedButton = toggleButton;
     }
 
     private void InitModeButtons()
@@ -63,23 +87,61 @@ public class TerrainInspectorUI : MonoBehaviour
         paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
         eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
 
-        settingsButton.SetupAction(() => ToggleSettingsMenu(true));
-        ToggleSettingsMenu(false);
         paintButton.Select();
-    }
-
-    private void ToggleSettingsMenu(bool shouldBeActive)
-    {
-        terrainSettingsUI.ToggleSettingsMenu(shouldBeActive);
-
-        paintButton.Unselect();
-        eraseButton.Unselect();
-        settingsButton.Unselect();
     }
 
     private void ChangeEditMode(TerrainEditMode newMode)
     {
         _terrainManager.SetCurrentEditMode(newMode);
-        ToggleSettingsMenu(false);
+
+        if(newMode == TerrainEditMode.Paint)
+        {
+            paintButton.Select();
+            eraseButton.Unselect();
+        }
+        else
+        {
+            eraseButton.Select();
+            paintButton.Unselect();
+        }
+    }
+
+    private void SetCurrentTile(Tile tile, ImageTabButton tabButton)
+    {
+        if (_currentTileButton)
+        {
+            _currentTileButton.Unselect();
+        }
+
+        _terrainManager.SetCurrentTile(tile);
+        _currentTileButton = tabButton;
+        _currentTile = tile;
+    }
+
+    private void SetCurrentTileGrid(TileGrid tileGrid, ImageTabButton tabButton)
+    {
+        if (_currentTileGridButton)
+        {
+            _currentTileGridButton.Unselect();
+        }
+
+        _terrainManager.SetCurrentTileGrid(tileGrid);
+        _currentTileGridButton = tabButton;
+        _currentTileGrid = tileGrid;
+    }
+
+    public void ToggleTileSelector(bool isSmartDragEnabled)
+    {
+        tileSelectorParent.SetActive(!isSmartDragEnabled);
+        tileGridSelectorParent.SetActive(isSmartDragEnabled);
+
+        if (isSmartDragEnabled)
+        {
+            _terrainManager.SetCurrentTileGrid(_currentTileGrid);
+        }
+        else
+        {
+            _terrainManager.SetCurrentTile(_currentTile);
+        }
     }
 }
