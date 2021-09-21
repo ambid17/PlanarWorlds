@@ -19,6 +19,8 @@ public class TerrainMenu : MonoBehaviour
     {
         _uIManager = UIManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
+
+        UIManager.OnEditModeChanged += EditModeChanged;
     }
 
     void Start()
@@ -84,5 +86,13 @@ public class TerrainMenu : MonoBehaviour
     private void Close()
     {
         gameObject.SetActive(false);
+    }
+
+    private void EditModeChanged(EditMode newEditMode)
+    {
+        if(newEditMode != EditMode.Terrain)
+        {
+            Close();
+        }
     }
 }
