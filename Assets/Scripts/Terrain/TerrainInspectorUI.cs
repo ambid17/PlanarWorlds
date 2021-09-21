@@ -3,7 +3,7 @@ using UnityEngine.Tilemaps;
 
 public enum TerrainEditMode
 {
-    Paint, Erase, BoxPaint
+    Paint, Erase
 }
 
 public class TerrainInspectorUI : MonoBehaviour
@@ -20,10 +20,11 @@ public class TerrainInspectorUI : MonoBehaviour
     public GameObject tileGridSelectorParent;
 
     private TerrainManager _terrainManager;
-    private ImageTabButton _currentSelectedButton;
 
-    private ImageTabButton _firstTilebutton;
-    private ImageTabButton _firstTileGridbutton;
+    private ImageTabButton _currentTileButton;
+    private Tile _currentTile;
+    private ImageTabButton _currentTileGridButton;
+    private TileGrid _currentTileGrid;
 
     void Awake()
     {
@@ -51,8 +52,10 @@ public class TerrainInspectorUI : MonoBehaviour
 
             if (isFirst)
             {
+                tabButton.Select();
+                _currentTile = tile;
+
                 isFirst = false;
-                _firstTilebutton = tabButton;
             }
         }
     }
@@ -70,8 +73,10 @@ public class TerrainInspectorUI : MonoBehaviour
 
                 if (isFirst)
                 {
+                    tabButton.Select();
+                    _currentTileGrid = tileGrid;
+
                     isFirst = false;
-                    _firstTileGridbutton = tabButton;
                 }
             }
         }
@@ -88,28 +93,41 @@ public class TerrainInspectorUI : MonoBehaviour
     private void ChangeEditMode(TerrainEditMode newMode)
     {
         _terrainManager.SetCurrentEditMode(newMode);
+
+        if(newMode == TerrainEditMode.Paint)
+        {
+            paintButton.Select();
+            eraseButton.Unselect();
+        }
+        else
+        {
+            eraseButton.Select();
+            paintButton.Unselect();
+        }
     }
 
     private void SetCurrentTile(Tile tile, ImageTabButton tabButton)
     {
-        if (_currentSelectedButton)
+        if (_currentTileButton)
         {
-            _currentSelectedButton.Unselect();
+            _currentTileButton.Unselect();
         }
 
         _terrainManager.SetCurrentTile(tile);
-        _currentSelectedButton = tabButton;
+        _currentTileButton = tabButton;
+        _currentTile = tile;
     }
 
     private void SetCurrentTileGrid(TileGrid tileGrid, ImageTabButton tabButton)
     {
-        if (_currentSelectedButton)
+        if (_currentTileGridButton)
         {
-            _currentSelectedButton.Unselect();
+            _currentTileGridButton.Unselect();
         }
 
         _terrainManager.SetCurrentTileGrid(tileGrid);
-        _currentSelectedButton = tabButton;
+        _currentTileGridButton = tabButton;
+        _currentTileGrid = tileGrid;
     }
 
     public void ToggleTileSelector(bool isSmartDragEnabled)
@@ -119,11 +137,11 @@ public class TerrainInspectorUI : MonoBehaviour
 
         if (isSmartDragEnabled)
         {
-            SetCurrentTileGrid(_tileGrids[0], _firstTileGridbutton);
+            _terrainManager.SetCurrentTileGrid(_currentTileGrid);
         }
         else
         {
-            SetCurrentTile(_tiles[0], _firstTilebutton);
+            _terrainManager.SetCurrentTile(_currentTile);
         }
     }
 }

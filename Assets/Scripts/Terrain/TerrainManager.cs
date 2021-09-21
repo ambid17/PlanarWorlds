@@ -56,6 +56,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private Vector3 _dragStartPosition;
     private List<Vector3Int> _draggedTilePositions = new List<Vector3Int>();
     private List<Vector3Int> _highlightedTilePositions = new List<Vector3Int>();
+    private List<Vector3Int> _shadowTilePositions = new List<Vector3Int>();
 
     private BoxCollider _tileMapCollider;
     private BoxCollider _highlightTileMapCollider;
@@ -189,7 +190,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     private void ResetDrag()
     {
         _draggedTilePositions.Clear();
-        shadowTileMap.ClearAllTiles();
+        shadowTileMap.ClearTiles(_shadowTilePositions);
         isValidDrag = false;
     }
     #endregion
@@ -202,7 +203,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public void SetCurrentEditMode(TerrainEditMode newEditMode)
     {
         _currentEditMode = newEditMode;
-        shadowTileMap.ClearAllTiles();
+        shadowTileMap.ClearTiles(_shadowTilePositions);
     }
 
     public void SetCurrentTile(Tile tile)
@@ -268,10 +269,19 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         Vector3Int dragEndPosition = tileMap.WorldToCell(hitPoint);
 
         Dictionary<Vector3Int, Tile> tilesForBrush;
-        if (isDragEnabled && isValidDrag)
+        if (isDragEnabled)
         {
-            tilesForBrush = _highlightTileSelector
-            .GetHighlightTilesForDrag(startPosition, dragEndPosition);
+            if (isValidDrag)
+            {
+                tilesForBrush = _highlightTileSelector
+                .GetHighlightTilesForDrag(startPosition, dragEndPosition);
+            }
+            else
+            {
+                tilesForBrush = _highlightTileSelector
+                .GetHighlightTilesByBrushSize(dragEndPosition, 1); // We don't want to use the brush size when in drag mode but not dragging
+            }
+            
         }
         else
         {
@@ -291,12 +301,11 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public void PaintShadowTiles(Vector3 hitPoint)
     {
         if (!_currentTile
-            || _currentEditMode == TerrainEditMode.Erase
-            || (isDragEnabled && !isValidDrag))
+            || _currentEditMode == TerrainEditMode.Erase)
             return;
 
         if (!isValidDrag)
-            shadowTileMap.ClearAllTiles();
+            shadowTileMap.ClearTiles(_shadowTilePositions);
 
         Vector3Int centerPosition = tileMap.WorldToCell(hitPoint);
         List<Vector3Int> tilePositionsForBrush = GetTilesByBrushSize(centerPosition);
@@ -309,6 +318,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     private void PaintShadowTile(Vector3Int tilePosition, Tile tileToPaint)
     {
+        _shadowTilePositions.Add(tilePosition);
         shadowTileMap.SetTile(tilePosition, tileToPaint, _shadowTileMapCollider.bounds);
         shadowTileMap.SetTileFlags(tilePosition, TileFlags.None);
         shadowTileMap.SetColor(tilePosition, Constants.ShadowTileColor);
@@ -326,5 +336,6 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public void ToggleTileSelector()
     {
         _terrainInspectorUI.ToggleTileSelector(isSmartDragEnabled);
+        ResetDrag();
     }
 }
