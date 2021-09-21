@@ -164,7 +164,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         foreach(TileModel tile in _currentCampaign.tiles)
         {
-            Tile tileToSet = _terrainManager.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
+            Tile tileToSet = _terrainManager.tileList.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
             _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
         }
     }
@@ -232,7 +232,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     private void AddToRecentCampaigns(string path)
     {
         recentCampaigns.Add(path);
-        OnRecentCampaignsUpdated.Invoke();
+        OnRecentCampaignsUpdated?.Invoke();
     }
     #endregion
 }

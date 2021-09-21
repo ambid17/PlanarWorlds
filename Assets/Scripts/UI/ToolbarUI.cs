@@ -10,6 +10,9 @@ public class ToolbarUI : MonoBehaviour
     public FileMenu fileMenu;
     public TMP_Text campaignNameText;
 
+    public Button terrainButton;
+    public TerrainMenu terrainMenu;
+
     private UIManager _uiManager;
 
     void Start()
@@ -19,6 +22,9 @@ public class ToolbarUI : MonoBehaviour
         fileButton.onClick.AddListener(FileButtonClicked);
         fileMenu.gameObject.SetActive(false);
         fileMenu.CampaignNameUpdated += UpdateCampaignName;
+
+        terrainButton.onClick.AddListener(TerrainButtonClicked);
+        terrainMenu.gameObject.SetActive(false);
     }
 
     void Update()
@@ -32,6 +38,11 @@ public class ToolbarUI : MonoBehaviour
     private void FileButtonClicked()
     {
         fileMenu.gameObject.SetActive(true);
+    }
+
+    private void TerrainButtonClicked()
+    {
+        terrainMenu.gameObject.SetActive(true);
     }
 
     public void UpdateCampaignName(string newName)

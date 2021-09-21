@@ -8,9 +8,9 @@ using UnityEngine.UI;
 
 public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 {
-    public ToggleButton positionButton;
-    public ToggleButton rotationButton;
-    public ToggleButton scaleButton;
+    public TabButton positionButton;
+    public TabButton rotationButton;
+    public TabButton scaleButton;
 
     public TMP_InputField xPositionInput;
     public TMP_InputField yPositionInput;

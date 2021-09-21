@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Map
+  m_text: Drag
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 7461323728440315547}
   - component: {fileID: 1160982767427321658}
   - component: {fileID: 6826926906280726523}
-  - component: {fileID: 3292553528572581917}
+  - component: {fileID: 8443245027998822239}
   m_Layer: 5
   m_Name: ToggleButton
   m_TagString: Untagged
@@ -256,7 +256,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3292553528572581917
+--- !u!114 &8443245027998822239
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -265,9 +265,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8310570353971415019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c32d90dd1a3f02a49b3bb91488aef9d0, type: 3}
+  m_Script: {fileID: 11500000, guid: 5492cc141aef72e44b3ca784d79b1049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   activeTextColor: {r: 0.4, g: 0.4, b: 1, a: 1}
   hoverTextColor: {r: 0.4, g: 0.4, b: 1, a: 1}
   inactiveTextColor: {r: 1, g: 1, b: 1, a: 1}
+  button: {fileID: 0}
+  buttonImage: {fileID: 0}
+  buttonText: {fileID: 0}
+  isSelected: 0
