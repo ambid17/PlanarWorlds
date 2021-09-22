@@ -17,7 +17,9 @@ public class TerrainInspectorUI : MonoBehaviour
     public TabButton eraseButton;
 
     public GameObject tileSelectorParent;
+    public GameObject tileList;
     public GameObject tileGridSelectorParent;
+    public GameObject tileGridList;
 
     private TerrainManager _terrainManager;
 
@@ -53,6 +55,7 @@ public class TerrainInspectorUI : MonoBehaviour
             if (isFirst)
             {
                 tabButton.Select();
+                _currentTileButton = tabButton;
                 _currentTile = tile;
 
                 isFirst = false;
@@ -74,6 +77,7 @@ public class TerrainInspectorUI : MonoBehaviour
                 if (isFirst)
                 {
                     tabButton.Select();
+                    _currentTileGridButton = tabButton;
                     _currentTileGrid = tileGrid;
 
                     isFirst = false;
@@ -132,8 +136,8 @@ public class TerrainInspectorUI : MonoBehaviour
 
     public void ToggleTileSelector(bool isSmartDragEnabled)
     {
-        tileSelectorParent.SetActive(!isSmartDragEnabled);
-        tileGridSelectorParent.SetActive(isSmartDragEnabled);
+        tileList.SetActive(!isSmartDragEnabled);
+        tileGridList.SetActive(isSmartDragEnabled);
 
         if (isSmartDragEnabled)
         {

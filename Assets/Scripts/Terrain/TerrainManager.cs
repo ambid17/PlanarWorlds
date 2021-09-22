@@ -158,7 +158,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
                 // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
                 if (_currentEditMode == TerrainEditMode.Erase)
-                    tileToPaint = dragState == DragState.Indicate ? _highlightTileSelector.centre : null;
+                    tileToPaint = null;
                 else if (_currentTile != null)
                     tileToPaint = _currentTile;
                 else if (_currentTileGrid != null)
