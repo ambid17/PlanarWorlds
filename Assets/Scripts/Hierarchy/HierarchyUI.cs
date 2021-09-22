@@ -12,6 +12,7 @@ public class HierarchyUI : MonoBehaviour
     public Transform scrollViewContent;
     public RectTransform scrollViewRect;
     public ScrollRect scrollRect;
+    public Transform dragItemsContainer;
 
     private List<HierarchyItem> hierarchyItems;
     private HierarchyManager _hierarchyManager;
@@ -54,7 +55,7 @@ public class HierarchyUI : MonoBehaviour
     {
         GameObject go = Instantiate(HierarchyItemPrefab, scrollViewContent);
         HierarchyItem item = go.GetComponent<HierarchyItem>();
-        item.Init(reference, _prefabManager.prefabContainer);
+        item.Init(reference, _prefabManager.prefabContainer, dragItemsContainer, scrollViewRect);
         item.ItemSelected += OnItemSelected;
         item.ItemExpanded += OnItemExpanded;
         item.ItemCollapsed += OnItemCollapsed;
