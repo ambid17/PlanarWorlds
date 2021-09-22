@@ -425,6 +425,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             List<GameObject> duplicateObjects = Duplicate();
 
             ToggleOutlineRender(false);
+            _hierarchyManager.DeselectItems(_targetObjects);
             _targetObjects.Clear();
 
             ForceSelectPrefabs(duplicateObjects);
