@@ -14,4 +14,13 @@ public class PrefabModel
     public Vector3 scale;
     [SerializeField]
     public int prefabId;
+    [SerializeField]
+    public string name;
+    [SerializeField]
+    public List<PrefabModel> children;
+
+    public PrefabModel()
+    {
+        children = new List<PrefabModel>();
+    }
 }

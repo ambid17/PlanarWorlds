@@ -19,7 +19,7 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public bool isFileBrowserOpen;
     public bool isPaused;
 
-    public bool UserCanInput { get => isEditingValues || isFileBrowserOpen || isPaused; }
+    public bool UserCantInput { get => isEditingValues || isFileBrowserOpen || isPaused; }
 
     public bool hierarchyWindowShouldBeActive;
     public bool inspectorWindowShouldBeActive;

@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba4b359a9e4c6947a2fd3af3e448668, type: 3}
   m_Name: TileGrid
   m_EditorClassIdentifier: 
-  topLeft: {fileID: 11400000, guid: dec15f67cae37ae4884182f7487db621, type: 2}
-  topMiddle: {fileID: 11400000, guid: 625d99d1b2bd7b4418c169377a7fef8b, type: 2}
-  topRight: {fileID: 11400000, guid: 766fd782485ee024b8b9c9a6ca710410, type: 2}
-  middleLeft: {fileID: 11400000, guid: d6ebcb1fcd001ba49b77bd20c4aaa849, type: 2}
-  middleMiddle: {fileID: 11400000, guid: f23a81f0b96b9634fb6f5c731ff8e637, type: 2}
-  middleRight: {fileID: 11400000, guid: af334a8ac45ef3f4593321480265b14c, type: 2}
-  bottomLeft: {fileID: 11400000, guid: 4e078f6b0998a384cb4609bfd6d94fae, type: 2}
+  _sprite: {fileID: 0}
+  bottomLeft: {fileID: 11400000, guid: 00142e8220c4f1d40a02b8e9de6e2bbc, type: 2}
   bottomMiddle: {fileID: 11400000, guid: db6f5b67de977ea479ea2c8b819abde4, type: 2}
-  bottomRight: {fileID: 11400000, guid: 1e4764e32c5405649b33e24df2bdc471, type: 2}
+  bottomRight: {fileID: 11400000, guid: 705e6f9e6eae2794da59ba1773c5071b, type: 2}
+  middleLeft: {fileID: 11400000, guid: d6ebcb1fcd001ba49b77bd20c4aaa849, type: 2}
+  middleMiddle: {fileID: 11400000, guid: 2f1c5700a0b47324a8ec66861b80fd08, type: 2}
+  middleRight: {fileID: 11400000, guid: af334a8ac45ef3f4593321480265b14c, type: 2}
+  topLeft: {fileID: 11400000, guid: ab8b35f186e998841bf5d6ef3c80769f, type: 2}
+  topMiddle: {fileID: 11400000, guid: 625d99d1b2bd7b4418c169377a7fef8b, type: 2}
+  topRight: {fileID: 11400000, guid: 2eee8caeb4c33344f9fe9bc5c6ae8f1b, type: 2}

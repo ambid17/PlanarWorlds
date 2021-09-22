@@ -21,6 +21,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private InspectorManager _inspectorManager;
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
+    private HierarchyManager _hierarchyManager;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -49,6 +50,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         _inspectorManager = InspectorManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
         _uiManager = UIManager.GetInstance();
+        _hierarchyManager = HierarchyManager.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -79,7 +81,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     void Update()
     {
-        if (_uiManager.EditMode != EditMode.Prefab || !_uiManager.UserCanInput)
+        if (_uiManager.EditMode != EditMode.Prefab || _uiManager.UserCantInput)
             return;
 
         CheckValidClick();
@@ -126,7 +128,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
             if(!mouseIsOnHierarchy && !mouseIsOnInspector)
             {
-                OnTargetObjectChanged(null, false);
+                ForceClearSelection();
             }
         }
     }
@@ -147,47 +149,92 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             
             if (!_targetObjects.Contains(selectedObject))
             {
-                OnTargetObjectChanged(selectedObject, false);
+                OnTargetObjectChanged(selectedObject);
             }
         }
     }
 
-    public void OnTargetObjectChanged(GameObject newTargetObject, bool shouldClearMultiSelect)
+    public void OnTargetObjectChanged(GameObject newTargetObject)
     {
         bool isMultiSelecting = Input.GetKey(KeyCode.LeftShift);
 
-        ToggleOutlineRender(false);
-
         if(newTargetObject == null)
         {
-            _targetObjects.Clear();
+            if (!isMultiSelecting)
+            {
+                ClearSelection();
+                UpdateRenderForSelection();
+            }
+            return;
         }
 
-        if (shouldClearMultiSelect && !isMultiSelecting)
+        if (!isMultiSelecting)
         {
-            _targetObjects.Clear();
+            ClearSelection();
+            UpdateRenderForSelection();
         }
-        
 
+        _targetObjects.Add(newTargetObject);
+        _currentTargetingType = TargetingType.Prefab;
+
+        FocusValidObjects();
+        UpdateRenderForSelection();
+    }
+
+    public void ForceSelectPrefabs(List<GameObject> objectsToSelect)
+    {
+        ClearSelection();
+
+        _targetObjects.AddRange(objectsToSelect);
+
+        _currentTargetingType = TargetingType.Prefab;
+
+        FocusValidObjects();
+        UpdateRenderForSelection();
+    }
+
+    public void ForceSelectObject(GameObject objectToSelect)
+    {
+        ClearSelection();
+
+        _targetObjects.Add(objectToSelect);
+
+        if (objectToSelect.layer == Constants.PrefabParentLayer)
+        {
+            _currentTargetingType = TargetingType.Prefab;
+        }
+        else if (objectToSelect.layer == Constants.PrefabPlacementLayer)
+        {
+            _currentTargetingType = TargetingType.PrefabPlacement;
+        }
+
+        FocusValidObjects();
+        UpdateRenderForSelection();
+    }
+
+    private void ForceClearSelection()
+    {
+        ClearSelection();
+        UpdateRenderForSelection();
+    }
+
+    private void FocusValidObjects()
+    {
+        ToggleOutlineRender(true);
+        _inspectorManager.UpdateInputFields();
+        _hierarchyManager.SelectItems(_targetObjects);
+    }
+
+    private void ClearSelection()
+    {
+        _hierarchyManager.DeselectItems(_targetObjects);
+        ToggleOutlineRender(false);
+        _targetObjects.Clear();
         _currentTargetingType = TargetingType.None;
+    }
 
-        if (newTargetObject != null)
-        {
-            _targetObjects.Add(newTargetObject);
-
-            if (newTargetObject.layer == Constants.PrefabParentLayer)
-            {
-                _currentTargetingType = TargetingType.Prefab;
-            }
-            else if (newTargetObject.layer == Constants.PrefabPlacementLayer)
-            {
-                _currentTargetingType = TargetingType.PrefabPlacement;
-            }
-
-            ToggleOutlineRender(true);
-            _inspectorManager.UpdateInputFields();
-        }
-
+    private void UpdateRenderForSelection()
+    {
         _inspectorManager.ShowUiForTargetType(_currentTargetingType);
         ToggleGizmos();
         ToggleZoomAbility();
@@ -231,9 +278,10 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         {
             foreach (GameObject go in _targetObjects)
             {
+                _hierarchyManager.RemoveItem(go);
                 Destroy(go);
             }
-            OnTargetObjectChanged(null, true);
+            ForceClearSelection();
         }
     }
 
@@ -254,7 +302,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             _targetObjects[0].layer = Constants.PrefabParentLayer;
 
             // THEN change the target object, so we keep the PrefabPlacementLayer
-            OnTargetObjectChanged(newTargets[0], true);
+            ForceSelectObject(newTargets[0]);
         }
     }
 
@@ -377,12 +425,10 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             List<GameObject> duplicateObjects = Duplicate();
 
             ToggleOutlineRender(false);
+            _hierarchyManager.DeselectItems(_targetObjects);
             _targetObjects.Clear();
 
-            foreach (GameObject go in duplicateObjects)
-            {
-                OnTargetObjectChanged(go, false);
-            }
+            ForceSelectPrefabs(duplicateObjects);
         }
     }
 
@@ -394,9 +440,10 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             {
                 foreach(GameObject go in _targetObjects)
                 {
+                    _hierarchyManager.RemoveItem(go);
                     Destroy(go);
                 }
-                OnTargetObjectChanged(null, true);
+                ForceClearSelection();
             }
         }
     }
@@ -469,8 +516,10 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             duplicateObject.transform.localScale = go.transform.localScale;
             duplicateObject.layer = go.layer;
             duplicateObject.transform.parent = go.transform.parent;
+            duplicateObject.name = go.name;
 
             toReturn.Add(duplicateObject);
+            _hierarchyManager.AddItem(duplicateObject);
         }
         
         return toReturn;
@@ -540,7 +589,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         if(newEditMode != EditMode.Prefab)
         {
-            OnTargetObjectChanged(null, true);
+            ForceClearSelection();
         }
     }
 
