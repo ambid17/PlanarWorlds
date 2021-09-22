@@ -16,8 +16,10 @@ public class HierarchyItem : MonoBehaviour
     public RectTransform content;
     public GameObject toggleArrow;
     public Button expandButton;
-    public Button selectButton;
     public PointerEventListener clickListener;
+
+    public TMP_Text inputText;
+    private TMP_SelectionCaret inputSelectionCaret;
 
 
     private Color defaultColor = new Color(0.17f, 0.25f, 0.33f, 0);
@@ -32,25 +34,30 @@ public class HierarchyItem : MonoBehaviour
 
     private RectTransform myRect;
 
+
     private void Awake()
     {
         myRect = GetComponent<RectTransform>();
+        inputText.raycastTarget = false;
+        
     }
 
     void Start()
     {
         backgroundImage.color = defaultColor;
         objectNameInput.onEndEdit.AddListener(delegate { UpdateObjectName(); });
-        selectButton.onClick.AddListener(ManualSelect);
         expandButton.onClick.AddListener(ToggleExpand);
 
         isExpanded = false;
         children = new List<HierarchyItem>();
 
         // HierarchyField.cs:131
-        //clickListener.PointerClick +=
+        clickListener.PointerClick += (eventData) => ManualSelect();
         //clickListener.PointerDown +=
         //clickListener.PointerUp +=
+
+        inputSelectionCaret = objectNameInput.GetComponentInChildren<TMP_SelectionCaret>(true);
+        inputSelectionCaret.raycastTarget = false;
     }
     
     public void Init(GameObject reference, Transform prefabContainer)
@@ -81,7 +88,8 @@ public class HierarchyItem : MonoBehaviour
 
     private void UpdateObjectName()
     {
-        reference.name = objectNameInput.text;
+        if(reference != null)
+            reference.name = objectNameInput.text;
     }
 
     private void ManualSelect()
@@ -89,6 +97,7 @@ public class HierarchyItem : MonoBehaviour
         ItemSelected?.Invoke(reference);
         backgroundImage.color = selectedColor;
         objectNameInput.interactable = true;
+        inputText.raycastTarget = true;
     }
 
     public RectTransform SelectFromScene()
@@ -102,6 +111,7 @@ public class HierarchyItem : MonoBehaviour
     {
         backgroundImage.color = defaultColor;
         objectNameInput.interactable = false;
+        inputText.raycastTarget = false;
     }
 
     public void ToggleExpand()
