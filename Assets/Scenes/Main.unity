@@ -20850,7 +20850,7 @@ MonoBehaviour:
       _text: Scale gizmo
     - _tooltip: Allows you to change universal gizmo settings.
       _text: Universal gizmo
-    _activeTabIndex: 1
+    _activeTabIndex: 3
   _settings:
     _canBeDisplayed: 1
     _isExpanded: 1
@@ -21769,7 +21769,7 @@ MonoBehaviour:
     _transformableLayers: -1
   _rotationGizmoSettings3D:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _camRightSnapStep: 15
     _camUpSnapStep: 15
     _sliderSettings:
@@ -21841,7 +21841,7 @@ MonoBehaviour:
       _scaleSensitivity: 1
   _rotationGizmoLookAndFeel3D:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _isMidCapVisible: 1
     _midCapLookAndFeel:
       _capType: 3
@@ -21986,7 +21986,7 @@ MonoBehaviour:
       _borderPolyThickness: 4
   _rotationGizmoHotkeys:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _enableSnapping:
       _isEnabled: 1
       _key: 0
@@ -22004,7 +22004,7 @@ MonoBehaviour:
         CanHaveMouseButtons: 0
   _objectRotationGizmoSettings:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _transformableLayers: -1
   _scaleGizmoSettings3D:
     _canBeDisplayed: 1
