@@ -26,8 +26,11 @@ public class PrefabModelContainer : MonoBehaviour
         List<PrefabModel> children = new List<PrefabModel>();
         foreach (Transform child in transform)
         {
-            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
-            children.Add(container.GetPrefabModel());
+            if(child.gameObject.layer == Constants.PrefabParentLayer)
+            {
+                PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
+                children.Add(container.GetPrefabModel());
+            }
         }
 
         return children;

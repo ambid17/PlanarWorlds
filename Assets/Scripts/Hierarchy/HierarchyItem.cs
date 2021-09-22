@@ -78,9 +78,11 @@ public class HierarchyItem : MonoBehaviour
     {
         int hierarchyDepth = 0;
 
-        while (reference.transform.parent != prefabContainer)
+        Transform parent = reference.transform.parent;
+        while (parent != prefabContainer)
         {
             hierarchyDepth++;
+            parent = parent.parent;
         }
         
         content.offsetMin = new Vector2(hierarchyDepth * 10, 0);

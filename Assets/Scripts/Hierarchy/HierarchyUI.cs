@@ -39,8 +39,11 @@ public class HierarchyUI : MonoBehaviour
         {
             foreach(Transform child in reference.transform)
             {
-                HierarchyItem childItem = CreateItem(child.gameObject);
-                parentItem.AddChild(childItem);
+                if(child.gameObject.layer == Constants.PrefabParentLayer)
+                {
+                    HierarchyItem childItem = CreateItem(child.gameObject);
+                    parentItem.AddChild(childItem);
+                }
             }
         }
 
