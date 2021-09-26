@@ -21,17 +21,12 @@ public class HierarchyUI : MonoBehaviour
     private PrefabManager _prefabManager;
     private PrefabGizmoManager _prefabGizmoManager;
 
-    void Start()
+    void Awake()
     {
         _hierarchyManager = HierarchyManager.GetInstance();
         _prefabManager = PrefabManager.GetInstance();
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         hierarchyItems = new List<HierarchyItem>();
-    }
-
-    void Update()
-    {
-        
     }
 
     public void AddItem(GameObject reference)

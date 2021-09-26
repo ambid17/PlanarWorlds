@@ -8,23 +8,21 @@ using UnityEngine.EventSystems;
 
 public class HierarchyItem : MonoBehaviour
 {
+    public static Color defaultColor = new Color(0.17f, 0.25f, 0.33f, 0);
+    public static Color selectedColor = new Color(0.17f, 0.25f, 0.33f, 1);
+
     public event Action<GameObject> ItemSelected;
 
     public Image backgroundImage;
     public TMP_InputField objectNameInput;
-    public RectTransform content;
     public PointerEventListener clickListener;
-
     public TMP_Text inputText;
+
     private TMP_SelectionCaret inputSelectionCaret;
-
-
-    public static Color defaultColor = new Color(0.17f, 0.25f, 0.33f, 0);
-    public static Color selectedColor = new Color(0.17f, 0.25f, 0.33f, 1);
+    private RectTransform myRect;
 
     public GameObject reference;
 
-    private RectTransform myRect;
     private UIManager _uiManager;
 
     private void Awake()

@@ -22,11 +22,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     private TerrainManager _terrainManager;
     private HierarchyManager _hierarchyManager;
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     private void Start()
     {
         _prefabManager = PrefabManager.GetInstance();
