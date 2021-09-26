@@ -10088,7 +10088,7 @@ GameObject:
   - component: {fileID: 546960795}
   - component: {fileID: 546960794}
   m_Layer: 0
-  m_Name: TerrainMenu
+  m_Name: TilemapMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19216,13 +19216,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65d22b3b914dca5408015d447e5fbadb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchInput: {fileID: 0}
   HierarchyItemPrefab: {fileID: 8309541442185500403, guid: 55166726534872d439f33980dddba302, type: 3}
   scrollViewContent: {fileID: 1618043030}
-  scrollViewRect: {fileID: 1618043030}
   scrollRect: {fileID: 1561260115}
-  verticalLayoutGroup: {fileID: 1618043031}
-  dragItem: {fileID: 0}
 --- !u!1 &1055940248
 GameObject:
   m_ObjectHideFlags: 0
@@ -28661,7 +28657,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MOVABLE WINDOW
+  m_text: Tilemap Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fa328c1ae3ffb6b4583cf371153b0be6, type: 2}
   m_sharedMaterial: {fileID: 21918420405216288, guid: fa328c1ae3ffb6b4583cf371153b0be6, type: 2}

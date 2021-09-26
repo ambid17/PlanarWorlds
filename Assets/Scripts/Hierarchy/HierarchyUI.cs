@@ -8,23 +8,15 @@ using UnityEngine.EventSystems;
 
 public class HierarchyUI : MonoBehaviour
 {
-    public TMP_InputField searchInput;
     public GameObject HierarchyItemPrefab;
     public Transform scrollViewContent;
-    public RectTransform scrollViewRect;
     public ScrollRect scrollRect;
-    public VerticalLayoutGroup verticalLayoutGroup;
-    public GameObject dragItem;
 
     private List<HierarchyItem> hierarchyItems;
-    private HierarchyManager _hierarchyManager;
-    private PrefabManager _prefabManager;
     private PrefabGizmoManager _prefabGizmoManager;
 
     void Awake()
     {
-        _hierarchyManager = HierarchyManager.GetInstance();
-        _prefabManager = PrefabManager.GetInstance();
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
         hierarchyItems = new List<HierarchyItem>();
     }
@@ -95,6 +87,7 @@ public class HierarchyUI : MonoBehaviour
         _prefabGizmoManager.ForceSelectObject(reference);
     }
 
+    // Scroll the Hierarchy to the selected item
     public void ScrollTo(RectTransform target)
     {
         Canvas.ForceUpdateCanvases();
