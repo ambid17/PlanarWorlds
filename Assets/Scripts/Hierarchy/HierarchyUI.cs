@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class HierarchyUI : MonoBehaviour
 {
@@ -12,7 +13,8 @@ public class HierarchyUI : MonoBehaviour
     public Transform scrollViewContent;
     public RectTransform scrollViewRect;
     public ScrollRect scrollRect;
-    public Transform dragItemsContainer;
+    public VerticalLayoutGroup verticalLayoutGroup;
+    public GameObject dragItem;
 
     private List<HierarchyItem> hierarchyItems;
     private HierarchyManager _hierarchyManager;
@@ -35,19 +37,6 @@ public class HierarchyUI : MonoBehaviour
     public void AddItem(GameObject reference)
     {
         HierarchyItem parentItem = CreateItem(reference);
-
-        if(reference.transform.childCount > 0)
-        {
-            foreach(Transform child in reference.transform)
-            {
-                if(child.gameObject.layer == Constants.PrefabParentLayer)
-                {
-                    HierarchyItem childItem = CreateItem(child.gameObject);
-                    parentItem.AddChild(childItem);
-                }
-            }
-        }
-
         hierarchyItems.Add(parentItem);
     }
 
@@ -55,18 +44,10 @@ public class HierarchyUI : MonoBehaviour
     {
         GameObject go = Instantiate(HierarchyItemPrefab, scrollViewContent);
         HierarchyItem item = go.GetComponent<HierarchyItem>();
-        item.Init(reference, _prefabManager.prefabContainer, dragItemsContainer, scrollViewRect);
+        item.Init(reference);
         item.ItemSelected += OnItemSelected;
-        item.ItemExpanded += OnItemExpanded;
-        item.ItemCollapsed += OnItemCollapsed;
 
         return item;
-    }
-
-    public void AddChild(GameObject parent)
-    {
-        GameObject go = Instantiate(HierarchyItemPrefab, scrollViewContent);
-        HierarchyItem item = go.GetComponent<HierarchyItem>();
     }
 
     public void RemoveItem(GameObject reference)
@@ -117,16 +98,6 @@ public class HierarchyUI : MonoBehaviour
     private void OnItemSelected(GameObject reference)
     {
         _prefabGizmoManager.ForceSelectObject(reference);
-    }
-
-    private void OnItemExpanded(GameObject reference)
-    {
-
-    }
-
-    private void OnItemCollapsed(GameObject reference)
-    {
-
     }
 
     public void ScrollTo(RectTransform target)
