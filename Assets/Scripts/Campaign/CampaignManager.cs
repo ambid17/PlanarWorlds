@@ -19,13 +19,13 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     public Campaign CurrentCampaign { get => _currentCampaign; }
 
     private PrefabManager _prefabManager;
-    private TileMapManager _terrainManager;
+    private TileMapManager _tileMapManager;
     private HierarchyManager _hierarchyManager;
 
     private void Start()
     {
         _prefabManager = PrefabManager.GetInstance();
-        _terrainManager = TileMapManager.GetInstance();
+        _tileMapManager = TileMapManager.GetInstance();
         _hierarchyManager = HierarchyManager.GetInstance();
 
         LoadRecentCampaigns();
@@ -124,13 +124,13 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         _currentCampaign.tiles = new List<TileModel>();
 
-        foreach(Vector3Int position in _terrainManager.tileMap.cellBounds.allPositionsWithin)
+        foreach(Vector3Int position in _tileMapManager.tileMap.cellBounds.allPositionsWithin)
         {
-            if (!_terrainManager.tileMap.HasTile(position))
+            if (!_tileMapManager.tileMap.HasTile(position))
                 continue;
 
             TileModel tile = new TileModel();
-            tile.tileName = _terrainManager.tileMap.GetTile(position).name;
+            tile.tileName = _tileMapManager.tileMap.GetTile(position).name;
             tile.tilePosition = position;
 
             _currentCampaign.tiles.Add(tile);
@@ -151,8 +151,8 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         foreach(TileModel tile in _currentCampaign.tiles)
         {
-            Tile tileToSet = _terrainManager.tileList.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
-            _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
+            Tile tileToSet = _tileMapManager.tileList.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
+            _tileMapManager.tileMap.SetTile(tile.tilePosition, tileToSet);
         }
     }
 
@@ -160,7 +160,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         _hierarchyManager.Clear();
         // Clear all of the current tiles
-        _terrainManager.tileMap.ClearAllTiles();
+        _tileMapManager.tileMap.ClearAllTiles();
 
         // Delete all of the current prefabs
         foreach (Transform child in _prefabManager.prefabContainer)
@@ -180,7 +180,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
                 isSaved = false;
             }
 
-            if(_terrainManager.tileMap.GetUsedTilesCount() > 0)
+            if(_tileMapManager.tileMap.GetUsedTilesCount() > 0)
             {
                 isSaved = false;
             }

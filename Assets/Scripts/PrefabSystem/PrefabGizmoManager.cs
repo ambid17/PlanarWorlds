@@ -19,7 +19,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private LayerMask layerMask;
 
     private InspectorManager _inspectorManager;
-    private TileMapManager _terrainManager;
+    private TileMapManager _tileMapManager;
     private UIManager _uiManager;
     private HierarchyManager _hierarchyManager;
 
@@ -48,7 +48,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         mainCamera = Camera.main;
 
         _inspectorManager = InspectorManager.GetInstance();
-        _terrainManager = TileMapManager.GetInstance();
+        _tileMapManager = TileMapManager.GetInstance();
         _uiManager = UIManager.GetInstance();
         _hierarchyManager = HierarchyManager.GetInstance();
 
@@ -315,7 +315,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         // Check if the ray intersects the tilemap. If it does, snap the object to the terrain
-        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainManager.terrainLayerMask))
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _tileMapManager.terrainLayerMask))
         {
             BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
 

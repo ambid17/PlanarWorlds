@@ -21,7 +21,7 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
     public Tilemap highlightTileMap;
     public Tilemap shadowTileMap;
 
-    public TileMapInspectorUI _terrainInspectorUI;
+    public TileMapInspectorUI _tileMapInspectorUI;
 
 
     [SerializeField]
@@ -335,7 +335,7 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
 
     public void ToggleTileSelector()
     {
-        _terrainInspectorUI.ToggleTileSelector(isSmartDragEnabled);
+        _tileMapInspectorUI.ToggleTileSelector(isSmartDragEnabled);
         ResetDrag();
     }
 }

@@ -21,7 +21,7 @@ public class TileMapInspectorUI : MonoBehaviour
     public GameObject tileGridSelectorParent;
     public GameObject tileGridList;
 
-    private TileMapManager _terrainManager;
+    private TileMapManager _tileMapManager;
 
     private ImageTabButton _currentTileButton;
     private Tile _currentTile;
@@ -30,9 +30,9 @@ public class TileMapInspectorUI : MonoBehaviour
 
     void Awake()
     {
-        _terrainManager = TileMapManager.GetInstance();
-        _tiles = _terrainManager.tileList.tiles;
-        _tileGrids = _terrainManager.tileGrids;
+        _tileMapManager = TileMapManager.GetInstance();
+        _tiles = _tileMapManager.tileList.tiles;
+        _tileGrids = _tileMapManager.tileGrids;
     }
 
     void Start()
@@ -96,7 +96,7 @@ public class TileMapInspectorUI : MonoBehaviour
 
     private void ChangeEditMode(TerrainEditMode newMode)
     {
-        _terrainManager.SetCurrentEditMode(newMode);
+        _tileMapManager.SetCurrentEditMode(newMode);
 
         if(newMode == TerrainEditMode.Paint)
         {
@@ -117,7 +117,7 @@ public class TileMapInspectorUI : MonoBehaviour
             _currentTileButton.Unselect();
         }
 
-        _terrainManager.SetCurrentTile(tile);
+        _tileMapManager.SetCurrentTile(tile);
         _currentTileButton = tabButton;
         _currentTile = tile;
     }
@@ -129,7 +129,7 @@ public class TileMapInspectorUI : MonoBehaviour
             _currentTileGridButton.Unselect();
         }
 
-        _terrainManager.SetCurrentTileGrid(tileGrid);
+        _tileMapManager.SetCurrentTileGrid(tileGrid);
         _currentTileGridButton = tabButton;
         _currentTileGrid = tileGrid;
     }
@@ -141,11 +141,11 @@ public class TileMapInspectorUI : MonoBehaviour
 
         if (isSmartDragEnabled)
         {
-            _terrainManager.SetCurrentTileGrid(_currentTileGrid);
+            _tileMapManager.SetCurrentTileGrid(_currentTileGrid);
         }
         else
         {
-            _terrainManager.SetCurrentTile(_currentTile);
+            _tileMapManager.SetCurrentTile(_currentTile);
         }
     }
 }
