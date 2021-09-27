@@ -21,7 +21,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         _hierarchyManager = HierarchyManager.GetInstance();
     }
 
-    public void LoadPrefabFromSave(PrefabModel model, bool isParent)
+    public void LoadPrefabFromSave(PrefabModel model)
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
@@ -38,18 +38,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         SetObjectShader(instance);
         CreateObjectCollider(instance);
 
-        if (model.children != null)
-        {
-            foreach (PrefabModel child in model.children)
-            {
-                LoadPrefabFromSave(child, false);
-            }
-        }
-
-        if (isParent)
-        {
-            _hierarchyManager.AddItem(instance);
-        }
+        _hierarchyManager.AddItem(instance);
     }
 
     public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId, string name)
@@ -125,7 +114,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     {
         foreach (PrefabModel campaignPrefab in campaign.prefabs)
         {
-            LoadPrefabFromSave(campaignPrefab, true);
+            LoadPrefabFromSave(campaignPrefab);
         }
     }
 
