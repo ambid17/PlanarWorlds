@@ -23,3 +23,6 @@ If you have any questions, feel free to:
 
 # Roadmap
 If you'd like to see our plans for the future, simply head on over to the [projects tab](https://github.com/ambid17/PlanarWorlds/projects/1)
+
+# Ideas
+Got any cool ideas? Make an [issue](https://github.com/ambid17/PlanarWorlds/issues)
