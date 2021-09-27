@@ -10739,10 +10739,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40259672da24d7a43bfe44b0f99aa602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainTypeDropdown: {fileID: 1840444114}
+  closeButton: {fileID: 834747849}
+  brushContainer: {fileID: 1030943653}
+  dragContainer: {fileID: 1565932112}
+  smartDragContainer: {fileID: 307656600}
   brushSizeInput: {fileID: 1120449845}
   dragSwitchManager: {fileID: 515654675}
   smartDragSwitchManager: {fileID: 297080300}
-  closeButton: {fileID: 834747849}
 --- !u!222 &546960795
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15295,10 +15299,10 @@ GameObject:
   - component: {fileID: 797217222}
   - component: {fileID: 797217223}
   - component: {fileID: 797217225}
-  - component: {fileID: 797217226}
   - component: {fileID: 797217219}
   - component: {fileID: 797217224}
   - component: {fileID: 797217227}
+  - component: {fileID: 797217226}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -15346,9 +15350,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inspectorRectTransform: {fileID: 1456868275}
   hierarchyRectTransform: {fileID: 242378440}
-  layerMask:
+  _prefabLayerMask:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 64
+  _terrainLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
   _currentTargetingType: 0
 --- !u!114 &797217222
 MonoBehaviour:
@@ -15435,23 +15442,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 797217218}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae30b72f7980fc64bb35d5dfb7b896b8, type: 3}
+  m_Script: {fileID: 11500000, guid: c4dda7ff522efac43b84a3b0daa39623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileList: {fileID: 11400000, guid: 5fb2c4186b540c04b85c5d1d2989e5f7, type: 2}
-  tileGrids:
-  - {fileID: 11400000, guid: 79fd18580f78d07439594b04f2474fa1, type: 2}
-  terrainLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  tileMap: {fileID: 933569558}
-  highlightTileMap: {fileID: 328437130}
-  shadowTileMap: {fileID: 1913838038}
-  _terrainInspectorUI: {fileID: 2021351614}
-  _highlightTileSelector: {fileID: 2021351615}
-  isDragEnabled: 0
-  isSmartDragEnabled: 0
-  isValidDrag: 0
+  tileMapEditor: {fileID: 1562729112}
+  meshMapEditor: {fileID: 1562729110}
+  currentTerrainMode: 0
 --- !u!114 &797217227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32824,6 +32820,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1561260113}
   m_CullTransparentMesh: 1
+--- !u!1 &1562729109
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1562729111}
+  - component: {fileID: 1562729112}
+  - component: {fileID: 1562729110}
+  m_Layer: 0
+  m_Name: TerrainEditors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1562729110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562729109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9e97554f4d65b489f97ac5ebdc2217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1562729111
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562729109}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1562729112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562729109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae30b72f7980fc64bb35d5dfb7b896b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileList: {fileID: 11400000, guid: 5fb2c4186b540c04b85c5d1d2989e5f7, type: 2}
+  tileGrids:
+  - {fileID: 11400000, guid: 79fd18580f78d07439594b04f2474fa1, type: 2}
+  terrainLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  tileMap: {fileID: 933569558}
+  highlightTileMap: {fileID: 328437130}
+  shadowTileMap: {fileID: 1913838038}
+  _tileMapInspectorUI: {fileID: 2021351614}
+  _highlightTileSelector: {fileID: 2021351615}
+  isDragEnabled: 0
+  isSmartDragEnabled: 0
+  isValidDrag: 0
 --- !u!1 &1565932112
 GameObject:
   m_ObjectHideFlags: 0

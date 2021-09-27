@@ -21,7 +21,7 @@ public class TileMapInspectorUI : MonoBehaviour
     public GameObject tileGridSelectorParent;
     public GameObject tileGridList;
 
-    private TileMapManager _tileMapManager;
+    private TerrainManager _terrainManager;
 
     private ImageTabButton _currentTileButton;
     private Tile _currentTile;
@@ -30,9 +30,9 @@ public class TileMapInspectorUI : MonoBehaviour
 
     void Awake()
     {
-        _tileMapManager = TileMapManager.GetInstance();
-        _tiles = _tileMapManager.tileList.tiles;
-        _tileGrids = _tileMapManager.tileGrids;
+        _terrainManager = TerrainManager.GetInstance();
+        _tiles = _terrainManager.tileMapEditor.tileList.tiles;
+        _tileGrids = _terrainManager.tileMapEditor.tileGrids;
     }
 
     void Start()
@@ -96,7 +96,7 @@ public class TileMapInspectorUI : MonoBehaviour
 
     private void ChangeEditMode(TerrainEditMode newMode)
     {
-        _tileMapManager.SetCurrentEditMode(newMode);
+        _terrainManager.tileMapEditor.SetCurrentEditMode(newMode);
 
         if(newMode == TerrainEditMode.Paint)
         {
@@ -117,7 +117,7 @@ public class TileMapInspectorUI : MonoBehaviour
             _currentTileButton.Unselect();
         }
 
-        _tileMapManager.SetCurrentTile(tile);
+        _terrainManager.tileMapEditor.SetCurrentTile(tile);
         _currentTileButton = tabButton;
         _currentTile = tile;
     }
@@ -129,7 +129,7 @@ public class TileMapInspectorUI : MonoBehaviour
             _currentTileGridButton.Unselect();
         }
 
-        _tileMapManager.SetCurrentTileGrid(tileGrid);
+        _terrainManager.tileMapEditor.SetCurrentTileGrid(tileGrid);
         _currentTileGridButton = tabButton;
         _currentTileGrid = tileGrid;
     }
@@ -141,11 +141,11 @@ public class TileMapInspectorUI : MonoBehaviour
 
         if (isSmartDragEnabled)
         {
-            _tileMapManager.SetCurrentTileGrid(_currentTileGrid);
+            _terrainManager.tileMapEditor.SetCurrentTileGrid(_currentTileGrid);
         }
         else
         {
-            _tileMapManager.SetCurrentTile(_currentTile);
+            _terrainManager.tileMapEditor.SetCurrentTile(_currentTile);
         }
     }
 }

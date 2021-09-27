@@ -22,12 +22,12 @@ public class TerrainMenu : MonoBehaviour
     // Terrain
 
     private UIManager _uIManager;
-    private TileMapManager _tileMapManager;
+    private TerrainManager _terrainManager;
 
     private void Awake()
     {
         _uIManager = UIManager.GetInstance();
-        _tileMapManager = TileMapManager.GetInstance();
+        _terrainManager = TerrainManager.GetInstance();
 
         UIManager.OnEditModeChanged += EditModeChanged;
     }
@@ -61,7 +61,7 @@ public class TerrainMenu : MonoBehaviour
 
     private void InitInputField(TMP_InputField inputField)
     {
-        brushSizeInput.text = _tileMapManager.BrushSize.ToString();
+        brushSizeInput.text = _terrainManager.tileMapEditor.BrushSize.ToString();
         brushSizeInput.onValueChanged.AddListener(delegate { BrushSizeUpdated(); });
         brushSizeInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
         brushSizeInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
@@ -76,41 +76,43 @@ public class TerrainMenu : MonoBehaviour
         brushContainer.gameObject.SetActive(index == 0);
         dragContainer.gameObject.SetActive(index == 0);
         smartDragContainer.gameObject.SetActive(index == 0);
+
+        _terrainManager.ChangeTerrainMode(index == 0 ? TerrainMode.TileMap : TerrainMode.Mesh);
     }
 
     private void BrushSizeUpdated()
     {
         int newBrushSize = InputValidation.ValidateInt(text: brushSizeInput.text, defaultValue: Constants.defaultBrushSize);
 
-        _tileMapManager.SetBrushSize(newBrushSize);
+        _terrainManager.tileMapEditor.SetBrushSize(newBrushSize);
     }
 
     private void OnDragClicked()
     {
-        _tileMapManager.isDragEnabled = !_tileMapManager.isDragEnabled;
+        _terrainManager.tileMapEditor.isDragEnabled = !_terrainManager.tileMapEditor.isDragEnabled;
 
-        if (!_tileMapManager.isDragEnabled && _tileMapManager.isSmartDragEnabled) 
+        if (!_terrainManager.tileMapEditor.isDragEnabled && _terrainManager.tileMapEditor.isSmartDragEnabled) 
         {
-            _tileMapManager.isSmartDragEnabled = false;
+            _terrainManager.tileMapEditor.isSmartDragEnabled = false;
             smartDragSwitchManager.AnimateSwitch();
         }
 
-        _tileMapManager.isValidDrag = false;
-        _tileMapManager.ToggleTileSelector();
+        _terrainManager.tileMapEditor.isValidDrag = false;
+        _terrainManager.tileMapEditor.ToggleTileSelector();
     }
 
     private void OnSmartDragClicked()
     {
-        _tileMapManager.isSmartDragEnabled = !_tileMapManager.isSmartDragEnabled;
+        _terrainManager.tileMapEditor.isSmartDragEnabled = !_terrainManager.tileMapEditor.isSmartDragEnabled;
 
-        if (_tileMapManager.isSmartDragEnabled && !_tileMapManager.isDragEnabled)
+        if (_terrainManager.tileMapEditor.isSmartDragEnabled && !_terrainManager.tileMapEditor.isDragEnabled)
         {
-            _tileMapManager.isDragEnabled = true;
+            _terrainManager.tileMapEditor.isDragEnabled = true;
             dragSwitchManager.AnimateSwitch();
         }
 
-        _tileMapManager.isValidDrag = false;
-        _tileMapManager.ToggleTileSelector();
+        _terrainManager.tileMapEditor.isValidDrag = false;
+        _terrainManager.tileMapEditor.ToggleTileSelector();
     }
 
     private void Close()

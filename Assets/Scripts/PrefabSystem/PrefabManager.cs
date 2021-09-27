@@ -120,4 +120,31 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             myCollider.size = bounds.size;
         }
     }
+
+    public void LoadCampaign(Campaign campaign)
+    {
+        foreach (PrefabModel campaignPrefab in campaign.prefabs)
+        {
+            LoadPrefabFromSave(campaignPrefab, true);
+        }
+    }
+
+    public void PopulateCampaign(Campaign campaign)
+    {
+        campaign.prefabs = new List<PrefabModel>();
+        foreach (Transform child in prefabContainer)
+        {
+            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
+            campaign.prefabs.Add(container.GetPrefabModel());
+        }
+    }
+
+    public void Clear()
+    {
+        // Delete all of the current prefabs
+        foreach (Transform child in prefabContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
 }

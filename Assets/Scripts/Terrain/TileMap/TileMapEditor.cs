@@ -10,7 +10,7 @@ public enum DragState
     Paint, Indicate
 }
 
-public class TileMapManager : StaticMonoBehaviour<TileMapManager>
+public class TileMapEditor : MonoBehaviour
 {
     public TileList tileList;
     public TileGrid[] tileGrids;
@@ -62,9 +62,10 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
     private BoxCollider _highlightTileMapCollider;
     private BoxCollider _shadowTileMapCollider;
 
-    private void Awake()
+    private bool _isDirty;
+
+    void Awake()
     {
-        base.Awake();
         _brushSize = Constants.defaultBrushSize;
 
         mainCamera = Camera.main;
@@ -73,6 +74,8 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
         GetComponents();
 
         UIManager.OnEditModeChanged += EditModeChanged;
+
+        _isDirty = false;
     }
 
     private void GetComponents()
@@ -171,7 +174,10 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
                 if (dragState == DragState.Indicate)
                     PaintShadowTile(tilePosition, tileToPaint);
                 else
+                {
                     tileMap.SetTile(tilePosition, tileToPaint);
+                    _isDirty = true;
+                }
             }
         }
 
@@ -228,6 +234,7 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
 
         foreach (Vector3Int tilePosition in tilePositionsForBrush)
         {
+            _isDirty = true;
             if (_currentEditMode == TerrainEditMode.Paint)
                 tileMap.SetTile(tilePosition, _currentTile, _tileMapCollider.bounds);
             else if (_currentEditMode == TerrainEditMode.Erase)
@@ -333,9 +340,52 @@ public class TileMapManager : StaticMonoBehaviour<TileMapManager>
         }
     }
 
+    public void Clear()
+    {
+        _isDirty = false;
+        tileMap.ClearAllTiles();
+        highlightTileMap.ClearAllTiles();
+        shadowTileMap.ClearAllTiles();
+    }
+
     public void ToggleTileSelector()
     {
         _tileMapInspectorUI.ToggleTileSelector(isSmartDragEnabled);
         ResetDrag();
+    }
+
+    public bool IsDirty()
+    {
+        return _isDirty;
+    }
+
+    public void SaveIntoCampaign(Campaign campaign)
+    {
+        campaign.tiles = new List<TileModel>();
+
+        foreach (Vector3Int position in tileMap.cellBounds.allPositionsWithin)
+        {
+            if (!tileMap.HasTile(position))
+                continue;
+
+            TileModel tile = new TileModel();
+            tile.tileName = tileMap.GetTile(position).name;
+            tile.tilePosition = position;
+
+            campaign.tiles.Add(tile);
+        }
+
+        _isDirty = false;
+    }
+
+    public void LoadFromCampaign(Campaign campaign)
+    {
+        foreach (TileModel tile in campaign.tiles)
+        {
+            Tile tileToSet = tileList.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
+            tileMap.SetTile(tile.tilePosition, tileToSet);
+        }
+
+        _isDirty = false;
     }
 }

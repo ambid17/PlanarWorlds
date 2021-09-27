@@ -16,10 +16,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     public RectTransform hierarchyRectTransform;
 
     [SerializeField]
-    private LayerMask layerMask;
+    private LayerMask _prefabLayerMask;
+    [SerializeField]
+    private LayerMask _terrainLayerMask;
 
     private InspectorManager _inspectorManager;
-    private TileMapManager _tileMapManager;
     private UIManager _uiManager;
     private HierarchyManager _hierarchyManager;
 
@@ -48,7 +49,6 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         mainCamera = Camera.main;
 
         _inspectorManager = InspectorManager.GetInstance();
-        _tileMapManager = TileMapManager.GetInstance();
         _uiManager = UIManager.GetInstance();
         _hierarchyManager = HierarchyManager.GetInstance();
 
@@ -142,7 +142,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
             // Check if the ray intersects a game object. If it does, return it
-            if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, layerMask))
+            if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _prefabLayerMask))
             {
                 selectedObject = rayHit.collider.gameObject;
             }
@@ -315,7 +315,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         // Check if the ray intersects the tilemap. If it does, snap the object to the terrain
-        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _tileMapManager.terrainLayerMask))
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainLayerMask))
         {
             BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
 
