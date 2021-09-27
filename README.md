@@ -11,7 +11,7 @@ Planar Worlds is based on 4 main features
 # How to use
 You can either:
 * Open this project in Unity 2020.3, and hit play
-* Visit the (itch.io)[https://ambid17.itch.io/planarworlds] page
+* Visit the [itch.io](https://ambid17.itch.io/planarworlds) page
 
 # Contributing
 To get started, simply fork the repository and make a pull request to the **main** branch
@@ -22,4 +22,4 @@ If you have any questions, feel free to:
 * send me an email: ambid17@gmail.com
 
 # Roadmap
-If you'd like to see our plans for the future, simply head on over to the (projects tab)[https://github.com/ambid17/PlanarWorlds/projects/1]
+If you'd like to see our plans for the future, simply head on over to the [projects tab](https://github.com/ambid17/PlanarWorlds/projects/1)
