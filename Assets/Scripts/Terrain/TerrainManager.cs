@@ -16,26 +16,19 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     void Start()
     {
-        
-    }
-
-    void Update()
-    {
-        
+        SetTerrainMode(TerrainMode.TileMap);
     }
 
     public void SetTerrainMode(TerrainMode newMode)
     {
-        if (currentTerrainMode != newMode)
+        if(newMode == TerrainMode.Mesh)
         {
-            if(newMode == TerrainMode.Mesh)
-            {
-                tileMapEditor.Clear();
-            }
-            else
-            {
-                meshMapEditor.Clear();
-            }
+            tileMapEditor.Clear();
+            meshMapEditor.Enable();
+        }
+        else
+        {
+            meshMapEditor.Disable();
         }
 
         currentTerrainMode = newMode;

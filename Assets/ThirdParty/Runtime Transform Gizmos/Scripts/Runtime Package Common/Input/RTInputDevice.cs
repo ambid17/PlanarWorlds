@@ -12,6 +12,11 @@ namespace RTG
 
         public void Update_SystemCall()
         {
+            if(_inputDevice == null)
+            {
+                _inputDevice = new MouseInputDevice();
+            }
+
             _inputDevice.Update();
         }
 

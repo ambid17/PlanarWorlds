@@ -23,6 +23,11 @@ public class Campaign
     #region Serialization
     public void Save()
     {
+        if(filePath == null || filePath == string.Empty)
+        {
+            SetTempFilePath();
+        }
+
         string fileContents = JsonUtility.ToJson(this);
         try
         {
