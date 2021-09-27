@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum TerrainEditMode
+public enum TileMapEditMode
 {
     Paint, Erase
 }
@@ -88,17 +88,17 @@ public class TileMapInspectorUI : MonoBehaviour
 
     private void InitModeButtons()
     {
-        paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
-        eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
+        paintButton.SetupAction(() => ChangeEditMode(TileMapEditMode.Paint));
+        eraseButton.SetupAction(() => ChangeEditMode(TileMapEditMode.Erase));
 
         paintButton.Select();
     }
 
-    private void ChangeEditMode(TerrainEditMode newMode)
+    private void ChangeEditMode(TileMapEditMode newMode)
     {
         _terrainManager.tileMapEditor.SetCurrentEditMode(newMode);
 
-        if(newMode == TerrainEditMode.Paint)
+        if(newMode == TileMapEditMode.Paint)
         {
             paintButton.Select();
             eraseButton.Unselect();

@@ -25,11 +25,11 @@ public class TileMapEditor : MonoBehaviour
 
 
     [SerializeField]
-    private HighlightTileSelector _highlightTileSelector;
+    private HighlightTileContainer _highlightTileSelector;
 
     private Tile _currentTile;
     private TileGrid _currentTileGrid;
-    private TerrainEditMode _currentEditMode;
+    private TileMapEditMode _currentEditMode;
 
     private int _brushSize;
     public int BrushSize
@@ -160,7 +160,7 @@ public class TileMapEditor : MonoBehaviour
                 Tile tileToPaint = null;
 
                 // Get tile based on edit mode and whether we're painting Tiles or TileGrids 
-                if (_currentEditMode == TerrainEditMode.Erase)
+                if (_currentEditMode == TileMapEditMode.Erase)
                     tileToPaint = null;
                 else if (_currentTile != null)
                     tileToPaint = _currentTile;
@@ -206,7 +206,7 @@ public class TileMapEditor : MonoBehaviour
         _brushSize = brushSize;
     }
 
-    public void SetCurrentEditMode(TerrainEditMode newEditMode)
+    public void SetCurrentEditMode(TileMapEditMode newEditMode)
     {
         _currentEditMode = newEditMode;
         shadowTileMap.ClearTiles(_shadowTilePositions);
@@ -235,9 +235,9 @@ public class TileMapEditor : MonoBehaviour
         foreach (Vector3Int tilePosition in tilePositionsForBrush)
         {
             _isDirty = true;
-            if (_currentEditMode == TerrainEditMode.Paint)
+            if (_currentEditMode == TileMapEditMode.Paint)
                 tileMap.SetTile(tilePosition, _currentTile, _tileMapCollider.bounds);
-            else if (_currentEditMode == TerrainEditMode.Erase)
+            else if (_currentEditMode == TileMapEditMode.Erase)
                 tileMap.SetTile(tilePosition, null, _tileMapCollider.bounds);
         }
     }
@@ -308,7 +308,7 @@ public class TileMapEditor : MonoBehaviour
     public void PaintShadowTiles(Vector3 hitPoint)
     {
         if (!_currentTile
-            || _currentEditMode == TerrainEditMode.Erase)
+            || _currentEditMode == TileMapEditMode.Erase)
             return;
 
         if (!isValidDrag)

@@ -77,7 +77,7 @@ public class TerrainMenu : MonoBehaviour
         dragContainer.gameObject.SetActive(index == 0);
         smartDragContainer.gameObject.SetActive(index == 0);
 
-        _terrainManager.ChangeTerrainMode(index == 0 ? TerrainMode.TileMap : TerrainMode.Mesh);
+        _terrainManager.SetTerrainMode(index == 0 ? TerrainMode.TileMap : TerrainMode.Mesh);
     }
 
     private void BrushSizeUpdated()

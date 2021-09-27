@@ -23,7 +23,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         
     }
 
-    public void ChangeTerrainMode(TerrainMode newMode)
+    public void SetTerrainMode(TerrainMode newMode)
     {
         if (currentTerrainMode != newMode)
         {
@@ -54,6 +54,15 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void LoadCampaign(Campaign campaign)
     {
+        if(campaign.tiles.Count > 0)
+        {
+            SetTerrainMode(TerrainMode.TileMap);
+        }
+        //else if(campaign.meshData != null)
+        //{
+        //    SetTerrainMode(TerrainMode.Mesh);
+        //}
+
         if (currentTerrainMode == TerrainMode.TileMap)
         {
             tileMapEditor.LoadFromCampaign(campaign);

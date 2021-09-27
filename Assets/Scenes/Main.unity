@@ -4090,7 +4090,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744504455}
   m_HandleRect: {fileID: 1744504454}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11296,42 +11296,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 573975282}
   m_CullTransparentMesh: 0
---- !u!1 &576230665
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 576230666}
-  m_Layer: 5
-  m_Name: Inspector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &576230666
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576230665}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 939414475}
-  m_Father: {fileID: 1443284853}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &577851217
 GameObject:
   m_ObjectHideFlags: 0
@@ -14762,7 +14726,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 420585288}
   m_HandleRect: {fileID: 420585287}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -17518,6 +17482,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 906161230}
   m_CullTransparentMesh: 1
+--- !u!1 &907538014
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 907538015}
+  m_Layer: 5
+  m_Name: MeshMapInspector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &907538015
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907538014}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1443284853}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &916061295
 GameObject:
   m_ObjectHideFlags: 0
@@ -18361,8 +18360,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 939414475}
+  - component: {fileID: 939414476}
   m_Layer: 5
-  m_Name: TerrainInspector
+  m_Name: TileMapInspector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18375,14 +18375,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939414474}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2009205018}
   - {fileID: 1679985250}
   - {fileID: 1694009347}
-  m_Father: {fileID: 576230666}
+  m_Father: {fileID: 1443284853}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -18390,6 +18390,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &939414476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939414474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225fb5e7cd10bbe468b75c0f8af802a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileButtonPrefab: {fileID: 0}
+  paintButton: {fileID: 0}
+  eraseButton: {fileID: 0}
+  tileSelectorParent: {fileID: 0}
+  tileList: {fileID: 0}
+  tileGridSelectorParent: {fileID: 0}
+  tileGridList: {fileID: 0}
 --- !u!1 &949020279
 GameObject:
   m_ObjectHideFlags: 0
@@ -30219,7 +30238,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 576230666}
+  - {fileID: 939414475}
+  - {fileID: 907538015}
   m_Father: {fileID: 1173532114}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31195,7 +31215,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 157571092}
   m_HandleRect: {fileID: 157571091}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -32831,6 +32851,7 @@ GameObject:
   - component: {fileID: 1562729111}
   - component: {fileID: 1562729112}
   - component: {fileID: 1562729110}
+  - component: {fileID: 1562729113}
   m_Layer: 0
   m_Name: TerrainEditors
   m_TagString: Untagged
@@ -32885,11 +32906,32 @@ MonoBehaviour:
   tileMap: {fileID: 933569558}
   highlightTileMap: {fileID: 328437130}
   shadowTileMap: {fileID: 1913838038}
-  _tileMapInspectorUI: {fileID: 2021351614}
-  _highlightTileSelector: {fileID: 2021351615}
+  _tileMapInspectorUI: {fileID: 939414476}
+  _highlightTileSelector: {fileID: 1562729113}
   isDragEnabled: 0
   isSmartDragEnabled: 0
   isValidDrag: 0
+--- !u!114 &1562729113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562729109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47602f8c6a586e54ea8147a6d8c233a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  centre: {fileID: 11400000, guid: ec63c550988e6fb41a75a8e94fd35ca7, type: 2}
+  _bottomLeft: {fileID: 11400000, guid: e441f788c82cf1948a8f7eec77b452e7, type: 2}
+  _bottomRight: {fileID: 11400000, guid: dfaf4dcce3c64ea4294817382a5b2601, type: 2}
+  _topLeft: {fileID: 11400000, guid: 1c5e658da5e9ec141b97a2b2de3264ba, type: 2}
+  _topRight: {fileID: 11400000, guid: c040117a95a8dda468b481994ca82252, type: 2}
+  _left: {fileID: 11400000, guid: 31c0fd62884f87f4a9b3b0d345373b45, type: 2}
+  _right: {fileID: 11400000, guid: 75df03df05df3ac49b69e50015aed0fd, type: 2}
+  _top: {fileID: 11400000, guid: ccafd615b87e87e438bb68591abafb80, type: 2}
+  _bottom: {fileID: 11400000, guid: 6abe99af9d7bac1449fe81ed2a99fbce, type: 2}
 --- !u!1 &1565932112
 GameObject:
   m_ObjectHideFlags: 0

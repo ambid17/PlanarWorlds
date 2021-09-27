@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class HighlightTileSelector : MonoBehaviour
+public class HighlightTileContainer : MonoBehaviour
 {
     public Tile centre;
 
