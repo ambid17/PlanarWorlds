@@ -17,4 +17,6 @@ public class TerrainLayerTexture
     public Texture2D diffuse;
     [SerializeField]
     public Texture2D normal;
+    [SerializeField]
+    public int Id;
 }

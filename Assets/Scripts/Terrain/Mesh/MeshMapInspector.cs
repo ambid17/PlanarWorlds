@@ -102,7 +102,7 @@ public class MeshMapInspector : MonoBehaviour
             _currentLayerButton.Unselect();
         }
 
-        _terrainManager.meshMapEditor.SelectSplatMap(layer);
+        _terrainManager.meshMapEditor.TryAddTerrainLayer(layer);
         _currentLayerButton = tabButton;
     }
 

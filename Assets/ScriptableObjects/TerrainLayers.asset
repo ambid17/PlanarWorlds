@@ -15,5 +15,7 @@ MonoBehaviour:
   layers:
   - diffuse: {fileID: 2800000, guid: 1ca232c57b4a6204e972a42c9dcd7f60, type: 3}
     normal: {fileID: 0}
+    Id: 0
   - diffuse: {fileID: 2800000, guid: 2c9e648d788d1d74fa15a0c85a077638, type: 3}
     normal: {fileID: 0}
+    Id: 1

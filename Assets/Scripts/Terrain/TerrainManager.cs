@@ -53,19 +53,14 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         if(campaign.tiles.Count > 0)
         {
             SetTerrainMode(TerrainMode.TileMap);
-        }
-        //else if(campaign.meshData != null)
-        //{
-        //    SetTerrainMode(TerrainMode.Mesh);
-        //}
-
-        if (currentTerrainMode == TerrainMode.TileMap)
-        {
             tileMapEditor.LoadFromCampaign(campaign);
+
         }
-        else
+        else if (campaign.terrainData != null && campaign.terrainData.heightMap != null)
         {
+            SetTerrainMode(TerrainMode.Mesh);
             meshMapEditor.LoadFromCampaign(campaign);
+
         }
     }
 

@@ -27,7 +27,8 @@ public class MeshMapEditor : MonoBehaviour
     // State
     public TerrainModificationMode currentMode;
     public Terrain terrain;
-    private int _terrainResolution;
+    private int _terrainHeightMapResolution;
+    private int _terrainAlphaMapResolution;
     private TerrainData _terrainData;
 
     private Camera _mainCamera;
@@ -35,6 +36,7 @@ public class MeshMapEditor : MonoBehaviour
     private UIManager _uiManager;
     private TerrainManager _terrainManager;
     private int currentSplatMapIndex;
+    private List<int> _terrainLayerIds;
 
     void Awake()
     {
@@ -45,7 +47,10 @@ public class MeshMapEditor : MonoBehaviour
         _terrainManager = TerrainManager.GetInstance();
 
         _terrainData = terrain.terrainData;
-        _terrainResolution = _terrainData.heightmapResolution;
+        _terrainHeightMapResolution = _terrainData.heightmapResolution;
+        _terrainAlphaMapResolution = _terrainData.alphamapResolution;
+
+        _terrainLayerIds = new List<int>();
     }
 
     private void Update()
@@ -84,9 +89,7 @@ public class MeshMapEditor : MonoBehaviour
     private void TryModification()
     {
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, float.MaxValue, modificationLayerMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
         {
             if(currentMode == TerrainModificationMode.Paint)
             {
@@ -160,6 +163,7 @@ public class MeshMapEditor : MonoBehaviour
 
                 float sum = weights.Sum();
 
+                // Normalize the results to make sure they add up to 1
                 for (int w = 0; w < weights.Length; w++)
                 {
                     weights[w] /= sum;
@@ -179,8 +183,8 @@ public class MeshMapEditor : MonoBehaviour
         float relativeHitX = hitPoint.x - terrain.transform.position.x;
         float relativeHitY = hitPoint.z - terrain.transform.position.z;
 
-        int terrainX = (int)((relativeHitX / _terrainData.size.x) * _terrainResolution);
-        int terrainY = (int)((relativeHitY / _terrainData.size.z) * _terrainResolution);
+        int terrainX = (int)((relativeHitX / _terrainData.size.x) * _terrainHeightMapResolution);
+        int terrainY = (int)((relativeHitY / _terrainData.size.z) * _terrainHeightMapResolution);
 
         int startingXIndex = terrainX - brushRadius;
         int startingYIndex = terrainY - brushRadius;
@@ -202,18 +206,13 @@ public class MeshMapEditor : MonoBehaviour
         return total / count;
     }
 
-    public void SelectSplatMap(TerrainLayerTexture layer)
-    {
-        currentSplatMapIndex = TryAddTerrainLayer(layer.diffuse, layer.normal); ;
-    }
-
-    private int TryAddTerrainLayer(Texture2D diffuseTexture, Texture2D normalTexture)
+    public void TryAddTerrainLayer(TerrainLayerTexture layer)
     {
         TerrainLayer newLayer = new TerrainLayer();
-        newLayer.diffuseTexture = diffuseTexture;
+        newLayer.diffuseTexture = layer.diffuse;
 
-        if(normalTexture != null)
-            newLayer.normalMapTexture = normalTexture;
+        if(layer.normal != null)
+            newLayer.normalMapTexture = layer.normal;
 
         TerrainLayer[] oldLayers = _terrainData.terrainLayers;
 
@@ -221,7 +220,10 @@ public class MeshMapEditor : MonoBehaviour
         for (int i = 0; i < oldLayers.Length; ++i)
         {
             if (oldLayers[i].diffuseTexture == newLayer.diffuseTexture)
-                return i;
+            {
+                currentSplatMapIndex = i;
+                return;
+            }
         }
 
         TerrainLayer[] newLayers = new TerrainLayer[oldLayers.Length + 1];
@@ -229,10 +231,12 @@ public class MeshMapEditor : MonoBehaviour
         // copy old array into new array
         Array.Copy(oldLayers, newLayers, oldLayers.Length);
 
-        // add new TerrainLayer to the new array
-        newLayers[newLayers.Length - 1] = newLayer;
+        // add new TerrainLayer to the end of the new array
+        int layerIndex = newLayers.Length - 1;
+        newLayers[layerIndex] = newLayer;
         terrain.terrainData.terrainLayers = newLayers;
-        return newLayers.Length - 1;
+        currentSplatMapIndex = layerIndex;
+        _terrainLayerIds.Add(layerIndex);
     }
 
     public void SetBrushHeight(float newHeight)
@@ -264,12 +268,52 @@ public class MeshMapEditor : MonoBehaviour
 
     public void SaveIntoCampaign(Campaign campaign)
     {
+        TerrainModel newModel = new TerrainModel();
+        try
+        {
+            float[] flattenedHeights = new float[_terrainHeightMapResolution * _terrainHeightMapResolution];
+            Buffer.BlockCopy(_terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution), 0, flattenedHeights, 0, flattenedHeights.Length * sizeof(float));
+            newModel.heightMap = flattenedHeights;
 
+            float[] flattenedAlphaMaps = new float[_terrainAlphaMapResolution * _terrainAlphaMapResolution * _terrainLayerIds.Count];
+            Buffer.BlockCopy(_terrainData.GetAlphamaps(0, 0, _terrainAlphaMapResolution, _terrainAlphaMapResolution), 0, flattenedAlphaMaps, 0, flattenedAlphaMaps.Length * sizeof(float));
+            newModel.splatMap = flattenedAlphaMaps;
+            newModel.textureIds = _terrainLayerIds.ToArray();
+        }catch(Exception e)
+        {
+            Debug.LogError($"Error saving mesh map: \n{e.Message}\n{e.StackTrace}");
+        }
+        
+
+        campaign.terrainData = newModel;
     }
 
     public void LoadFromCampaign(Campaign campaign)
     {
+        if(campaign.terrainData != null)
+        {
+            try
+            {
+                float[,] unflattenedHeights = new float[_terrainHeightMapResolution, _terrainHeightMapResolution];
+                Buffer.BlockCopy(campaign.terrainData.heightMap, 0, unflattenedHeights, 0, _terrainHeightMapResolution * _terrainHeightMapResolution);
+                _terrainData.SetHeights(0, 0, unflattenedHeights);
 
+                foreach (int id in campaign.terrainData.textureIds)
+                {
+                    TerrainLayerTexture texture = terrainLayerTextures.layers.Where(layer => layer.Id == id).FirstOrDefault();
+                    if (texture != null)
+                        TryAddTerrainLayer(texture);
+                }
+
+                float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, campaign.terrainData.textureIds.Count()];
+                Buffer.BlockCopy(campaign.terrainData.splatMap, 0, unflattenedAlphas, 0, _terrainAlphaMapResolution * _terrainAlphaMapResolution * campaign.terrainData.textureIds.Count());
+                _terrainData.SetAlphamaps(0, 0, unflattenedAlphas);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error laoding mesh map: \n{e.Message}\n{e.StackTrace}");
+            }
+        }
     }
 
     public void Clear()

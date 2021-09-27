@@ -13,6 +13,8 @@ public class Campaign
     public List<TileModel> tiles;
     [SerializeField]
     public string filePath;
+    [SerializeField]
+    public TerrainModel terrainData;
 
     public Campaign()
     {
