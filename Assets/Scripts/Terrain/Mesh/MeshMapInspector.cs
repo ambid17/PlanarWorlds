@@ -2,34 +2,63 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class MeshMapInspector : MonoBehaviour
 {
-    public TabButton raiseButton;
-    public TabButton lowerButton;
-    public TabButton flattenButton;
+    public ImageTabButton raiseButton;
+    public ImageTabButton lowerButton;
+    public ImageTabButton setHeightButton;
+    public ImageTabButton smoothButton;
+    public ImageTabButton paintButton;
 
     public TMP_InputField brushSizeInput;
     public TMP_InputField brushHeightInput;
     public TMP_InputField brushStrengthInput;
 
+    public GameObject brushSizeContainer;
+    public GameObject brushHeightContainer;
+    public GameObject brushStrengthContainer;
+    public GameObject paintContainer;
+
+    public GameObject paintLayerPrefab;
+    public Transform paintLayerParent;
+
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
+
+    private ImageTabButton _currentLayerButton;
+
+    private VerticalLayoutGroup _myVerticalLayoutGroup;
 
     private void Awake()
     {
         _terrainManager = TerrainManager.GetInstance();
         _uiManager = UIManager.GetInstance();
+        _myVerticalLayoutGroup = GetComponent<VerticalLayoutGroup>();
     }
 
     void Start()
     {
-        raiseButton.SetupAction(() => ChangeTerrainModificationMode(TerrainModificationMode.Raise));
-        lowerButton.SetupAction(() => ChangeTerrainModificationMode(TerrainModificationMode.Lower));
-        flattenButton.SetupAction(() => ChangeTerrainModificationMode(TerrainModificationMode.Flatten));
-
+        SetupButtons();
+        SetupInputs();
+        SetupPaints();
         raiseButton.Select();
+        UpdateUI(TerrainModificationMode.Raise);
+    }
 
+    private void SetupButtons()
+    {
+        raiseButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Raise));
+        lowerButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Lower));
+        setHeightButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.SetHeight));
+        smoothButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Smooth));
+        paintButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Paint));
+
+    }
+
+    private void SetupInputs()
+    {
         brushSizeInput.onValueChanged.AddListener((newText) => BrushSizeUpdated());
         brushSizeInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
         brushSizeInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
@@ -46,16 +75,44 @@ public class MeshMapInspector : MonoBehaviour
         brushStrengthInput.text = "0.01";
     }
 
-    void Update()
+    private void SetupPaints()
     {
-        
+        bool isFirst = true;
+        foreach (TerrainLayerTexture layer in _terrainManager.meshMapEditor.terrainLayerTextures.layers)
+        {
+            GameObject newButton = Instantiate(paintLayerPrefab, paintLayerParent);
+            ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
+
+            Sprite layerSprite = Sprite.Create(layer.diffuse, new Rect(0, 0, layer.diffuse.width, layer.diffuse.height), new Vector2(0.5f, 0.5f));
+            tabButton.Setup(layerSprite, () => SetCurrentTile(layer, tabButton));
+
+            if (isFirst)
+            {
+                tabButton.Select();
+                _currentLayerButton = tabButton;
+                isFirst = false;
+            }
+        }
+    }
+
+    private void SetCurrentTile(TerrainLayerTexture layer, ImageTabButton tabButton)
+    {
+        if (_currentLayerButton)
+        {
+            _currentLayerButton.Unselect();
+        }
+
+        _terrainManager.meshMapEditor.SelectSplatMap(layer);
+        _currentLayerButton = tabButton;
     }
 
     private void ChangeTerrainModificationMode(TerrainModificationMode newMode)
     {
         raiseButton.Unselect();
         lowerButton.Unselect();
-        flattenButton.Unselect();
+        setHeightButton.Unselect();
+        smoothButton.Unselect();
+        paintButton.Unselect();
 
         _terrainManager.meshMapEditor.SwitchTerrainModificationMode(newMode);
     }
@@ -64,14 +121,33 @@ public class MeshMapInspector : MonoBehaviour
     {
         raiseButton.Unselect();
         lowerButton.Unselect();
-        flattenButton.Unselect();
+        setHeightButton.Unselect();
+        smoothButton.Unselect();
+        paintButton.Unselect();
 
         if (newMode == TerrainModificationMode.Raise)
             raiseButton.Select();
         if (newMode == TerrainModificationMode.Lower)
             lowerButton.Select();
-        if (newMode == TerrainModificationMode.Flatten)
-            flattenButton.Select();
+        if (newMode == TerrainModificationMode.SetHeight)
+            setHeightButton.Select();
+        if (newMode == TerrainModificationMode.Smooth)
+            smoothButton.Select();
+        if (newMode == TerrainModificationMode.Paint)
+            paintButton.Select();
+
+        UpdateUI(newMode);
+    }
+
+    private void UpdateUI(TerrainModificationMode newMode)
+    {
+        brushSizeContainer.SetActive(true);
+        brushHeightContainer.SetActive(newMode == TerrainModificationMode.SetHeight);
+        brushStrengthContainer.SetActive(true);
+        paintContainer.SetActive(newMode == TerrainModificationMode.Paint);
+
+        _myVerticalLayoutGroup.CalculateLayoutInputHorizontal();
+        _myVerticalLayoutGroup.SetLayoutVertical();
     }
 
     private void BrushSizeUpdated()

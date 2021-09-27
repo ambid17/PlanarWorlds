@@ -22,6 +22,13 @@ public class ImageTabButton : ButtonBase
         button.onClick.AddListener(Select);
     }
 
+    public void Setup(Action callback)
+    {
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => callback());
+        button.onClick.AddListener(Select);
+    }
+
     public void Select()
     {
         isSelected = true;
