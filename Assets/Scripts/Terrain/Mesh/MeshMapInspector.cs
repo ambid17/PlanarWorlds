@@ -153,7 +153,7 @@ public class MeshMapInspector : MonoBehaviour
     private void BrushSizeUpdated()
     {
         int validatedSize = InputValidation.ValidateInt(brushSizeInput.text, 1);
-        _terrainManager.meshMapEditor.brushSize = validatedSize;
+        _terrainManager.meshMapEditor.SetBrushSize(validatedSize);
     }
 
     private void BrushHeightUpdated()

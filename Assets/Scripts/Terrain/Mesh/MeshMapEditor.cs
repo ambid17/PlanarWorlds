@@ -23,6 +23,7 @@ public class MeshMapEditor : MonoBehaviour
     public LayerMask modificationLayerMask;
     public MeshMapInspector mapInspector;
     public TerrainLayerTextures terrainLayerTextures;
+    public Material terrainMaterial;
 
     // State
     public TerrainModificationMode currentMode;
@@ -67,6 +68,10 @@ public class MeshMapEditor : MonoBehaviour
             // This makes the process much quicker, see:
             // https://docs.unity3d.com/ScriptReference/TerrainData.SetHeightsDelayLOD.html
             _terrainData.SyncHeightmap();
+        }
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            UpdateTerrainHighlight();
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -206,6 +211,19 @@ public class MeshMapEditor : MonoBehaviour
         return total / count;
     }
 
+    private void UpdateTerrainHighlight()
+    {
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
+        {
+            terrainMaterial.SetVector("_Center", hit.point);
+        }
+        else 
+        {
+            terrainMaterial.SetVector("_Center", new Vector3(-100, 0, -100));
+        }
+    }
+
     public void TryAddTerrainLayer(TerrainLayerTexture layer)
     {
         TerrainLayer newLayer = new TerrainLayer();
@@ -242,6 +260,12 @@ public class MeshMapEditor : MonoBehaviour
     public void SetBrushHeight(float newHeight)
     {
         brushHeight = newHeight / _terrainData.size.y;
+    }
+
+    public void SetBrushSize(int newSize)
+    {
+        brushSize = newSize;
+        terrainMaterial.SetFloat("_Radius", newSize);
     }
 
     public void SwitchTerrainModificationMode(TerrainModificationMode mode)

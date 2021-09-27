@@ -4165,7 +4165,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744504455}
   m_HandleRect: {fileID: 1744504454}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4706,7 +4706,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1520370436}
   m_HandleRect: {fileID: 1520370435}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -14639,7 +14639,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.7
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -22451,7 +22451,7 @@ Terrain:
   m_DrawInstanced: 0
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 12c46d10e41b3104cbcd8037adb4c823, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -34934,6 +34934,7 @@ MonoBehaviour:
     m_Bits: 256
   mapInspector: {fileID: 907538016}
   terrainLayerTextures: {fileID: 11400000, guid: c60dc30a99fc8ee45b0fc9a28767c9b5, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: 12c46d10e41b3104cbcd8037adb4c823, type: 2}
   currentMode: 0
   terrain: {fileID: 1097542664}
 --- !u!4 &1562729111
