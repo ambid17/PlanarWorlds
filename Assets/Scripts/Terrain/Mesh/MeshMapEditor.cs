@@ -76,6 +76,11 @@ public class MeshMapEditor : MonoBehaviour
             SwitchTerrainModificationMode(TerrainModificationMode.Paint);
     }
 
+    private void OnApplicationQuit()
+    {
+        _terrainData.terrainLayers = new TerrainLayer[0];
+    }
+
     private void TryModification()
     {
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
