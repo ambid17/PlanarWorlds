@@ -62,7 +62,7 @@ public class HighlightTileContainer : MonoBehaviour
             return tiles;
         }
 
-        Vector3Int offset = TerrainUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
+        Vector3Int offset = TileMapUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
         
         if(offset.x != 0 && offset.y != 0)
         {

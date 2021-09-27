@@ -148,7 +148,7 @@ public class TileMapEditor : MonoBehaviour
         Vector3Int startPosition = tileMap.WorldToCell(_dragStartPosition);
         Vector3Int endPosition = tileMap.WorldToCell(dragEndPosition);
 
-        Vector3Int offset = TerrainUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
+        Vector3Int offset = TileMapUtils.GetDragPaintOffset(ref startPosition, ref endPosition);
 
         // Keep track of tile positions we have dragged over
         List<Vector3Int> newDraggedPositions = new List<Vector3Int>();

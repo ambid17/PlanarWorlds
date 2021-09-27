@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public static class TerrainUtils
+public static class TileMapUtils
 {
     // This method Gets the offset, and also swaps the start/end position, so that the start position is in the bottom left
     public static Vector3Int GetDragPaintOffset(ref Vector3Int startPosition, ref Vector3Int endPosition)
