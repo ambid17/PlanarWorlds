@@ -39,6 +39,7 @@ public class TileMapEditor : MonoBehaviour
 
     private Camera mainCamera;
     private UIManager _uiManager;
+    private TerrainManager _terrainManager;
 
     private bool CanModifyTerrain
     {
@@ -70,6 +71,7 @@ public class TileMapEditor : MonoBehaviour
 
         mainCamera = Camera.main;
         _uiManager = UIManager.GetInstance();
+        _terrainManager = TerrainManager.GetInstance();
 
         GetComponents();
 
@@ -87,7 +89,7 @@ public class TileMapEditor : MonoBehaviour
 
     private void Update()
     {
-        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen)
+        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.Mesh)
             return;
 
         TryTerrainModification();

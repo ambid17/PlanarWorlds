@@ -14726,7 +14726,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 420585288}
   m_HandleRect: {fileID: 420585287}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -15412,6 +15412,7 @@ MonoBehaviour:
   tileMapEditor: {fileID: 1562729112}
   meshMapEditor: {fileID: 1562729110}
   currentTerrainMode: 0
+  terrainInspector: {fileID: 2021351614}
 --- !u!114 &797217227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18402,13 +18403,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225fb5e7cd10bbe468b75c0f8af802a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileButtonPrefab: {fileID: 0}
-  paintButton: {fileID: 0}
-  eraseButton: {fileID: 0}
-  tileSelectorParent: {fileID: 0}
-  tileList: {fileID: 0}
-  tileGridSelectorParent: {fileID: 0}
-  tileGridList: {fileID: 0}
+  tileButtonPrefab: {fileID: 9151598574256022449, guid: 5b1813a35bb552d4099da16da9c6922e, type: 3}
+  paintButton: {fileID: 342222189}
+  eraseButton: {fileID: 2139927998}
+  tileSelectorParent: {fileID: 141399157}
+  tileList: {fileID: 1679985249}
+  tileGridSelectorParent: {fileID: 1255218253}
+  tileGridList: {fileID: 1694009346}
 --- !u!1 &949020279
 GameObject:
   m_ObjectHideFlags: 0
@@ -25287,7 +25288,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -175.46606, y: -377.7}
+  m_AnchoredPosition: {x: -175.46606, y: -420}
   m_SizeDelta: {x: 350, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1182694153
@@ -30717,7 +30718,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -175.46606, y: -377.7}
+  m_AnchoredPosition: {x: -175.46606, y: -420}
   m_SizeDelta: {x: 350, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1461033462
@@ -31215,7 +31216,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 157571092}
   m_HandleRect: {fileID: 157571091}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -39721,7 +39722,6 @@ GameObject:
   - component: {fileID: 2021351612}
   - component: {fileID: 2021351611}
   - component: {fileID: 2021351614}
-  - component: {fileID: 2021351615}
   m_Layer: 0
   m_Name: TerrainInspectorCanvas
   m_TagString: Untagged
@@ -39819,37 +39819,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2021351609}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 225fb5e7cd10bbe468b75c0f8af802a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 372d52396d9a30d4893a57d788c1f5dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileButtonPrefab: {fileID: 9151598574256022449, guid: 5b1813a35bb552d4099da16da9c6922e, type: 3}
-  paintButton: {fileID: 342222189}
-  eraseButton: {fileID: 2139927998}
-  tileSelectorParent: {fileID: 141399157}
-  tileList: {fileID: 1679985249}
-  tileGridSelectorParent: {fileID: 1255218253}
-  tileGridList: {fileID: 1694009346}
---- !u!114 &2021351615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2021351609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47602f8c6a586e54ea8147a6d8c233a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  centre: {fileID: 11400000, guid: ec63c550988e6fb41a75a8e94fd35ca7, type: 2}
-  _bottomLeft: {fileID: 11400000, guid: e441f788c82cf1948a8f7eec77b452e7, type: 2}
-  _bottomRight: {fileID: 11400000, guid: dfaf4dcce3c64ea4294817382a5b2601, type: 2}
-  _topLeft: {fileID: 11400000, guid: 1c5e658da5e9ec141b97a2b2de3264ba, type: 2}
-  _topRight: {fileID: 11400000, guid: c040117a95a8dda468b481994ca82252, type: 2}
-  _left: {fileID: 11400000, guid: 31c0fd62884f87f4a9b3b0d345373b45, type: 2}
-  _right: {fileID: 11400000, guid: 75df03df05df3ac49b69e50015aed0fd, type: 2}
-  _top: {fileID: 11400000, guid: ccafd615b87e87e438bb68591abafb80, type: 2}
-  _bottom: {fileID: 11400000, guid: 6abe99af9d7bac1449fe81ed2a99fbce, type: 2}
+  tileMapInspector: {fileID: 939414474}
+  meshMapInspector: {fileID: 907538014}
 --- !u!1 &2026774267
 GameObject:
   m_ObjectHideFlags: 0
