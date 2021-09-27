@@ -7,10 +7,14 @@ using TMPro;
 
 public class TerrainMenu : MonoBehaviour
 {
-    public Dropdown terrainTypeDropdown;
+    public TMP_Dropdown terrainTypeDropdown;
     public Button closeButton;
 
     //TileMap
+    public GameObject brushContainer;
+    public GameObject dragContainer;
+    public GameObject smartDragContainer;
+
     public TMP_InputField brushSizeInput;
     public SwitchManager dragSwitchManager;
     public SwitchManager smartDragSwitchManager;
@@ -30,7 +34,21 @@ public class TerrainMenu : MonoBehaviour
 
     void Start()
     {
+        PopulateTerrainTypes();
+        terrainTypeDropdown.onValueChanged.AddListener(OnTerrainTypeChanged);
+        terrainTypeDropdown.value = 0;
         InitInputFields();
+    }
+
+    private void PopulateTerrainTypes()
+    {
+        terrainTypeDropdown.ClearOptions();
+
+        List<string> options = new List<string>();
+        options.Add("2D");
+        options.Add("3D");
+
+        terrainTypeDropdown.AddOptions(options);
     }
 
     private void InitInputFields()
@@ -51,6 +69,13 @@ public class TerrainMenu : MonoBehaviour
         {
             return InputValidation.ValidateCharAsUnsignedInt(addedChar);
         };
+    }
+
+    private void OnTerrainTypeChanged(int index)
+    {
+        brushContainer.gameObject.SetActive(index == 0);
+        dragContainer.gameObject.SetActive(index == 0);
+        smartDragContainer.gameObject.SetActive(index == 0);
     }
 
     private void BrushSizeUpdated()
