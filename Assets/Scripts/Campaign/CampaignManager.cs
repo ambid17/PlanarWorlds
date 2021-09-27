@@ -19,13 +19,13 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     public Campaign CurrentCampaign { get => _currentCampaign; }
 
     private PrefabManager _prefabManager;
-    private TerrainManager _terrainManager;
+    private TileMapManager _terrainManager;
     private HierarchyManager _hierarchyManager;
 
     private void Start()
     {
         _prefabManager = PrefabManager.GetInstance();
-        _terrainManager = TerrainManager.GetInstance();
+        _terrainManager = TileMapManager.GetInstance();
         _hierarchyManager = HierarchyManager.GetInstance();
 
         LoadRecentCampaigns();

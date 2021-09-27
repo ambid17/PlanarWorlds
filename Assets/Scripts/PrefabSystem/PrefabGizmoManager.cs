@@ -19,7 +19,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private LayerMask layerMask;
 
     private InspectorManager _inspectorManager;
-    private TerrainManager _terrainManager;
+    private TileMapManager _terrainManager;
     private UIManager _uiManager;
     private HierarchyManager _hierarchyManager;
 
@@ -48,7 +48,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         mainCamera = Camera.main;
 
         _inspectorManager = InspectorManager.GetInstance();
-        _terrainManager = TerrainManager.GetInstance();
+        _terrainManager = TileMapManager.GetInstance();
         _uiManager = UIManager.GetInstance();
         _hierarchyManager = HierarchyManager.GetInstance();
 

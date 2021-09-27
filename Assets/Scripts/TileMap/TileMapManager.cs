@@ -10,7 +10,7 @@ public enum DragState
     Paint, Indicate
 }
 
-public class TerrainManager : StaticMonoBehaviour<TerrainManager>
+public class TileMapManager : StaticMonoBehaviour<TileMapManager>
 {
     public TileList tileList;
     public TileGrid[] tileGrids;
@@ -21,7 +21,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public Tilemap highlightTileMap;
     public Tilemap shadowTileMap;
 
-    public TerrainInspectorUI _terrainInspectorUI;
+    public TileMapInspectorUI _terrainInspectorUI;
 
 
     [SerializeField]

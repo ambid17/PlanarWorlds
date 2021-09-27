@@ -13,12 +13,12 @@ public class TerrainMenu : MonoBehaviour
     public Button closeButton;
 
     private UIManager _uIManager;
-    private TerrainManager _terrainManager;
+    private TileMapManager _terrainManager;
 
     private void Awake()
     {
         _uIManager = UIManager.GetInstance();
-        _terrainManager = TerrainManager.GetInstance();
+        _terrainManager = TileMapManager.GetInstance();
 
         UIManager.OnEditModeChanged += EditModeChanged;
     }

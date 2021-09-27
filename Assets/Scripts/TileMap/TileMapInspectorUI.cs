@@ -6,7 +6,7 @@ public enum TerrainEditMode
     Paint, Erase
 }
 
-public class TerrainInspectorUI : MonoBehaviour
+public class TileMapInspectorUI : MonoBehaviour
 {
     private Tile[] _tiles;
     private TileGrid[] _tileGrids;
@@ -21,7 +21,7 @@ public class TerrainInspectorUI : MonoBehaviour
     public GameObject tileGridSelectorParent;
     public GameObject tileGridList;
 
-    private TerrainManager _terrainManager;
+    private TileMapManager _terrainManager;
 
     private ImageTabButton _currentTileButton;
     private Tile _currentTile;
@@ -30,7 +30,7 @@ public class TerrainInspectorUI : MonoBehaviour
 
     void Awake()
     {
-        _terrainManager = TerrainManager.GetInstance();
+        _terrainManager = TileMapManager.GetInstance();
         _tiles = _terrainManager.tileList.tiles;
         _tileGrids = _terrainManager.tileGrids;
     }
