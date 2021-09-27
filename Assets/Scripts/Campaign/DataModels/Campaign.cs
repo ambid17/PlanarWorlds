@@ -66,7 +66,7 @@ public class Campaign
     // i.e. : tempCampaign0, tempCampaign1, etc
     public string SetTempFilePath()
     {
-        string baseFilePath = Path.Combine(Application.persistentDataPath, "Campaigns");
+        string baseFilePath = FilePathUtil.GetSaveFolder();
 
         int fileCounter = 1;
         string fullFilePath = Path.Combine(baseFilePath, $"tempCampaign{fileCounter}.plane");

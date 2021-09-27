@@ -8,6 +8,7 @@ using TMPro;
 using System.Linq;
 using UnityEngine.EventSystems;
 using System;
+using System.Diagnostics;
 
 public enum OverwriteType
 {
@@ -21,6 +22,7 @@ public class FileMenu : MonoBehaviour
     public TMP_Dropdown recentCampaignsDropdown;
     public Button saveButton;
     public Button saveAsButton;
+    public Button openFolderButton;
     public TempSaveModal tempSaveModal;
     public OverwriteSaveModal overwriteSaveModal;
 
@@ -45,6 +47,7 @@ public class FileMenu : MonoBehaviour
         openButton.onClick.AddListener(OnOpen);
         saveButton.onClick.AddListener(OnSave);
         saveAsButton.onClick.AddListener(OnSaveAs);
+        openFolderButton.onClick.AddListener(OnOpenFolder);
 
         FileBrowser.SetFilters(false, new FileBrowser.Filter("Campaigns", ".plane"));
 
@@ -137,6 +140,24 @@ public class FileMenu : MonoBehaviour
         FileBrowser.ShowSaveDialog((paths) => { SaveAs(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }
 
+    public void OnOpenFolder()
+    {
+#if UNITY_STANDALONE_WIN
+        string fileBrowserLocation = FilePathUtil.GetSaveFolder();
+        fileBrowserLocation = fileBrowserLocation.Replace("/","\\");
+        try
+        {
+            Process fileBrowserProcess = new Process();
+            fileBrowserProcess.StartInfo = new ProcessStartInfo("explorer.exe", fileBrowserLocation);
+            fileBrowserProcess.Start();
+        }
+        catch(Exception e)
+        {
+            UnityEngine.Debug.LogError($"Cannot open folder: \n{fileBrowserLocation} \nException\n{e.Message}");
+        }
+        #endif
+    }
+
     private void InformOfSave()
     {
         string filePath = _campaignManager.SaveTempCampaign();
@@ -205,6 +226,8 @@ public class FileMenu : MonoBehaviour
         _uiManager.isFileBrowserOpen = false;
         gameObject.SetActive(false);
     }
+
+    
 
     private void Overwrite(string path, OverwriteType type)
     {

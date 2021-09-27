@@ -24,6 +24,11 @@ public class FilePathUtil : MonoBehaviour
         return saveFilePath;
     }
 
+    public static string GetSaveFolder()
+    {
+        return Path.Combine(Application.persistentDataPath, "Campaigns");
+    }
+
     public static List<string> GetCampaignNames()
     {
         string campaignParentFolder = Path.Combine(Application.persistentDataPath, campaignFolderName);

@@ -73,6 +73,11 @@ public class ToolbarUI : MonoBehaviour
             {
                 fileMenu.OnSaveAs();
             }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                fileMenu.OnOpenFolder();
+            }
         }
         
     }
