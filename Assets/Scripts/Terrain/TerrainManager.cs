@@ -12,6 +12,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     public TileMapEditor tileMapEditor;
     public MeshMapEditor meshMapEditor;
     public TerrainMode currentTerrainMode;
+    public TerrainInspector terrainInspector;
 
     void Start()
     {
@@ -38,6 +39,8 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
         }
 
         currentTerrainMode = newMode;
+
+        terrainInspector.SetTerrainMode(currentTerrainMode);
     }
 
     public void PopulateCampaign(Campaign campaign)
