@@ -8,7 +8,9 @@ Planar Worlds is based on 4 main features
 * Serialization. This allows the user to save/load campaigns (with all of the accompanying data). This will also allow users to share their files and import campaigns
 
 # Walk through
-Here is a YouTube video discussing the current functionality as of September 28th: ![link](https://youtu.be/uqBY5FKbrNg)
+Here is a YouTube video discussing the current functionality as of September 28th: 
+[![planar worlds video](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/uqBY5FKbrNg)
+
 # How to use
 You can either:
 * Open this project in Unity 2020.3, and hit play
