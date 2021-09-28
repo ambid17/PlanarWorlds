@@ -27,7 +27,6 @@ Shader "Custom/TerrainBrushHighlight"
             "RenderType" = "Opaque" 
         }
         LOD 200
-        //Blend SrcAlpha OneMinusSrcAlpha
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
@@ -63,7 +62,6 @@ Shader "Custom/TerrainBrushHighlight"
             fixed4 splat_control = tex2D(_Control, IN.uv_Control);
             fixed3 col = 1;
 
-            //fixed4 highlightCol = _Color;
             fixed4 highlightCol = tex2D(_MainTex, IN.uv_MainTex);
 
             if (_Center.x > IN.worldPos.x - _Radius

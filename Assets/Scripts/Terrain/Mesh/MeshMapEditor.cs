@@ -258,15 +258,15 @@ public class MeshMapEditor : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
         {
-            Vector3 pos = terrain.gameObject.transform.InverseTransformPoint(hit.point);
+            Vector3 hitPosition = hit.point;
 
-            terrainMaterial.SetVector("_Center", pos);
+            terrainMaterial.SetVector("_Center", hitPosition);
 
             float terrainWidth = _terrainData.size.x / 2;
             float scale = terrainWidth / brushSize;
             scale /= _terrainData.size.x;
 
-            Vector2 textureOffset = new Vector2(pos.x, pos.z);
+            Vector2 textureOffset = new Vector2(hitPosition.x, hitPosition.z);
             float x = (textureOffset.x - brushSize) % (brushSize * 2);
             float y = (textureOffset.y - brushSize) % (brushSize * 2);
             textureOffset.x = 1 - (scale * x);
