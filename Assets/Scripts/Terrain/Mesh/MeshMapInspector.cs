@@ -143,7 +143,7 @@ public class MeshMapInspector : MonoBehaviour
     {
         brushSizeContainer.SetActive(true);
         brushHeightContainer.SetActive(newMode == TerrainModificationMode.SetHeight);
-        brushStrengthContainer.SetActive(true);
+        brushStrengthContainer.SetActive(newMode != TerrainModificationMode.SetHeight);
         paintContainer.SetActive(newMode == TerrainModificationMode.Paint);
 
         _myVerticalLayoutGroup.CalculateLayoutInputHorizontal();
