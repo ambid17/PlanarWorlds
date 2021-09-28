@@ -18,6 +18,7 @@ public class ToolbarUI : MonoBehaviour
     void Start()
     {
         _uiManager = UIManager.GetInstance();
+        UIManager.OnEditModeChanged += EditModeChanged;
 
         fileButton.onClick.AddListener(FileButtonClicked);
         fileMenu.gameObject.SetActive(false);
@@ -80,5 +81,10 @@ public class ToolbarUI : MonoBehaviour
             }
         }
         
+    }
+
+    private void EditModeChanged(EditMode newEditMode)
+    {
+        terrainButton.gameObject.SetActive(newEditMode == EditMode.Terrain);
     }
 }

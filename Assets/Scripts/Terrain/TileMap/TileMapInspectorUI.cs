@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum TerrainEditMode
+public enum TileMapEditMode
 {
     Paint, Erase
 }
 
-public class TerrainInspectorUI : MonoBehaviour
+public class TileMapInspectorUI : MonoBehaviour
 {
     private Tile[] _tiles;
     private TileGrid[] _tileGrids;
@@ -31,8 +31,8 @@ public class TerrainInspectorUI : MonoBehaviour
     void Awake()
     {
         _terrainManager = TerrainManager.GetInstance();
-        _tiles = _terrainManager.tileList.tiles;
-        _tileGrids = _terrainManager.tileGrids;
+        _tiles = _terrainManager.tileMapEditor.tileList.tiles;
+        _tileGrids = _terrainManager.tileMapEditor.tileGrids;
     }
 
     void Start()
@@ -88,17 +88,17 @@ public class TerrainInspectorUI : MonoBehaviour
 
     private void InitModeButtons()
     {
-        paintButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Paint));
-        eraseButton.SetupAction(() => ChangeEditMode(TerrainEditMode.Erase));
+        paintButton.SetupAction(() => ChangeEditMode(TileMapEditMode.Paint));
+        eraseButton.SetupAction(() => ChangeEditMode(TileMapEditMode.Erase));
 
         paintButton.Select();
     }
 
-    private void ChangeEditMode(TerrainEditMode newMode)
+    private void ChangeEditMode(TileMapEditMode newMode)
     {
-        _terrainManager.SetCurrentEditMode(newMode);
+        _terrainManager.tileMapEditor.SetCurrentEditMode(newMode);
 
-        if(newMode == TerrainEditMode.Paint)
+        if(newMode == TileMapEditMode.Paint)
         {
             paintButton.Select();
             eraseButton.Unselect();
@@ -117,7 +117,7 @@ public class TerrainInspectorUI : MonoBehaviour
             _currentTileButton.Unselect();
         }
 
-        _terrainManager.SetCurrentTile(tile);
+        _terrainManager.tileMapEditor.SetCurrentTile(tile);
         _currentTileButton = tabButton;
         _currentTile = tile;
     }
@@ -129,7 +129,7 @@ public class TerrainInspectorUI : MonoBehaviour
             _currentTileGridButton.Unselect();
         }
 
-        _terrainManager.SetCurrentTileGrid(tileGrid);
+        _terrainManager.tileMapEditor.SetCurrentTileGrid(tileGrid);
         _currentTileGridButton = tabButton;
         _currentTileGrid = tileGrid;
     }
@@ -141,11 +141,11 @@ public class TerrainInspectorUI : MonoBehaviour
 
         if (isSmartDragEnabled)
         {
-            _terrainManager.SetCurrentTileGrid(_currentTileGrid);
+            _terrainManager.tileMapEditor.SetCurrentTileGrid(_currentTileGrid);
         }
         else
         {
-            _terrainManager.SetCurrentTile(_currentTile);
+            _terrainManager.tileMapEditor.SetCurrentTile(_currentTile);
         }
     }
 }

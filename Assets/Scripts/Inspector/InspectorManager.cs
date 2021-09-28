@@ -29,14 +29,14 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
 
 
     private PrefabGizmoManager _prefabGizmoManager;
-    private UIManager _uIManager;
+    private UIManager _uiManager;
 
     private string multiSelectMismatch = "-";
 
     void Start()
     {
         _prefabGizmoManager = PrefabGizmoManager.GetInstance();
-        _uIManager = UIManager.GetInstance();
+        _uiManager = UIManager.GetInstance();
 
         InitInputFields();
 
@@ -164,42 +164,42 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     private void InitInputFields()
     {
         xPositionInput.onValueChanged.AddListener(delegate { InputFieldUpdated(xPositionInput, TransformType.Position, TransformAxis.X); });
-        xPositionInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        xPositionInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        xPositionInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        xPositionInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
         yPositionInput.onValueChanged.AddListener(delegate { InputFieldUpdated(yPositionInput, TransformType.Position, TransformAxis.Y); });
-        yPositionInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        yPositionInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        yPositionInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        yPositionInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
         zPositionInput.onValueChanged.AddListener(delegate { InputFieldUpdated(zPositionInput, TransformType.Position, TransformAxis.Z); });
-        zPositionInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        zPositionInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        zPositionInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        zPositionInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
 
         xRotationInput.onValueChanged.AddListener(delegate { InputFieldUpdated(xRotationInput, TransformType.Rotation, TransformAxis.X); });
-        xRotationInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        xRotationInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        xRotationInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        xRotationInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
         yRotationInput.onValueChanged.AddListener(delegate { InputFieldUpdated(yRotationInput, TransformType.Rotation, TransformAxis.Y); });
-        yRotationInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        yRotationInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        yRotationInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        yRotationInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
         zRotationInput.onValueChanged.AddListener(delegate { InputFieldUpdated(zRotationInput, TransformType.Rotation, TransformAxis.Z); });
-        zRotationInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        zRotationInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        zRotationInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        zRotationInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
 
         xScaleInput.onValueChanged.AddListener(delegate { InputFieldUpdated(xScaleInput, TransformType.Scale, TransformAxis.X); });
-        xScaleInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        xScaleInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        xScaleInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        xScaleInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
         yScaleInput.onValueChanged.AddListener(delegate { InputFieldUpdated(yScaleInput, TransformType.Scale, TransformAxis.Y); });
-        yScaleInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        yScaleInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        yScaleInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        yScaleInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
 
         zScaleInput.onValueChanged.AddListener(delegate { InputFieldUpdated(zScaleInput, TransformType.Scale, TransformAxis.Z); });
-        zScaleInput.onSelect.AddListener(delegate { _uIManager.isEditingValues = true; });
-        zScaleInput.onDeselect.AddListener(delegate { _uIManager.isEditingValues = false; });
+        zScaleInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
+        zScaleInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
     }
 }
 

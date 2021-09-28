@@ -1,14 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System.Linq;
-using System.IO;
 using System;
-using RTG;
-using UnityEngine.Tilemaps;
-using System.Linq;
-using UnityEngine.Events;
+using System.IO;
+using UnityEngine;
 
 public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {
@@ -67,16 +59,16 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         if(_currentCampaign != null)
         {
             ClearOldData();
-            LoadPrefabs();
-            LoadTiles();
+            _prefabManager.LoadCampaign(_currentCampaign);
+            _terrainManager.LoadCampaign(_currentCampaign);
             AddToRecentCampaigns(path);
         }
     }
 
     public void SaveCampaign()
     {
-        SavePrefabs();
-        SaveTiles();
+        _prefabManager.PopulateCampaign(_currentCampaign);
+        _terrainManager.PopulateCampaign(_currentCampaign);
         _currentCampaign.Save();
         AddToRecentCampaigns(_currentCampaign.filePath);
     }
@@ -109,64 +101,12 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     }
     #endregion
 
-    #region Save Utils
-    public void SavePrefabs()
-    {
-        _currentCampaign.prefabs = new List<PrefabModel>();
-        foreach (Transform child in _prefabManager.prefabContainer)
-        {
-            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
-            _currentCampaign.prefabs.Add(container.GetPrefabModel());
-        }
-    }
-
-    private void SaveTiles()
-    {
-        _currentCampaign.tiles = new List<TileModel>();
-
-        foreach(Vector3Int position in _terrainManager.tileMap.cellBounds.allPositionsWithin)
-        {
-            if (!_terrainManager.tileMap.HasTile(position))
-                continue;
-
-            TileModel tile = new TileModel();
-            tile.tileName = _terrainManager.tileMap.GetTile(position).name;
-            tile.tilePosition = position;
-
-            _currentCampaign.tiles.Add(tile);
-        }
-    }
-    #endregion
-
     #region Load Utils
-    private void LoadPrefabs()
-    {
-        foreach (PrefabModel campaignPrefab in _currentCampaign.prefabs)
-        {
-            _prefabManager.LoadPrefabFromSave(campaignPrefab, true);
-        }
-    }
-
-    private void LoadTiles()
-    {
-        foreach(TileModel tile in _currentCampaign.tiles)
-        {
-            Tile tileToSet = _terrainManager.tileList.tiles.Where(t => t.name == tile.tileName).FirstOrDefault();
-            _terrainManager.tileMap.SetTile(tile.tilePosition, tileToSet);
-        }
-    }
-
     private void ClearOldData()
     {
         _hierarchyManager.Clear();
-        // Clear all of the current tiles
-        _terrainManager.tileMap.ClearAllTiles();
-
-        // Delete all of the current prefabs
-        foreach (Transform child in _prefabManager.prefabContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        _terrainManager.ClearAllTerrain();
+        _prefabManager.Clear();
     }
 
     public bool CurrentDataIsSaved()
@@ -180,7 +120,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
                 isSaved = false;
             }
 
-            if(_terrainManager.tileMap.GetUsedTilesCount() > 0)
+            if(_terrainManager.TerrainNeedsSaved())
             {
                 isSaved = false;
             }

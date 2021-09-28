@@ -21,7 +21,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         _hierarchyManager = HierarchyManager.GetInstance();
     }
 
-    public void LoadPrefabFromSave(PrefabModel model, bool isParent)
+    public void LoadPrefabFromSave(PrefabModel model)
     {
         Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
@@ -38,18 +38,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         SetObjectShader(instance);
         CreateObjectCollider(instance);
 
-        if (model.children != null)
-        {
-            foreach (PrefabModel child in model.children)
-            {
-                LoadPrefabFromSave(child, false);
-            }
-        }
-
-        if (isParent)
-        {
-            _hierarchyManager.AddItem(instance);
-        }
+        _hierarchyManager.AddItem(instance);
     }
 
     public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId, string name)
@@ -118,6 +107,33 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             }
             myCollider.center = bounds.center - instance.transform.position;
             myCollider.size = bounds.size;
+        }
+    }
+
+    public void LoadCampaign(Campaign campaign)
+    {
+        foreach (PrefabModel campaignPrefab in campaign.prefabs)
+        {
+            LoadPrefabFromSave(campaignPrefab);
+        }
+    }
+
+    public void PopulateCampaign(Campaign campaign)
+    {
+        campaign.prefabs = new List<PrefabModel>();
+        foreach (Transform child in prefabContainer)
+        {
+            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
+            campaign.prefabs.Add(container.GetPrefabModel());
+        }
+    }
+
+    public void Clear()
+    {
+        // Delete all of the current prefabs
+        foreach (Transform child in prefabContainer)
+        {
+            Destroy(child.gameObject);
         }
     }
 }

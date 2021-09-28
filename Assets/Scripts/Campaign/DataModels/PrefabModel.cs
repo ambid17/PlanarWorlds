@@ -16,11 +16,4 @@ public class PrefabModel
     public int prefabId;
     [SerializeField]
     public string name;
-    [SerializeField]
-    public List<PrefabModel> children;
-
-    public PrefabModel()
-    {
-        children = new List<PrefabModel>();
-    }
 }
