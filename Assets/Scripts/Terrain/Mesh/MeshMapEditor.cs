@@ -146,8 +146,11 @@ public class MeshMapEditor : MonoBehaviour
         float relativeHitX = hitPoint.x - terrain.transform.position.x;
         float relativeHitY = hitPoint.z - terrain.transform.position.z;
 
-        int terrainX = (int)((relativeHitX / _terrainData.size.x) * _terrainHeightMapResolution);
-        int terrainY = (int)((relativeHitY / _terrainData.size.z) * _terrainHeightMapResolution);
+        float terX = relativeHitX / _terrainData.size.x;
+        float terY = relativeHitY / _terrainData.size.z;
+
+        int terrainX = Mathf.RoundToInt(terX * _terrainHeightMapResolution);
+        int terrainY = Mathf.RoundToInt(terY * _terrainHeightMapResolution);
 
         int startingXIndex = terrainX - brushRadius;
         int startingYIndex = terrainY - brushRadius;
