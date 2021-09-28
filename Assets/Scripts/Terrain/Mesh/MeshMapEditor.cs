@@ -112,13 +112,9 @@ public class MeshMapEditor : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        terrain.terrainData.terrainLayers = new TerrainLayer[0];
-        terrain.terrainData.treeInstances = new TreeInstance[0];
-
-        float[,] heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
-        terrain.terrainData.SetHeights(0, 0, heights);
-
-        terrain.terrainData.detailPrototypes = new DetailPrototype[0];
+        #if UNITY_EDITOR
+            //Clear();
+        #endif
     }
 
     #region Modification
@@ -547,7 +543,13 @@ public class MeshMapEditor : MonoBehaviour
 
     public void Clear()
     {
+        terrain.terrainData.terrainLayers = new TerrainLayer[0];
+        terrain.terrainData.treeInstances = new TreeInstance[0];
 
+        float[,] heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
+        terrain.terrainData.SetHeights(0, 0, heights);
+
+        terrain.terrainData.detailPrototypes = new DetailPrototype[0];
     }
 
     private void EditModeChanged(EditMode newEditMode)
