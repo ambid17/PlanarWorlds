@@ -29,17 +29,19 @@ public class PrefabListGenerator : EditorWindow
         {
             string[] foldersToGetAssetsFrom = new string[]
             {
-                "Assets/Models/TestAssets/Campfire",
-                "Assets/Models/TestAssets/Maple Tree",
-                "Assets/Models/TestAssets/Rocks",
-                "Assets/Models/TestAssets/Wood Cart",
-                "Assets/Models/TestAssets/House1"
+                //"Assets/Models/TestAssets/Campfire",
+                //"Assets/Models/TestAssets/Maple Tree",
+                //"Assets/Models/TestAssets/Rocks",
+                //"Assets/Models/TestAssets/Wood Cart",
+                //"Assets/Models/TestAssets/House1"
+                "Assets/Prefabs/AssetInstances/Grass"
+                //"Assets/Models/TestAssets/House1"
             };
 
             GameObject[] prefabs = GetAllPrefabs(foldersToGetAssetsFrom);
             List<Texture2D> previews = GetPreviews(prefabs);
-            PopulatePrefabs(prefabs, previews);
-            EditorUtility.SetDirty(prefabList);
+            //PopulatePrefabs(prefabs, previews);
+            //EditorUtility.SetDirty(prefabList);
         }
     }
 
@@ -62,18 +64,21 @@ public class PrefabListGenerator : EditorWindow
             {
                 preview.Apply();
                 byte[] data = preview.EncodeToPNG();
-                string folder = Path.Combine(
-                                        Path.Combine(Application.dataPath, "Textures"), 
-                                        "GeneratedPreviews");
+                string texturesFolder = Path.Combine(Application.dataPath, "Textures");
+                string previewsFolder = Path.Combine(texturesFolder, "GeneratedPreviews");
+                string specificFolder = Path.Combine(previewsFolder, "TerrainDetailMeshes");
+                //string specificFolder = Path.Combine(previewsFolder, "TerrainTrees");
                 string fileName = $"{go.name}.png";
-                string fullPath = Path.Combine(folder, fileName);
+                string fullPath = Path.Combine(specificFolder, fileName);
 
                 if (!File.Exists(fullPath))
                 {
                     File.WriteAllBytes(fullPath, data);
                 }
 
-                Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/{fileName}");
+                //Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/{fileName}");
+                Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/TerrainDetailMeshes/{fileName}");
+                //Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/TerrainTrees/{fileName}");
                 previews.Add(savedTexture);
             }
         }

@@ -110,8 +110,11 @@ public class MeshMapEditor : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        _terrainData.terrainLayers = new TerrainLayer[0];
-        _terrainData = new TerrainData();
+        terrain.terrainData.terrainLayers = new TerrainLayer[0];
+        terrain.terrainData.treeInstances = new TreeInstance[0];
+
+        float[,] heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
+        terrain.terrainData.SetHeights(0, 0, heights);
     }
 
     #region Modification
@@ -261,8 +264,18 @@ public class MeshMapEditor : MonoBehaviour
     private void AddTree(Vector3 hitPoint)
     {
         TreeInstance instance = new TreeInstance();
-        instance.position = hitPoint;
+
+        Vector3 relativePosition = hitPoint;
+        relativePosition.x -= terrain.transform.position.x;
+        relativePosition.z -= terrain.transform.position.z;
+        relativePosition.x /= _terrainData.size.x;
+        relativePosition.z /= _terrainData.size.x;
+
+        instance.position = relativePosition;
         instance.prototypeIndex = currentTreeIndex;
+        instance.color = new Color32(1, 1, 1, 1);
+        instance.heightScale = 1;
+        instance.widthScale = 1;
         terrain.AddTreeInstance(instance);
         terrain.Flush();
     }
