@@ -11,7 +11,9 @@ public enum TerrainModificationMode
     Lower,
     SetHeight,
     Smooth,
-    Paint
+    Paint,
+    Trees,
+    Foliage
 }
 
 public class MeshMapEditor : MonoBehaviour
@@ -23,6 +25,8 @@ public class MeshMapEditor : MonoBehaviour
     public LayerMask modificationLayerMask;
     public MeshMapInspector mapInspector;
     public TerrainLayerTextures terrainLayerTextures;
+    public PrefabList treePrefabList;
+    public PrefabList foliagePrefabList;
     public Material terrainMaterial;
 
     // State
@@ -36,8 +40,13 @@ public class MeshMapEditor : MonoBehaviour
     private bool _isDirty;
     private UIManager _uiManager;
     private TerrainManager _terrainManager;
-    private int currentSplatMapIndex;
+
+    private int currentTerrainLayerIndex;
+    private int currentTreeIndex;
+    private int currentFoliageIndex;
+
     private List<int> _terrainLayerIds;
+
 
     private Vector3 _mouseDragStartPosition;
     private Vector3 _startingHitPoint;
@@ -91,17 +100,24 @@ public class MeshMapEditor : MonoBehaviour
             SwitchTerrainModificationMode(TerrainModificationMode.Lower);
         if (Input.GetKeyDown(KeyCode.C))
             SwitchTerrainModificationMode(TerrainModificationMode.SetHeight);
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.V))
             SwitchTerrainModificationMode(TerrainModificationMode.Smooth);
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.B))
             SwitchTerrainModificationMode(TerrainModificationMode.Paint);
+        if (Input.GetKeyDown(KeyCode.N))
+            SwitchTerrainModificationMode(TerrainModificationMode.Trees);
+        if (Input.GetKeyDown(KeyCode.M))
+            SwitchTerrainModificationMode(TerrainModificationMode.Foliage);
     }
 
     private void OnApplicationQuit()
     {
-        _terrainData.terrainLayers = new TerrainLayer[0];
+        #if UNITY_EDITOR
+                Clear();
+        #endif
     }
 
+    #region Modification
     private void TryModification()
     {
         // If we are just starting a drag, save off the starting points
@@ -132,11 +148,18 @@ public class MeshMapEditor : MonoBehaviour
         {
             PaintTerrain(_startingHitPoint);
         }
+        else if(currentMode == TerrainModificationMode.Trees)
+        {
+            AddTree(_startingHitPoint);
+        }
+        else if (currentMode == TerrainModificationMode.Foliage)
+        {
+            AddDetail(_startingHitPoint);
+        }
         else
         {
             ModifyTerrain(_startingHitPoint);
         }
-
     }
 
     private void ModifyTerrain(Vector3 hitPoint)
@@ -221,7 +244,7 @@ public class MeshMapEditor : MonoBehaviour
                     weights[z] = splatMaps[x, y, z];
                 }
 
-                weights[currentSplatMapIndex] += brushStrength;
+                weights[currentTerrainLayerIndex] += brushStrength;
 
                 float sum = weights.Sum();
 
@@ -235,6 +258,71 @@ public class MeshMapEditor : MonoBehaviour
         }
 
         _terrainData.SetAlphamaps(startingXIndex, startingYIndex, splatMaps);
+        terrain.Flush();
+    }
+
+    private void AddTree(Vector3 hitPoint)
+    {
+        Vector3 mouseDelta = Input.mousePosition - _mouseDragStartPosition;
+        if (mouseDelta.magnitude > 50)
+        {
+            _mouseDragStartPosition = Input.mousePosition;
+            for(int i = 0; i < brushSize / 2; i++)
+            {
+                float randomX = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
+                float randomY = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
+
+                TreeInstance instance = new TreeInstance();
+
+                Vector3 relativePosition = hitPoint;
+                relativePosition.x -= terrain.transform.position.x + randomX;
+                relativePosition.z -= terrain.transform.position.z + randomY;
+                relativePosition.x /= _terrainData.size.x;
+                relativePosition.z /= _terrainData.size.x;
+
+                instance.position = relativePosition;
+                instance.prototypeIndex = currentTreeIndex;
+                instance.color = new Color32(1, 1, 1, 1);
+                instance.heightScale = 1;
+                instance.widthScale = 1;
+                terrain.AddTreeInstance(instance);
+            }
+            
+            terrain.Flush();
+        }
+        
+    }
+
+    private void AddDetail(Vector3 hitPoint)
+    {
+        int brushRadius = brushSize / 2;
+
+        float relativeHitX = hitPoint.x - terrain.transform.position.x;
+        float relativeHitY = hitPoint.z - terrain.transform.position.z;
+
+        float terX = relativeHitX / _terrainData.size.x;
+        float terY = relativeHitY / _terrainData.size.z;
+
+        int terrainX = Mathf.RoundToInt(terX * _terrainData.detailResolution);
+        int terrainY = Mathf.RoundToInt(terY * _terrainData.detailResolution);
+
+        int startingXIndex = terrainX - brushRadius;
+        int startingYIndex = terrainY - brushRadius;
+
+        startingXIndex = Mathf.Max(0, startingXIndex);
+        startingYIndex = Mathf.Max(0, startingYIndex);
+
+        int[,] details = _terrainData.GetDetailLayer(startingXIndex, startingYIndex, brushSize, brushSize, currentFoliageIndex);
+
+        for (int x = 0; x < brushSize; x++)
+        {
+            for (int y = 0; y < brushSize; y++)
+            {
+                details[x, y] = currentFoliageIndex;
+            }
+        }
+
+        _terrainData.SetDetailLayer(startingXIndex, startingYIndex, currentFoliageIndex, details);
         terrain.Flush();
     }
 
@@ -257,15 +345,15 @@ public class MeshMapEditor : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
         {
-            Vector3 pos = terrain.gameObject.transform.InverseTransformPoint(hit.point);
+            Vector3 hitPosition = hit.point;
 
-            terrainMaterial.SetVector("_Center", pos);
+            terrainMaterial.SetVector("_Center", hitPosition);
 
             float terrainWidth = _terrainData.size.x / 2;
             float scale = terrainWidth / brushSize;
             scale /= _terrainData.size.x;
 
-            Vector2 textureOffset = new Vector2(pos.x, pos.z);
+            Vector2 textureOffset = new Vector2(hitPosition.x, hitPosition.z);
             float x = (textureOffset.x - brushSize) % (brushSize * 2);
             float y = (textureOffset.y - brushSize) % (brushSize * 2);
             textureOffset.x = 1 - (scale * x);
@@ -277,26 +365,28 @@ public class MeshMapEditor : MonoBehaviour
             terrainMaterial.SetVector("_Center", new Vector3(-10000, 0, -10000));
         }
     }
+    #endregion
 
+    #region Settings
     public void TryAddTerrainLayer(TerrainLayerTexture layer)
     {
-        TerrainLayer newLayer = new TerrainLayer();
-        newLayer.diffuseTexture = layer.diffuse;
-
-        if(layer.normal != null)
-            newLayer.normalMapTexture = layer.normal;
-
         TerrainLayer[] oldLayers = _terrainData.terrainLayers;
 
         // check to see that we are not adding a duplicate TerrainLayer
         for (int i = 0; i < oldLayers.Length; ++i)
         {
-            if (oldLayers[i].diffuseTexture == newLayer.diffuseTexture)
+            if (oldLayers[i].diffuseTexture == layer.diffuse)
             {
-                currentSplatMapIndex = i;
+                currentTerrainLayerIndex = i;
                 return;
             }
         }
+
+        TerrainLayer newLayer = new TerrainLayer();
+        newLayer.diffuseTexture = layer.diffuse;
+
+        if (layer.normal != null)
+            newLayer.normalMapTexture = layer.normal;
 
         TerrainLayer[] newLayers = new TerrainLayer[oldLayers.Length + 1];
 
@@ -307,8 +397,71 @@ public class MeshMapEditor : MonoBehaviour
         int layerIndex = newLayers.Length - 1;
         newLayers[layerIndex] = newLayer;
         terrain.terrainData.terrainLayers = newLayers;
-        currentSplatMapIndex = layerIndex;
+        currentTerrainLayerIndex = layerIndex;
         _terrainLayerIds.Add(layerIndex);
+    }
+
+    public void TryAddTree(GameObject treePrefab)
+    {
+        TreePrototype[] oldPrototypes = _terrainData.treePrototypes;
+
+        for (int i = 0; i < oldPrototypes.Length; i++)
+        {
+            if(oldPrototypes[i].prefab.name == treePrefab.name)
+            {
+                currentTreeIndex = i;
+                return;
+            }
+        }
+
+        TreePrototype newPrototype = new TreePrototype();
+        newPrototype.prefab = treePrefab;
+
+        TreePrototype[] newPrototypes = new TreePrototype[oldPrototypes.Length + 1];
+
+        // copy old array into new array
+        Array.Copy(oldPrototypes, newPrototypes, oldPrototypes.Length);
+
+        // add new TerrainLayer to the end of the new array
+        int index = newPrototypes.Length - 1;
+        newPrototypes[index] = newPrototype;
+        terrain.terrainData.treePrototypes = newPrototypes;
+        currentTreeIndex = index;
+    }
+
+    public void TryAddFoliageMesh(GameObject foliagePrefab)
+    {
+        DetailPrototype[] oldPrototypes = _terrainData.detailPrototypes;
+
+        for (int i = 0; i < oldPrototypes.Length; i++)
+        {
+            if (oldPrototypes[i].prototype.name == foliagePrefab.name)
+            {
+                currentFoliageIndex = i;
+                return;
+            }
+        }
+
+        DetailPrototype newPrototype = new DetailPrototype();
+        newPrototype.usePrototypeMesh = true;
+        newPrototype.prototype = foliagePrefab;
+        newPrototype.maxHeight = 2;
+        newPrototype.maxWidth = 2;
+        newPrototype.minHeight = 0.5f;
+        newPrototype.minWidth = 0.5f;
+        newPrototype.noiseSpread = 0.5f;
+        newPrototype.renderMode = DetailRenderMode.Grass;
+
+        DetailPrototype[] newPrototypes = new DetailPrototype[oldPrototypes.Length + 1];
+
+        // copy old array into new array
+        Array.Copy(oldPrototypes, newPrototypes, oldPrototypes.Length);
+
+        // add new TerrainLayer to the end of the new array
+        int index = newPrototypes.Length - 1;
+        newPrototypes[index] = newPrototype;
+        terrain.terrainData.detailPrototypes = newPrototypes;
+        currentFoliageIndex = index;
     }
 
     public void SetBrushHeight(float newHeight)
@@ -331,7 +484,9 @@ public class MeshMapEditor : MonoBehaviour
         currentMode = mode;
         mapInspector.TerrainModificationModeChanged(mode);
     }
+    #endregion
 
+    #region Utils
     public void Enable()
     {
         terrain.gameObject.SetActive(true);
@@ -354,7 +509,8 @@ public class MeshMapEditor : MonoBehaviour
         try
         {
             float[] flattenedHeights = new float[_terrainHeightMapResolution * _terrainHeightMapResolution];
-            Buffer.BlockCopy(_terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution), 0, flattenedHeights, 0, flattenedHeights.Length * sizeof(float));
+            float[,] a = _terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution);
+            Buffer.BlockCopy(a, 0, flattenedHeights, 0, flattenedHeights.Length * sizeof(float));
             newModel.heightMap = flattenedHeights;
 
             float[] flattenedAlphaMaps = new float[_terrainAlphaMapResolution * _terrainAlphaMapResolution * _terrainLayerIds.Count];
@@ -400,7 +556,13 @@ public class MeshMapEditor : MonoBehaviour
 
     public void Clear()
     {
+        terrain.terrainData.terrainLayers = new TerrainLayer[0];
+        terrain.terrainData.treeInstances = new TreeInstance[0];
 
+        float[,] heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
+        terrain.terrainData.SetHeights(0, 0, heights);
+
+        terrain.terrainData.detailPrototypes = new DetailPrototype[0];
     }
 
     private void EditModeChanged(EditMode newEditMode)
@@ -410,4 +572,5 @@ public class MeshMapEditor : MonoBehaviour
             // Cleanup
         }
     }
+    #endregion
 }
