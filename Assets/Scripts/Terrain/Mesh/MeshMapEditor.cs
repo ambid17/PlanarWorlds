@@ -44,7 +44,9 @@ public class MeshMapEditor : MonoBehaviour
     private int currentTerrainLayerIndex;
     private int currentTreeIndex;
     private int currentFoliageIndex;
+
     private List<int> _terrainLayerIds;
+
 
     private Vector3 _mouseDragStartPosition;
     private Vector3 _startingHitPoint;
@@ -115,6 +117,8 @@ public class MeshMapEditor : MonoBehaviour
 
         float[,] heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
         terrain.terrainData.SetHeights(0, 0, heights);
+
+        terrain.terrainData.detailPrototypes = new DetailPrototype[0];
     }
 
     #region Modification
@@ -290,8 +294,8 @@ public class MeshMapEditor : MonoBehaviour
         float terX = relativeHitX / _terrainData.size.x;
         float terY = relativeHitY / _terrainData.size.z;
 
-        int terrainX = Mathf.RoundToInt(terX * _terrainAlphaMapResolution);
-        int terrainY = Mathf.RoundToInt(terY * _terrainAlphaMapResolution);
+        int terrainX = Mathf.RoundToInt(terX * _terrainData.detailResolution);
+        int terrainY = Mathf.RoundToInt(terY * _terrainData.detailResolution);
 
         int startingXIndex = terrainX - brushRadius;
         int startingYIndex = terrainY - brushRadius;
@@ -432,6 +436,12 @@ public class MeshMapEditor : MonoBehaviour
         DetailPrototype newPrototype = new DetailPrototype();
         newPrototype.usePrototypeMesh = true;
         newPrototype.prototype = foliagePrefab;
+        newPrototype.maxHeight = 2;
+        newPrototype.maxWidth = 2;
+        newPrototype.minHeight = 0.5f;
+        newPrototype.minWidth = 0.5f;
+        newPrototype.noiseSpread = 0.5f;
+        newPrototype.renderMode = DetailRenderMode.Grass;
 
         DetailPrototype[] newPrototypes = new DetailPrototype[oldPrototypes.Length + 1];
 
