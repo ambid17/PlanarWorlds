@@ -9,7 +9,7 @@ Planar Worlds is based on 4 main features
 
 # Walk through
 Here is a YouTube video discussing the current functionality as of September 28th: 
-[![planar worlds video](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/uqBY5FKbrNg)
+[![planar worlds video](https://img.youtube.com/vi/uqBY5FKbrNg/0.jpg)](https://youtu.be/uqBY5FKbrNg)
 
 # How to use
 You can either:
