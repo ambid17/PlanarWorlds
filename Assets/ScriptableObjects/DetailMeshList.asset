@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: DetailMeshList
   m_EditorClassIdentifier: 
   prefabs:
-  - gameObject: {fileID: 1683855059343171992, guid: 2c66336982230594f91901b6c212209e, type: 3}
-    previewTexture: {fileID: 2800000, guid: f94922b3339163f49a9f8317f62db002, type: 3}
-    prefabId: 0
-    prefabName: GrassChunk1
   - gameObject: {fileID: 5018751695295639014, guid: 8459d751d91ad4047b317d3a230c5876, type: 3}
     previewTexture: {fileID: 2800000, guid: cb4136808c113e34cbea65cf440d8a2b, type: 3}
     prefabId: 1
