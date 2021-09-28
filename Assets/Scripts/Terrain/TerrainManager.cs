@@ -16,7 +16,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     void Start()
     {
-        SetTerrainMode(TerrainMode.TileMap);
+        SetTerrainMode(TerrainMode.Mesh);
     }
 
     public void SetTerrainMode(TerrainMode newMode)

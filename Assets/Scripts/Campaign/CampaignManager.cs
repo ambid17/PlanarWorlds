@@ -1,14 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System.Linq;
-using System.IO;
 using System;
-using RTG;
-using UnityEngine.Tilemaps;
-using System.Linq;
-using UnityEngine.Events;
+using System.IO;
+using UnityEngine;
 
 public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 {

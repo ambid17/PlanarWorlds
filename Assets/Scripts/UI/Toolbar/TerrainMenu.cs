@@ -36,7 +36,7 @@ public class TerrainMenu : MonoBehaviour
     {
         PopulateTerrainTypes();
         terrainTypeDropdown.onValueChanged.AddListener(OnTerrainTypeChanged);
-        terrainTypeDropdown.value = 0;
+        terrainTypeDropdown.value = 1;
         InitInputFields();
     }
 

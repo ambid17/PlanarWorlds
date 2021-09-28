@@ -109,10 +109,20 @@ public class MeshMapEditor : MonoBehaviour
 
     private void ModifyTerrain(Vector3 hitPoint)
     {
-        (int startingXIndex, int startingYIndex) = GetTerrainIndicesForRay(hitPoint);
+        int brushRadius = brushSize / 2;
 
-        if (startingXIndex < 0 || startingYIndex < 0)
-            return;
+        float relativeHitX = hitPoint.x - terrain.transform.position.x;
+        float relativeHitY = hitPoint.z - terrain.transform.position.z;
+
+        int terrainX = (int)((relativeHitX / _terrainData.size.x) * _terrainHeightMapResolution);
+        int terrainY = (int)((relativeHitY / _terrainData.size.z) * _terrainHeightMapResolution);
+
+        int startingXIndex = terrainX - brushRadius;
+        int startingYIndex = terrainY - brushRadius;
+
+        startingXIndex = Mathf.Max(0, startingXIndex);
+        startingYIndex = Mathf.Max(0, startingYIndex);
+
 
         // Note: Terrain heights are 0-1, indexed as y,x
         // See: https://docs.unity3d.com/ScriptReference/TerrainData.GetHeights.html
@@ -146,10 +156,22 @@ public class MeshMapEditor : MonoBehaviour
 
     private void PaintTerrain(Vector3 hitPoint)
     {
-        (int startingXIndex, int startingYIndex) = GetTerrainIndicesForRay(hitPoint);
+        int brushRadius = brushSize / 2;
 
-        if (startingXIndex < 0 || startingYIndex < 0)
-            return;
+        float relativeHitX = hitPoint.x - terrain.transform.position.x;
+        float relativeHitY = hitPoint.z - terrain.transform.position.z;
+
+        float terX = relativeHitX / _terrainData.size.x;
+        float terY = relativeHitY / _terrainData.size.z;
+        
+        int terrainX = Mathf.RoundToInt(terX * _terrainAlphaMapResolution);
+        int terrainY = Mathf.RoundToInt(terY * _terrainAlphaMapResolution);
+
+        int startingXIndex = terrainX - brushRadius;
+        int startingYIndex = terrainY - brushRadius;
+
+        startingXIndex = Mathf.Max(0, startingXIndex);
+        startingYIndex = Mathf.Max(0, startingYIndex);
 
         float [,,] splatMaps = _terrainData.GetAlphamaps(startingXIndex, startingYIndex, brushSize, brushSize);
 
@@ -181,22 +203,6 @@ public class MeshMapEditor : MonoBehaviour
         terrain.Flush();
     }
 
-    private (int, int) GetTerrainIndicesForRay(Vector3 hitPoint)
-    {
-        int brushRadius = brushSize / 2;
-
-        float relativeHitX = hitPoint.x - terrain.transform.position.x;
-        float relativeHitY = hitPoint.z - terrain.transform.position.z;
-
-        int terrainX = (int)((relativeHitX / _terrainData.size.x) * _terrainHeightMapResolution);
-        int terrainY = (int)((relativeHitY / _terrainData.size.z) * _terrainHeightMapResolution);
-
-        int startingXIndex = terrainX - brushRadius;
-        int startingYIndex = terrainY - brushRadius;
-
-        return (startingXIndex, startingYIndex);
-    }
-
     private float GetAverageHeight(float[,] heights)
     {
         float total = 0; 
@@ -216,11 +222,24 @@ public class MeshMapEditor : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
         {
-            terrainMaterial.SetVector("_Center", hit.point);
+            Vector3 pos = terrain.gameObject.transform.InverseTransformPoint(hit.point);
+
+            terrainMaterial.SetVector("_Center", pos);
+
+            float terrainWidth = _terrainData.size.x / 2;
+            float scale = terrainWidth / brushSize;
+            scale /= _terrainData.size.x;
+
+            Vector2 textureOffset = new Vector2(pos.x, pos.z);
+            float x = (textureOffset.x - brushSize) % (brushSize * 2);
+            float y = (textureOffset.y - brushSize) % (brushSize * 2);
+            textureOffset.x = 1 - (scale * x);
+            textureOffset.y = 1 - (scale * y);
+            terrainMaterial.SetTextureOffset("_MainTex", textureOffset);
         }
         else 
         {
-            terrainMaterial.SetVector("_Center", new Vector3(-100, 0, -100));
+            terrainMaterial.SetVector("_Center", new Vector3(-10000, 0, -10000));
         }
     }
 
@@ -265,7 +284,11 @@ public class MeshMapEditor : MonoBehaviour
     public void SetBrushSize(int newSize)
     {
         brushSize = newSize;
+
         terrainMaterial.SetFloat("_Radius", newSize);
+        float terrainWidth = _terrainData.size.x / 2;
+        float scale = terrainWidth / brushSize;
+        terrainMaterial.SetTextureScale("_MainTex", new Vector2(scale, scale));
     }
 
     public void SwitchTerrainModificationMode(TerrainModificationMode mode)
