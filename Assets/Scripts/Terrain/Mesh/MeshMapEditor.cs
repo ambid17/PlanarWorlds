@@ -100,6 +100,7 @@ public class MeshMapEditor : MonoBehaviour
     private void OnApplicationQuit()
     {
         _terrainData.terrainLayers = new TerrainLayer[0];
+        _terrainData = new TerrainData();
     }
 
     private void TryModification()
@@ -354,7 +355,8 @@ public class MeshMapEditor : MonoBehaviour
         try
         {
             float[] flattenedHeights = new float[_terrainHeightMapResolution * _terrainHeightMapResolution];
-            Buffer.BlockCopy(_terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution), 0, flattenedHeights, 0, flattenedHeights.Length * sizeof(float));
+            float[,] a = _terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution);
+            Buffer.BlockCopy(a, 0, flattenedHeights, 0, flattenedHeights.Length * sizeof(float));
             newModel.heightMap = flattenedHeights;
 
             float[] flattenedAlphaMaps = new float[_terrainAlphaMapResolution * _terrainAlphaMapResolution * _terrainLayerIds.Count];

@@ -23,6 +23,8 @@ public class TileMapEditor : MonoBehaviour
 
     public TileMapInspectorUI _tileMapInspectorUI;
 
+    public GameObject tileMapBoundary;
+
 
     [SerializeField]
     private HighlightTileContainer _highlightTileSelector;
@@ -340,6 +342,23 @@ public class TileMapEditor : MonoBehaviour
             highlightTileMap.ClearAllTiles();
             shadowTileMap.ClearAllTiles();
         }
+    }
+
+    public void Disable()
+    {
+        Clear();
+        tileMap.gameObject.SetActive(false);
+        highlightTileMap.gameObject.SetActive(false);
+        shadowTileMap.gameObject.SetActive(false);
+        tileMapBoundary.SetActive(false);
+    }
+
+    public void Enable()
+    {
+        tileMap.gameObject.SetActive(true);
+        highlightTileMap.gameObject.SetActive(true);
+        shadowTileMap.gameObject.SetActive(true);
+        tileMapBoundary.SetActive(true);
     }
 
     public void Clear()

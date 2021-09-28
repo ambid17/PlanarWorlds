@@ -23,11 +23,12 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     {
         if(newMode == TerrainMode.Mesh)
         {
-            tileMapEditor.Clear();
+            tileMapEditor.Disable();
             meshMapEditor.Enable();
         }
         else
         {
+            tileMapEditor.Enable();
             meshMapEditor.Disable();
         }
 
