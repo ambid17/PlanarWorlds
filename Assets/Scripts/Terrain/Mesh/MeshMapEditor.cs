@@ -39,6 +39,10 @@ public class MeshMapEditor : MonoBehaviour
     private int currentSplatMapIndex;
     private List<int> _terrainLayerIds;
 
+    private Vector3 _mouseDragStartPosition;
+    private Vector3 _startingHitPoint;
+    private bool _isDragging;
+
     void Awake()
     {
         _isDirty = false;
@@ -52,6 +56,8 @@ public class MeshMapEditor : MonoBehaviour
         _terrainAlphaMapResolution = _terrainData.alphamapResolution;
 
         _terrainLayerIds = new List<int>();
+
+        _isDragging = false;
     }
 
     private void Update()
@@ -59,12 +65,17 @@ public class MeshMapEditor : MonoBehaviour
         if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.TileMap)
             return;
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isDragging = false;
+        }
         if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             TryModification();
         }
         if (Input.GetMouseButtonUp(0))
         {
+            _isDragging = false;
             // This makes the process much quicker, see:
             // https://docs.unity3d.com/ScriptReference/TerrainData.SetHeightsDelayLOD.html
             _terrainData.SyncHeightmap();
@@ -93,18 +104,39 @@ public class MeshMapEditor : MonoBehaviour
 
     private void TryModification()
     {
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
+        // If we are just starting a drag, save off the starting points
+        if(!_isDragging)
         {
-            if(currentMode == TerrainModificationMode.Paint)
+            _mouseDragStartPosition = Input.mousePosition;
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
             {
-                PaintTerrain(hit.point);
+                _startingHitPoint = hit.point;
             }
-            else
+            _isDragging = true;
+        }
+        else // If we are in a drag, only raycast if the user has moved the mouse
+        {
+            Vector3 mouseDelta = Input.mousePosition - _mouseDragStartPosition;
+            if (mouseDelta.magnitude > 1f)
             {
-                ModifyTerrain(hit.point);
+                Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
+                {
+                    _startingHitPoint = hit.point;
+                }
             }
         }
+
+        if (currentMode == TerrainModificationMode.Paint)
+        {
+            PaintTerrain(_startingHitPoint);
+        }
+        else
+        {
+            ModifyTerrain(_startingHitPoint);
+        }
+
     }
 
     private void ModifyTerrain(Vector3 hitPoint)
