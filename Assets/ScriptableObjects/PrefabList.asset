@@ -13,35 +13,35 @@ MonoBehaviour:
   m_Name: PrefabList
   m_EditorClassIdentifier: 
   prefabs:
-  - gameObject: {fileID: 100002, guid: 382c5c276cbf0244f95cb598627de3bf, type: 3}
+  - gameObject: {fileID: 7508591275021710709, guid: 937dc9468f3143947bb3aa1739806860, type: 3}
     previewTexture: {fileID: 2800000, guid: 7799fa07fbc74cb428e5604cbd17ab11, type: 3}
     prefabId: 0
     prefabName: CookingCampFire
-  - gameObject: {fileID: 100000, guid: bd454777355c9714587252a203a6bef8, type: 3}
+  - gameObject: {fileID: 8731931015022136873, guid: f85285e62dab5504fa17ed7142b29d2c, type: 3}
     previewTexture: {fileID: 2800000, guid: 2fa646c5780f8c043870520166a0763c, type: 3}
     prefabId: 1
     prefabName: MapleTree
-  - gameObject: {fileID: 100000, guid: 6524847568f8b4d4db0728c081dcac76, type: 3}
+  - gameObject: {fileID: 6255078685437367960, guid: d2baea6baef6f4843bd77281761f5084, type: 3}
     previewTexture: {fileID: 2800000, guid: 5f68d1654892d3e47bbd5c9fd992b572, type: 3}
     prefabId: 2
     prefabName: Rock1
-  - gameObject: {fileID: 100000, guid: 89dc010c0e1e5394cb6982a224a94d0b, type: 3}
+  - gameObject: {fileID: 4394756226086008310, guid: 0d0c436dcdb9b724793dfc59330f0eaa, type: 3}
     previewTexture: {fileID: 2800000, guid: 2623debae2f0b29488e7f1b793388825, type: 3}
     prefabId: 3
     prefabName: Rock2
-  - gameObject: {fileID: 100000, guid: ff066ae0d025e294aa43998d5ad15279, type: 3}
+  - gameObject: {fileID: 4914658915696528324, guid: 4dbce3743e25f0542a4260becc40ecdb, type: 3}
     previewTexture: {fileID: 2800000, guid: 64623bcb09b76da4ebf5bb7e742b7079, type: 3}
     prefabId: 4
     prefabName: Rock3
-  - gameObject: {fileID: 100000, guid: 3af63e32eb676b143be201160a95c566, type: 3}
+  - gameObject: {fileID: 1061954418230573024, guid: 92dbce9136c0c584abd86a7cbdd92f00, type: 3}
     previewTexture: {fileID: 2800000, guid: 99611090fd0f64640ac5c16a8b74669b, type: 3}
     prefabId: 5
     prefabName: Rock4
-  - gameObject: {fileID: 100000, guid: bbcd66f89b4989947826e275aa879814, type: 3}
+  - gameObject: {fileID: 7165534316785872605, guid: 9648030f329a2184782a14f32a720e9c, type: 3}
     previewTexture: {fileID: 2800000, guid: da59044a728ec5e488813be9e723cc35, type: 3}
     prefabId: 6
     prefabName: WoodCart
-  - gameObject: {fileID: 100000, guid: 2abcd3d43ca224d4487a64df6fb351d2, type: 3}
+  - gameObject: {fileID: 3839906623000890777, guid: c09b059ce5b03f64690470574ca5376b, type: 3}
     previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
     prefabId: 7
     prefabName: House1
