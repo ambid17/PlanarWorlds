@@ -17,10 +17,6 @@ MonoBehaviour:
     previewTexture: {fileID: 2800000, guid: 7799fa07fbc74cb428e5604cbd17ab11, type: 3}
     prefabId: 0
     prefabName: CookingCampFire
-  - gameObject: {fileID: 8731931015022136873, guid: f85285e62dab5504fa17ed7142b29d2c, type: 3}
-    previewTexture: {fileID: 2800000, guid: 2fa646c5780f8c043870520166a0763c, type: 3}
-    prefabId: 1
-    prefabName: MapleTree
   - gameObject: {fileID: 6255078685437367960, guid: d2baea6baef6f4843bd77281761f5084, type: 3}
     previewTexture: {fileID: 2800000, guid: 5f68d1654892d3e47bbd5c9fd992b572, type: 3}
     prefabId: 2
