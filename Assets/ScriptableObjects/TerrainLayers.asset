@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: TerrainLayers
   m_EditorClassIdentifier: 
   layers:
-  - diffuse: {fileID: 2800000, guid: 1ca232c57b4a6204e972a42c9dcd7f60, type: 3}
-    normal: {fileID: 0}
+  - diffuse: {fileID: 2800000, guid: 2cd275f23244c754eb4c2b65a3a249f1, type: 3}
+    normal: {fileID: 2800000, guid: 5e6ba9818c66958459b92cb691b8e589, type: 3}
     Id: 0
   - diffuse: {fileID: 2800000, guid: 5a5cf01df06e7984eb6306ab4d124024, type: 3}
     normal: {fileID: 2800000, guid: 14e6c507a54d8564187a5a59d8296c93, type: 3}
     Id: 0
   - diffuse: {fileID: 2800000, guid: 2ccdb9ae872cb3d448fd2d8661f59c32, type: 3}
     normal: {fileID: 2800000, guid: 9bdbe5d93f6712d4a8c4275b71d36947, type: 3}
+    Id: 0
+  - diffuse: {fileID: 2800000, guid: faf59c11b96c6734cb5d6401543a6976, type: 3}
+    normal: {fileID: 2800000, guid: eeccf599d50c96c43811be8bcc99b931, type: 3}
     Id: 0
