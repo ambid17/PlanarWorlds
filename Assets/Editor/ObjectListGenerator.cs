@@ -77,7 +77,8 @@ public class PrefabListGenerator : EditorWindow
                 }
 
                 //Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/{fileName}");
-                Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/TerrainDetailMeshes/{fileName}");
+                Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/Props/{fileName}");
+                //Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/TerrainDetailMeshes/{fileName}");
                 //Texture2D savedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/GeneratedPreviews/TerrainTrees/{fileName}");
                 previews.Add(savedTexture);
             }
