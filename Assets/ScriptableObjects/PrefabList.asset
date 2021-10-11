@@ -17,10 +17,6 @@ MonoBehaviour:
     previewTexture: {fileID: 2800000, guid: 7799fa07fbc74cb428e5604cbd17ab11, type: 3}
     prefabId: 0
     prefabName: CookingCampFire
-  - gameObject: {fileID: 8731931015022136873, guid: f85285e62dab5504fa17ed7142b29d2c, type: 3}
-    previewTexture: {fileID: 2800000, guid: 2fa646c5780f8c043870520166a0763c, type: 3}
-    prefabId: 1
-    prefabName: MapleTree
   - gameObject: {fileID: 6255078685437367960, guid: d2baea6baef6f4843bd77281761f5084, type: 3}
     previewTexture: {fileID: 2800000, guid: 5f68d1654892d3e47bbd5c9fd992b572, type: 3}
     prefabId: 2
@@ -37,11 +33,23 @@ MonoBehaviour:
     previewTexture: {fileID: 2800000, guid: 99611090fd0f64640ac5c16a8b74669b, type: 3}
     prefabId: 5
     prefabName: Rock4
-  - gameObject: {fileID: 7165534316785872605, guid: 9648030f329a2184782a14f32a720e9c, type: 3}
-    previewTexture: {fileID: 2800000, guid: da59044a728ec5e488813be9e723cc35, type: 3}
+  - gameObject: {fileID: 2877601021107841594, guid: 18cff11b22de1ac4a87378d76193cea4, type: 3}
+    previewTexture: {fileID: 2800000, guid: 910123f0bb51a8543be3856be31d25a4, type: 3}
     prefabId: 6
     prefabName: WoodCart
   - gameObject: {fileID: 3839906623000890777, guid: c09b059ce5b03f64690470574ca5376b, type: 3}
     previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
     prefabId: 7
     prefabName: House1
+  - gameObject: {fileID: 6381391812093862709, guid: ab694da94fa460042887d51cac938f4a, type: 3}
+    previewTexture: {fileID: 2800000, guid: 6b30ca1cee695b74b872663303d4a8bd, type: 3}
+    prefabId: 9
+    prefabName: WoodCrate
+  - gameObject: {fileID: 5876150633889907509, guid: a40db83b462e42b4c811ae3e414034ed, type: 3}
+    previewTexture: {fileID: 2800000, guid: 102b88c3b6b7fef4d959a3681c4594a8, type: 3}
+    prefabId: 10
+    prefabName: WoodFence
+  - gameObject: {fileID: 3497887789606846679, guid: 11ac9bfa76eed974791847fc6c82c4b1, type: 3}
+    previewTexture: {fileID: 2800000, guid: 0ba8edef2e0a98542a8a193df73b8193, type: 3}
+    prefabId: 11
+    prefabName: WoodFence_Ext
