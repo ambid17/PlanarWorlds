@@ -6,7 +6,9 @@ using System.Linq;
 public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 {
     public Transform prefabContainer;
-    public PrefabList prefabList;
+    public PrefabList propList;
+    public PrefabList playerList;
+    public PrefabList monsterList;
 
     private HierarchyManager _hierarchyManager;
 
@@ -23,7 +25,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     public void LoadPrefabFromSave(PrefabModel model)
     {
-        Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
+        Prefab prefab = propList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
 
         GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
         instance.transform.position = model.position;
@@ -74,11 +76,13 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     // Create a parent collider, and make it encapsulate all it's child meshes
     public void CreateObjectCollider(GameObject instance)
     {
-        BoxCollider myCollider = instance.GetComponent<BoxCollider>();
-        if (!myCollider)
+        Collider myCollider = instance.GetComponent<Collider>();
+        if (myCollider != null)
         {
-            myCollider = instance.AddComponent<BoxCollider>();
+            return;
         }
+
+        BoxCollider myBoxCollider = instance.AddComponent<BoxCollider>();
 
         // Unity will auto calculate collider size for only one object, we don't need the rest of the code if the model is set up properly
         if (instance.transform.childCount == 0)
@@ -91,8 +95,8 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             bounds.Encapsulate(myRenderer.bounds);
         }
 
-        myCollider.center = bounds.center - instance.transform.position;
-        myCollider.size = bounds.size;
+        myBoxCollider.center = bounds.center - instance.transform.position;
+        myBoxCollider.size = bounds.size;
 
         Transform[] children = instance.GetComponentsInChildren<Transform>();
         foreach (Transform child in children)
@@ -105,8 +109,8 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             {
                 bounds.Encapsulate(childRenderer.bounds);
             }
-            myCollider.center = bounds.center - instance.transform.position;
-            myCollider.size = bounds.size;
+            myBoxCollider.center = bounds.center - instance.transform.position;
+            myBoxCollider.size = bounds.size;
         }
     }
 

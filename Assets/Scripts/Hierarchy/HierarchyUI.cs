@@ -13,11 +13,11 @@ public class HierarchyUI : MonoBehaviour
     public ScrollRect scrollRect;
 
     private List<HierarchyItem> hierarchyItems;
-    private PrefabGizmoManager _prefabGizmoManager;
+    private PrefabInteractionManager _prefabGizmoManager;
 
     void Awake()
     {
-        _prefabGizmoManager = PrefabGizmoManager.GetInstance();
+        _prefabGizmoManager = PrefabInteractionManager.GetInstance();
         hierarchyItems = new List<HierarchyItem>();
     }
 

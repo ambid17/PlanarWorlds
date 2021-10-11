@@ -10,7 +10,7 @@ public enum TargetingType
     Prefab, PrefabPlacement, None
 }
 
-public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
+public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionManager>
 {
     public RectTransform inspectorRectTransform;
     public RectTransform hierarchyRectTransform;
