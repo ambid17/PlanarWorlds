@@ -67,6 +67,12 @@ public class MeshMapEditor : MonoBehaviour
         _terrainLayerIds = new List<int>();
 
         _isDragging = false;
+
+    }
+
+    private void Start()
+    {
+        UIManager.OnEditModeChanged += EditModeChanged;
     }
 
     private void Update()
@@ -569,7 +575,7 @@ public class MeshMapEditor : MonoBehaviour
     {
         if (newEditMode != EditMode.Terrain)
         {
-            // Cleanup
+            terrainMaterial.SetVector("_Center", new Vector3(-10000, 0, -10000));
         }
     }
     #endregion
