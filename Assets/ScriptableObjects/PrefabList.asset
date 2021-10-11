@@ -33,7 +33,7 @@ MonoBehaviour:
     previewTexture: {fileID: 2800000, guid: 99611090fd0f64640ac5c16a8b74669b, type: 3}
     prefabId: 5
     prefabName: Rock4
-  - gameObject: {fileID: 7165534316785872605, guid: 9648030f329a2184782a14f32a720e9c, type: 3}
+  - gameObject: {fileID: 2877601021107841594, guid: 18cff11b22de1ac4a87378d76193cea4, type: 3}
     previewTexture: {fileID: 2800000, guid: da59044a728ec5e488813be9e723cc35, type: 3}
     prefabId: 6
     prefabName: WoodCart
@@ -41,3 +41,15 @@ MonoBehaviour:
     previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
     prefabId: 7
     prefabName: House1
+  - gameObject: {fileID: 6381391812093862709, guid: ab694da94fa460042887d51cac938f4a, type: 3}
+    previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
+    prefabId: 9
+    prefabName: WoodCrate
+  - gameObject: {fileID: 5876150633889907509, guid: a40db83b462e42b4c811ae3e414034ed, type: 3}
+    previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
+    prefabId: 10
+    prefabName: WoodFence
+  - gameObject: {fileID: 3497887789606846679, guid: 11ac9bfa76eed974791847fc6c82c4b1, type: 3}
+    previewTexture: {fileID: 2800000, guid: 18d396c5794ffd0409cbf71690e5e16b, type: 3}
+    prefabId: 11
+    prefabName: WoodFence_Ext
