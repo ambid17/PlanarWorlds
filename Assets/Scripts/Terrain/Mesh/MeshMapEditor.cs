@@ -75,6 +75,8 @@ public class MeshMapEditor : MonoBehaviour
         UIManager.OnEditModeChanged += EditModeChanged;
     }
 
+
+    private bool updateTerrain = true;
     private void Update()
     {
         if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.TileMap)
@@ -95,7 +97,11 @@ public class MeshMapEditor : MonoBehaviour
             // https://docs.unity3d.com/ScriptReference/TerrainData.SetHeightsDelayLOD.html
             _terrainData.SyncHeightmap();
         }
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            updateTerrain = !updateTerrain;
+        }
+        if (!EventSystem.current.IsPointerOverGameObject() && updateTerrain)
         {
             UpdateTerrainHighlight();
         }
@@ -555,7 +561,7 @@ public class MeshMapEditor : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error laoding mesh map: \n{e.Message}\n{e.StackTrace}");
+                Debug.LogError($"Error loading mesh map: \n{e.Message}\n{e.StackTrace}");
             }
         }
     }
