@@ -212,3 +212,8 @@ MonoBehaviour:
   activeTextColor: {r: 0.4, g: 0.4, b: 1, a: 1}
   hoverTextColor: {r: 0.4, g: 0.4, b: 1, a: 1}
   inactiveTextColor: {r: 1, g: 1, b: 1, a: 1}
+  button: {fileID: 5974601083634379681}
+  buttonImage: {fileID: 2038075039013755744}
+  buttonText: {fileID: 0}
+  isSelected: 0
+  innerImage: {fileID: 85241326686146350}

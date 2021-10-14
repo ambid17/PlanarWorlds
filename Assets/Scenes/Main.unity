@@ -3270,7 +3270,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 826, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &155014210
@@ -10160,11 +10160,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_SizeDelta.x
@@ -10176,11 +10176,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 170
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 7849888299924935794, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_text
@@ -10189,6 +10189,10 @@ PrefabInstance:
     - target: {fileID: 8310570353971415019, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_Name
       value: LockButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 8310570353971415019, guid: 05ccec16703629448889604fec1af41b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05ccec16703629448889604fec1af41b, type: 3}
@@ -11481,11 +11485,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_SizeDelta.x
@@ -11497,19 +11501,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 295123190267296358, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 7849888299924935794, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_text
-      value: Fill
+      value: Sort
       objectReference: {fileID: 0}
     - target: {fileID: 8310570353971415019, guid: 05ccec16703629448889604fec1af41b, type: 3}
       propertyPath: m_Name
-      value: FillButton
+      value: SortButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 8310570353971415019, guid: 05ccec16703629448889604fec1af41b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05ccec16703629448889604fec1af41b, type: 3}
@@ -19233,6 +19241,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce187185fcc95624ca6ddce01c33309e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sortButton: {fileID: 884400202}
+  lockButton: {fileID: 1884812391}
+  nextTurnButton: {fileID: 1846766802}
+  imageButtonPrefab: {fileID: 9151598574256022449, guid: 8b376412e7242a24ea6d3c9c43dfe00e, type: 3}
+  initiativeImageContainer: {fileID: 699399341}
 --- !u!1 &776498769
 GameObject:
   m_ObjectHideFlags: 0
@@ -19938,6 +19951,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedCharacter: {fileID: 0}
   _characterInspector: {fileID: 768342786}
+  _initiativeUI: {fileID: 768342787}
   _characterLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -21726,6 +21740,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 876608820}
   m_CullTransparentMesh: 0
+--- !u!114 &884400202 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3237954428312474568, guid: 05ccec16703629448889604fec1af41b, type: 3}
+  m_PrefabInstance: {fileID: 492400716}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d540e81b3a3db2f418bdeb242c258662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &887471581
 GameObject:
   m_ObjectHideFlags: 0
@@ -23509,8 +23534,8 @@ MonoBehaviour:
     _isExpanded: 1
     _focusMode: 2
     _constantSpeed: 10
-    _smoothTime: 1.5
-    _focusDistanceAdd: 1.2
+    _smoothTime: 0.5
+    _focusDistanceAdd: 3
   _rotationSwitchSettings:
     _canBeDisplayed: 1
     _isExpanded: 1
@@ -26156,8 +26181,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 413, y: 0}
-  m_SizeDelta: {x: 786, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1055940250
 MonoBehaviour:
@@ -33345,6 +33370,7 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}
 --- !u!1 &1263099518
 GameObject:
   m_ObjectHideFlags: 0
@@ -46185,6 +46211,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1844767817}
   m_CullTransparentMesh: 0
+--- !u!114 &1846766802 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3237954428312474568, guid: 05ccec16703629448889604fec1af41b, type: 3}
+  m_PrefabInstance: {fileID: 535835870}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d540e81b3a3db2f418bdeb242c258662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1848306914
 GameObject:
   m_ObjectHideFlags: 0
@@ -47003,6 +47040,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1884417296}
   m_CullTransparentMesh: 1
+--- !u!114 &1884812391 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3237954428312474568, guid: 05ccec16703629448889604fec1af41b, type: 3}
+  m_PrefabInstance: {fileID: 431197997}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d540e81b3a3db2f418bdeb242c258662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1885401675
 GameObject:
   m_ObjectHideFlags: 0
@@ -47889,6 +47937,7 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}
 --- !u!1 &1916437851
 GameObject:
   m_ObjectHideFlags: 0
@@ -53479,6 +53528,7 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}
 --- !u!1 &8310570353477334265
 GameObject:
   m_ObjectHideFlags: 0
@@ -53518,6 +53568,7 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}
 --- !u!1 &8310570353515363836
 GameObject:
   m_ObjectHideFlags: 0
@@ -53557,6 +53608,7 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}
 --- !u!1 &8310570354063367265
 GameObject:
   m_ObjectHideFlags: 0
@@ -53596,6 +53648,7 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}
 --- !u!1 &8310570355096471997
 GameObject:
   m_ObjectHideFlags: 0
@@ -53635,3 +53688,4 @@ MonoBehaviour:
   buttonImage: {fileID: 0}
   buttonText: {fileID: 0}
   isSelected: 0
+  innerImage: {fileID: 0}

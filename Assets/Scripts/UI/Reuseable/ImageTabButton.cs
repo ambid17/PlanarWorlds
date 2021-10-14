@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class ImageTabButton : ButtonBase
 {
+    [SerializeField]
     private Image innerImage;
 
     public override void Awake()

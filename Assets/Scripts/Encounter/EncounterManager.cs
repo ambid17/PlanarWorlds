@@ -1,3 +1,4 @@
+using RTG;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,11 +7,14 @@ using UnityEngine.EventSystems;
 public class EncounterManager : StaticMonoBehaviour<EncounterManager>
 {
     private List<CharacterInstanceData> _characters = new List<CharacterInstanceData>();
+    public List<CharacterInstanceData> Characters => _characters;
 
     public CharacterInstanceData selectedCharacter;
 
     [SerializeField]
     private CharacterInspector _characterInspector;
+    [SerializeField]
+    private InitiativeUI _initiativeUI;
     [SerializeField]
     private LayerMask _characterLayerMask;
     private Camera _mainCamera;
@@ -48,7 +52,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         }
     }
 
-    private void OnCharacterChanged(CharacterInstanceData characterInstance)
+    public void OnCharacterChanged(CharacterInstanceData characterInstance)
     {
         ToggleOutlineRender(false);
         selectedCharacter = characterInstance;
@@ -74,10 +78,6 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         }
     }
 
-    // We can only click on an object if:
-    // - We click the left mouse button
-    // - We aren't clicking on a gizmo
-    // - We aren't clicking on any UI
     private bool DidValidClick()
     {
         return Input.GetMouseButtonDown(0)
@@ -87,10 +87,47 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
     public void AddCharacter(CharacterInstanceData newCharacter)
     {
         _characters.Add(newCharacter);
+        _initiativeUI.RefreshCharacterList();
+        SortCharactersByInitiative();
     }
 
     public void RemoveCharacter(CharacterInstanceData character)
     {
         _characters.Remove(character);
+        _initiativeUI.RefreshCharacterList();
+        SortCharactersByInitiative();
+    }
+
+    public void SortCharactersByInitiative()
+    {
+        _characters.Sort();
+    }
+
+    public void OnInitiativeUpdated()
+    {
+        SortCharactersByInitiative();
+        _initiativeUI.RefreshCharacterList();
+    }
+
+    public CharacterInstanceData GetNextCharacter()
+    {
+        int currentIndex = _characters.IndexOf(selectedCharacter);
+
+        if(currentIndex < _characters.Count - 1)
+        {
+            currentIndex++;
+        }
+        else
+        {
+            currentIndex = 0;
+        }
+
+        return _characters[currentIndex];
+    }
+
+    public void FocusOnCharacter()
+    {
+        // Always focus the camera pointing north
+        RTFocusCamera.Get.Focus(new List<GameObject>() { selectedCharacter.gameObject });
     }
 }

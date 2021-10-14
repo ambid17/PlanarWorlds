@@ -25,19 +25,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     public void LoadPrefabFromSave(PrefabModel model)
     {
-        Prefab prefab = null;
-        if (model.prefabType == PrefabType.Prop)
-        {
-            prefab = propList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
-        }
-        else if (model.prefabType == PrefabType.Player)
-        {
-            prefab = playerList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
-        }
-        else
-        {
-            prefab = monsterList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
-        }
+        Prefab prefab = LookupPrefab(model.prefabType, model.prefabId);
 
         GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
         instance.transform.position = model.position;
@@ -70,6 +58,26 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         CreateObjectCollider(instance);
 
         _hierarchyManager.AddItem(instance);
+    }
+
+    public Prefab LookupPrefab(PrefabType prefabType, int prefabId)
+    {
+        Prefab toReturn = new Prefab();
+
+        if (prefabType == PrefabType.Prop)
+        {
+            toReturn = propList.prefabs.Where(p => p.prefabId == prefabId).FirstOrDefault();
+        }
+        else if (prefabType == PrefabType.Player)
+        {
+            toReturn = playerList.prefabs.Where(p => p.prefabId == prefabId).FirstOrDefault();
+        }
+        else
+        {
+            toReturn = monsterList.prefabs.Where(p => p.prefabId == prefabId).FirstOrDefault();
+        }
+
+        return toReturn;
     }
 
     public GameObject CreatePrefabInstance(Prefab prefab, PrefabType prefabType)

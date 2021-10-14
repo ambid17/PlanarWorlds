@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterInstanceData : PrefabInstanceData
+public class CharacterInstanceData : PrefabInstanceData, IComparable
 {
     public string characterName;
     public int characterHp;
@@ -25,5 +26,28 @@ public class CharacterInstanceData : PrefabInstanceData
         };
 
         return myModel;
+    }
+
+    // Sorts the players in descending initiative order
+    public int CompareTo(object obj)
+    {
+        CharacterInstanceData characterToCompare = obj as CharacterInstanceData;
+        
+        if (characterToCompare == null)
+        {
+            return 1;
+        }
+
+        if(characterToCompare.characterInitiative < characterInitiative)
+        {
+            return -1;
+        }
+
+        if(characterToCompare.characterInitiative > characterInitiative)
+        {
+            return 1;
+        }
+
+        return 0;
     }
 }

@@ -59,6 +59,7 @@ public class CharacterInspector : MonoBehaviour
     {
         int parsedValue = InputValidation.ValidateInt(text: characterInitiativeInput.text, defaultValue: 0);
         EncounterManager.Instance.selectedCharacter.characterInitiative = parsedValue;
+        EncounterManager.Instance.OnInitiativeUpdated();
     }
 
     public void CharacterSelected(CharacterInstanceData characterData)
