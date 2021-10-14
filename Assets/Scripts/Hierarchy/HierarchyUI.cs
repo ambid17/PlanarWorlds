@@ -74,6 +74,12 @@ public class HierarchyUI : MonoBehaviour
 
     public void Clear()
     {
+        // When loading a campaign, if the hierarchy hasn't been opened yet the hierarchyItems will be bull
+        if(hierarchyItems == null)
+        {
+            hierarchyItems = new List<HierarchyItem>();
+        }
+
         foreach (HierarchyItem item in hierarchyItems)
         {
             Destroy(item.gameObject);

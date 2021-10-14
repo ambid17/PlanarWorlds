@@ -279,6 +279,13 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
             foreach (GameObject go in _targetObjects)
             {
                 _hierarchyManager.RemoveItem(go);
+
+                CharacterInstanceData characterInstance = go.GetComponent<CharacterInstanceData>();
+                if (characterInstance)
+                {
+                    EncounterManager.Instance.RemoveCharacter(characterInstance);
+                }
+
                 Destroy(go);
             }
             ForceClearSelection();

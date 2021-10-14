@@ -25,7 +25,19 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     public void LoadPrefabFromSave(PrefabModel model)
     {
-        Prefab prefab = propList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
+        Prefab prefab = null;
+        if (model.prefabType == PrefabType.Prop)
+        {
+            prefab = propList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
+        }
+        else if (model.prefabType == PrefabType.Player)
+        {
+            prefab = playerList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
+        }
+        else
+        {
+            prefab = monsterList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
+        }
 
         GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
         instance.transform.position = model.position;
@@ -34,8 +46,25 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         instance.layer = Constants.PrefabParentLayer;
         instance.name = model.name;
 
-        PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
-        container.prefabId = model.prefabId;
+        if (model.prefabType == PrefabType.Prop)
+        {
+            PrefabInstanceData instanceData = instance.AddComponent<PrefabInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = model.prefabType;
+        }
+        else
+        {
+            CharacterModel characterModel = model as CharacterModel;
+            CharacterInstanceData instanceData = instance.AddComponent<CharacterInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = model.prefabType;
+            instanceData.characterName = characterModel.name;
+            instanceData.characterHp = characterModel.characterHp;
+            instanceData.characterInitiative = characterModel.characterInitiative;
+            instanceData.characterSpeed = characterModel.characterSpeed;
+
+            EncounterManager.Instance.AddCharacter(instanceData);
+        }
 
         SetObjectShader(instance);
         CreateObjectCollider(instance);
@@ -43,13 +72,29 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         _hierarchyManager.AddItem(instance);
     }
 
-    public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId, string name)
+    public GameObject CreatePrefabInstance(Prefab prefab, PrefabType prefabType)
     {
-        GameObject instance = Instantiate(prefabToInstantiate, prefabContainer);
-        instance.name = name;
+        GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
+        instance.name = prefab.prefabName;
 
-        PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
-        container.prefabId = prefabId;
+        if(prefabType == PrefabType.Prop)
+        {
+            PrefabInstanceData instanceData = instance.AddComponent<PrefabInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = prefabType;
+        }
+        else
+        {
+            CharacterInstanceData instanceData = instance.AddComponent<CharacterInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = prefabType;
+            instanceData.characterName = prefab.prefabName;
+            instanceData.characterHp = 10;
+            instanceData.characterInitiative = 0;
+            instanceData.characterSpeed = 30;
+
+            EncounterManager.Instance.AddCharacter(instanceData);
+        }
 
         SetObjectShader(instance);
         CreateObjectCollider(instance);
@@ -116,19 +161,34 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     public void LoadCampaign(Campaign campaign)
     {
-        foreach (PrefabModel campaignPrefab in campaign.prefabs)
+        foreach (PrefabModel propModel in campaign.props)
         {
-            LoadPrefabFromSave(campaignPrefab);
+            LoadPrefabFromSave(propModel);
+        }
+
+        foreach (CharacterModel characterModel in campaign.characters)
+        {
+            LoadPrefabFromSave(characterModel);
         }
     }
 
     public void PopulateCampaign(Campaign campaign)
     {
-        campaign.prefabs = new List<PrefabModel>();
+        campaign.props = new List<PrefabModel>();
+        campaign.characters = new List<CharacterModel>();
+
         foreach (Transform child in prefabContainer)
         {
-            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
-            campaign.prefabs.Add(container.GetPrefabModel());
+            PrefabInstanceData instanceData = child.GetComponent<PrefabInstanceData>();
+            if(instanceData.prefabType == PrefabType.Prop)
+            {
+                campaign.props.Add(instanceData.GetPrefabModel());
+            }
+            else
+            {
+                CharacterInstanceData characterInstance = instanceData as CharacterInstanceData;
+                campaign.characters.Add(characterInstance.GetCharacterModel());
+            }
         }
     }
 

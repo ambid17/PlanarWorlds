@@ -26,14 +26,14 @@ public class PrefabUI : MonoBehaviour
     {
         _prefabGizmoManager = PrefabInteractionManager.GetInstance();
         _prefabManager = PrefabManager.GetInstance();
-        PopulateMenu(_prefabManager.propList.prefabs, propsContainer);
-        PopulateMenu(_prefabManager.playerList.prefabs, playersContainer);
-        PopulateMenu(_prefabManager.monsterList.prefabs, monstersContainer);
+        PopulateMenu(_prefabManager.propList.prefabs, propsContainer, PrefabType.Prop);
+        PopulateMenu(_prefabManager.playerList.prefabs, playersContainer, PrefabType.Player);
+        PopulateMenu(_prefabManager.monsterList.prefabs, monstersContainer, PrefabType.Monster);
         InitButtons();
         PrefabTypeButtonClicked(PrefabType.Prop);
     }
 
-    private void PopulateMenu(Prefab[] prefabList, Transform container)
+    private void PopulateMenu(Prefab[] prefabList, Transform container, PrefabType prefabType)
     {
         foreach (Prefab prefab in prefabList)
         {
@@ -41,15 +41,15 @@ public class PrefabUI : MonoBehaviour
             prefabItemGO.name = prefab.gameObject.name;
 
             PrefabListItem prefabListItem = prefabItemGO.GetComponent<PrefabListItem>();
-            prefabListItem.button.onClick.AddListener(() => PrefabButtonClicked(prefab));
+            prefabListItem.button.onClick.AddListener(() => PrefabButtonClicked(prefab, prefabType));
             prefabListItem.image.sprite = Sprite.Create(prefab.previewTexture, new Rect(0, 0, prefab.previewTexture.width, prefab.previewTexture.height), new Vector2(0.5f, 0.5f));
             prefabListItem.text.text = prefab.gameObject.name;
         }
     }
 
-    private void PrefabButtonClicked(Prefab prefab)
+    private void PrefabButtonClicked(Prefab prefab, PrefabType prefabType)
     {
-        GameObject instance = _prefabManager.CreatePrefabInstance(prefab.gameObject, prefab.prefabId, prefab.prefabName);
+        GameObject instance = _prefabManager.CreatePrefabInstance(prefab, prefabType);
         
         instance.layer = Constants.PrefabPlacementLayer;
 

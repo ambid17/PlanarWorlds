@@ -2,19 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabModelContainer : MonoBehaviour
+public class PrefabInstanceData : MonoBehaviour
 {
     public int prefabId;
+    public PrefabType prefabType;
 
-    public PrefabModel GetPrefabModel()
+    public virtual PrefabModel GetPrefabModel()
     {
         PrefabModel myModel = new PrefabModel()
         {
             position = transform.position,
             rotation = transform.rotation.eulerAngles,
             scale = transform.localScale,
-            prefabId = prefabId,
             name = gameObject.name,
+            prefabId = prefabId,
+            prefabType = prefabType
         };
 
         return myModel;

@@ -14,6 +14,7 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public GameObject InspectorCanvas;
     public GameObject HierarchyCanvas;
     public GameObject TerrainInspectorCanvas;
+    public GameObject EncounterCanvas;
 
     public bool isEditingValues;
     public bool isFileBrowserOpen;
@@ -25,6 +26,7 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     public bool inspectorWindowShouldBeActive;
     public bool prefabWindowShouldBeActive;
     public bool terrainInspectorWindowShouldBeActive;
+    public bool encounterWindowShouldBeActive;
 
     public static event Action<EditMode> OnEditModeChanged;
 
@@ -54,6 +56,7 @@ public class UIManager : StaticMonoBehaviour<UIManager>
         inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
         prefabWindowShouldBeActive = editMode == EditMode.Prefab;
         terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;
+        encounterWindowShouldBeActive = editMode == EditMode.Encounter;
 
         //tell the UI scripts that are listening to clean their UI and affects before their scripts are toggled off
         OnEditModeChanged.Invoke(editMode);
@@ -67,5 +70,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
         InspectorCanvas.SetActive(inspectorWindowShouldBeActive);
         PrefabCanvas.SetActive(prefabWindowShouldBeActive);
         TerrainInspectorCanvas.SetActive(terrainInspectorWindowShouldBeActive);
+        EncounterCanvas.SetActive(encounterWindowShouldBeActive);
     }
 }
