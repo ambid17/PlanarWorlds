@@ -128,6 +128,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
     public void FocusOnCharacter()
     {
         // Always focus the camera pointing north
+        _mainCamera.transform.rotation = Quaternion.Euler(new Vector3(35,0,0));
         RTFocusCamera.Get.Focus(new List<GameObject>() { selectedCharacter.gameObject });
     }
 }

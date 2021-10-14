@@ -80,7 +80,6 @@ public class InitiativeUI : MonoBehaviour
     public void RefreshCharacterList()
     {
         ClearCharacterList();
-        bool isFirst = true;
         foreach (CharacterInstanceData characterInstance in EncounterManager.Instance.Characters)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, initiativeImageContainer.transform);
@@ -91,14 +90,6 @@ public class InitiativeUI : MonoBehaviour
             iconButton.Setup(characterSprite, () => SetCurrentCharacter(characterInstance, iconButton));
 
             _characterIcons.Add(iconButton);
-            if (isFirst)
-            {
-                iconButton.Select();
-                _currentImageButton = iconButton;
-                EncounterManager.Instance.OnCharacterChanged(characterInstance);
-
-                isFirst = false;
-            }
         }
     }
 
