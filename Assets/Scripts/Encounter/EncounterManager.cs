@@ -39,15 +39,25 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
     {
         if (DidValidClick())
         {
+            GameObject selectedObject = null;
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _characterLayerMask))
             {
-                CharacterInstanceData characterInstance = rayHit.collider.gameObject.GetComponent<CharacterInstanceData>();
-                if (characterInstance && characterInstance != selectedCharacter)
-                {
-                    OnCharacterChanged(characterInstance);
-                }
+                selectedObject = rayHit.collider.gameObject;
+            }
+
+            CharacterInstanceData characterInstance = null;
+
+            if (selectedObject)
+            {
+                characterInstance = selectedObject.GetComponent<CharacterInstanceData>();
+            }
+
+            if (characterInstance != selectedCharacter)
+            {
+                OnCharacterChanged(characterInstance);
+                _initiativeUI.OnCharacterSelectedManually(characterInstance);
             }
         }
     }
@@ -87,14 +97,12 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
     public void AddCharacter(CharacterInstanceData newCharacter)
     {
         _characters.Add(newCharacter);
-        _initiativeUI.RefreshCharacterList();
         SortCharactersByInitiative();
     }
 
     public void RemoveCharacter(CharacterInstanceData character)
     {
         _characters.Remove(character);
-        _initiativeUI.RefreshCharacterList();
         SortCharactersByInitiative();
     }
 

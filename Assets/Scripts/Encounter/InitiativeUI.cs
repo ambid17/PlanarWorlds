@@ -14,17 +14,21 @@ public class InitiativeUI : MonoBehaviour
 
     private ImageTabButton _currentImageButton;
 
-    private List<ImageTabButton> _characterIcons;
+    private Dictionary<CharacterInstanceData, ImageTabButton> _characterIcons;
 
     void Start()
     {
-        _characterIcons = new List<ImageTabButton>();
+        _characterIcons = new Dictionary<CharacterInstanceData, ImageTabButton>();
         InitButtons();
+        UIManager.OnEditModeChanged += EditModeChanged;
     }
 
-    void Update()
+    private void EditModeChanged(EditMode newEditMode)
     {
-
+        if(newEditMode == EditMode.Encounter)
+        {
+            RefreshCharacterList();
+        }
     }
 
     private void InitButtons()
@@ -53,64 +57,76 @@ public class InitiativeUI : MonoBehaviour
 
         if(nextCharacter != null)
         {
-            ImageTabButton iconButton = GetIconButton();
-            iconButton.Select();
-            SetCurrentCharacter(nextCharacter, iconButton);
+            SetCurrentCharacter(nextCharacter);
         }
 
         nextTurnButton.Unselect();
-    }
-
-    private ImageTabButton GetIconButton()
-    {
-        int currentIndex = _characterIcons.IndexOf(_currentImageButton);
-
-        if (currentIndex < _characterIcons.Count - 1)
-        {
-            currentIndex++;
-        }
-        else
-        {
-            currentIndex = 0;
-        }
-
-        return _characterIcons[currentIndex];
+        EncounterManager.Instance.FocusOnCharacter();
     }
 
     public void RefreshCharacterList()
     {
         ClearCharacterList();
+
+        if (EncounterManager.Instance.Characters.Count == 0)
+        {
+            return;
+        }
+
         foreach (CharacterInstanceData characterInstance in EncounterManager.Instance.Characters)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, initiativeImageContainer.transform);
-            ImageTabButton iconButton = newButton.GetComponent<ImageTabButton>();
+            newButton.name = $"{characterInstance.characterName} icon";
 
+            ImageTabButton iconButton = newButton.GetComponent<ImageTabButton>();
+            
             Texture2D previewTexture = PrefabManager.Instance.LookupPrefab(characterInstance.prefabType, characterInstance.prefabId).previewTexture;
             Sprite characterSprite = Sprite.Create(previewTexture, new Rect(0, 0, previewTexture.width, previewTexture.height), new Vector2(0.5f, 0.5f));
-            iconButton.Setup(characterSprite, () => SetCurrentCharacter(characterInstance, iconButton));
+            iconButton.Setup(characterSprite, () => SetCurrentCharacter(characterInstance));
 
-            _characterIcons.Add(iconButton);
+            _characterIcons.Add(characterInstance, iconButton);
         }
     }
 
     private void ClearCharacterList()
     {
-        _characterIcons = new List<ImageTabButton>();
+        _characterIcons = new Dictionary<CharacterInstanceData, ImageTabButton>();
         foreach (Transform child in initiativeImageContainer.transform)
         {
             Destroy(child.gameObject);
         }
     }
 
-    private void SetCurrentCharacter(CharacterInstanceData characterInstance, ImageTabButton iconButton)
+    private void SetCurrentCharacter(CharacterInstanceData characterInstance)
+    {
+        // Unselect the last image button
+        if (_currentImageButton)
+        {
+            _currentImageButton.Unselect();
+        }
+
+        _currentImageButton = _characterIcons[characterInstance];
+        _currentImageButton.Select();
+        EncounterManager.Instance.OnCharacterChanged(characterInstance);
+    }
+
+    public void OnCharacterSelectedManually(CharacterInstanceData characterInstance)
     {
         if (_currentImageButton)
         {
             _currentImageButton.Unselect();
         }
 
-        _currentImageButton = iconButton;
-        EncounterManager.Instance.OnCharacterChanged(characterInstance);
-        EncounterManager.Instance.FocusOnCharacter();
+        ImageTabButton buttonForCharacter = null;
+        if (characterInstance)
+        {
+            _characterIcons.TryGetValue(characterInstance, out buttonForCharacter);
+
+        }
+        _currentImageButton = buttonForCharacter;
+        if (_currentImageButton)
+        {
+            _currentImageButton.Select();
+        }
     }
 }
