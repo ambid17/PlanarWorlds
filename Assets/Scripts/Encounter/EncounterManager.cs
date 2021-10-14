@@ -4,22 +4,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+public enum EncounterPlacementType
+{
+
+}
 public class EncounterManager : StaticMonoBehaviour<EncounterManager>
 {
-    private List<CharacterInstanceData> _characters = new List<CharacterInstanceData>();
-    public List<CharacterInstanceData> Characters => _characters;
-
-    public CharacterInstanceData selectedCharacter;
-
     [SerializeField]
     private CharacterInspector _characterInspector;
     [SerializeField]
     private InitiativeUI _initiativeUI;
     [SerializeField]
     private LayerMask _characterLayerMask;
+    [SerializeField]
+    private LayerMask _terrainLayerMask;
     private Camera _mainCamera;
 
     private UIManager _uiManager;
+
+    private List<CharacterInstanceData> _characters = new List<CharacterInstanceData>();
+    public List<CharacterInstanceData> Characters => _characters;
+
+    public CharacterInstanceData selectedCharacter;
+
+    private bool _isMovingCharacter = false;
+    private Vector3 _moveStartPosition;
 
     void Start()
     {
@@ -32,12 +41,23 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         if (_uiManager.EditMode != EditMode.Encounter || _uiManager.UserCantInput)
             return;
 
-        TrySelectCharacter();
+        if (!_isMovingCharacter)
+        {
+            TrySelectCharacter();
+            TryMoveCharacter();
+        }
+        else
+        {
+            MoveCharacter();
+            TryCancelMove();
+        }
+        
     }
 
     private void TrySelectCharacter()
     {
-        if (DidValidClick())
+        if (Input.GetMouseButtonDown(0)
+            && !EventSystem.current.IsPointerOverGameObject())
         {
             GameObject selectedObject = null;
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -88,10 +108,49 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         }
     }
 
-    private bool DidValidClick()
+    private void TryMoveCharacter()
     {
-        return Input.GetMouseButtonDown(0)
-            && !EventSystem.current.IsPointerOverGameObject();
+        if(Input.GetMouseButtonDown(2)
+            && !EventSystem.current.IsPointerOverGameObject()
+            && selectedCharacter != null)
+        {
+            _isMovingCharacter = true;
+            _moveStartPosition = selectedCharacter.transform.position;
+        }
+    }
+
+    private void MoveCharacter()
+    {
+        if (selectedCharacter == null)
+            return;
+
+        // Build a ray using the current mouse cursor position
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        // Check if the ray intersects the terrain. If it does, snap the object to the terrain
+        if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainLayerMask))
+        {
+            selectedCharacter.transform.position = rayHit.point;
+        }
+        else
+        {
+            _isMovingCharacter = false;
+            selectedCharacter.transform.position = _moveStartPosition;
+        }
+    }
+
+    private void TryCancelMove()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            _isMovingCharacter = false;
+        }
+
+        if(Input.GetMouseButton(1))
+        {
+            _isMovingCharacter = false;
+            selectedCharacter.transform.position = _moveStartPosition;
+        }
     }
 
     public void AddCharacter(CharacterInstanceData newCharacter)
@@ -115,6 +174,17 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
     {
         SortCharactersByInitiative();
         _initiativeUI.RefreshCharacterList();
+    }
+
+    public void OnHpUpdated()
+    {
+        if (selectedCharacter && selectedCharacter.characterHp <= 0)
+        {
+            selectedCharacter.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+            _initiativeUI.RefreshCharacterList();
+            _characters.Remove(selectedCharacter);
+            OnCharacterChanged(null);
+        }
     }
 
     public CharacterInstanceData GetNextCharacter()

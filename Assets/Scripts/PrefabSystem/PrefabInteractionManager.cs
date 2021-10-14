@@ -296,7 +296,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
     {
         UpdatePrefabPosition();
 
-        if (Input.GetMouseButtonDown(0) )
+        if (Input.GetMouseButtonDown(0))
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {

@@ -47,6 +47,7 @@ public class CharacterInspector : MonoBehaviour
     {
         int parsedValue = InputValidation.ValidateInt(text: characterHpInput.text, defaultValue: 0);
         EncounterManager.Instance.selectedCharacter.characterHp = parsedValue;
+        EncounterManager.Instance.OnHpUpdated();
     }
 
     private void OnSpeedUpdated()

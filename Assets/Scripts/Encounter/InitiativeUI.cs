@@ -75,6 +75,9 @@ public class InitiativeUI : MonoBehaviour
 
         foreach (CharacterInstanceData characterInstance in EncounterManager.Instance.Characters)
         {
+            if (characterInstance.characterHp <= 0)
+                continue;
+
             GameObject newButton = Instantiate(imageButtonPrefab, initiativeImageContainer.transform);
             newButton.name = $"{characterInstance.characterName} icon";
 
@@ -105,7 +108,14 @@ public class InitiativeUI : MonoBehaviour
             _currentImageButton.Unselect();
         }
 
-        _currentImageButton = _characterIcons[characterInstance];
+        ImageTabButton buttonForCharacter = null;
+        if (characterInstance)
+        {
+            _characterIcons.TryGetValue(characterInstance, out buttonForCharacter);
+
+        }
+
+        _currentImageButton = buttonForCharacter;
         _currentImageButton.Select();
         EncounterManager.Instance.OnCharacterChanged(characterInstance);
     }
