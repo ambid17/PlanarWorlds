@@ -7,7 +7,7 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, PrefabPlacement, None
+    Prefab, PrefabPlacement, CharacterPlacement, None
 }
 
 public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionManager>
@@ -524,6 +524,12 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
             duplicateObject.layer = go.layer;
             duplicateObject.transform.parent = go.transform.parent;
             duplicateObject.name = go.name;
+
+            CharacterInstanceData instanceData = go.GetComponent<CharacterInstanceData>();
+            if (instanceData)
+            {
+                EncounterManager.Instance.AddCharacter(instanceData);
+            }
 
             toReturn.Add(duplicateObject);
             _hierarchyManager.AddItem(duplicateObject);

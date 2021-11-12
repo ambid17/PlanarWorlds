@@ -50,6 +50,21 @@ public class CharacterInspector : MonoBehaviour
         EncounterManager.Instance.OnHpUpdated();
     }
 
+    public void OnCharacterDowned()
+    {
+
+    }
+
+    public void OnCharacterRevived()
+    {
+
+    }
+
+    public void OnCharacterKilled()
+    {
+
+    }
+
     private void OnSpeedUpdated()
     {
         int parsedValue = InputValidation.ValidateInt(text: characterSpeedInput.text, defaultValue: 0);

@@ -12,6 +12,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     private HierarchyManager _hierarchyManager;
 
+    private int instanceIdCounter = 0;
 
     protected override void Awake()
     {
@@ -50,6 +51,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             instanceData.characterHp = characterModel.characterHp;
             instanceData.characterInitiative = characterModel.characterInitiative;
             instanceData.characterSpeed = characterModel.characterSpeed;
+            instanceData.instanceId = ++instanceIdCounter;
 
             EncounterManager.Instance.AddCharacter(instanceData);
         }
@@ -100,6 +102,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             instanceData.characterHp = 10;
             instanceData.characterInitiative = 0;
             instanceData.characterSpeed = 30;
+            instanceData.instanceId = ++instanceIdCounter;
 
             EncounterManager.Instance.AddCharacter(instanceData);
         }
@@ -207,5 +210,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         {
             Destroy(child.gameObject);
         }
+
+        instanceIdCounter = 0;
     }
 }

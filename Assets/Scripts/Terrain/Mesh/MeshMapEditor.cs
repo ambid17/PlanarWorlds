@@ -555,7 +555,8 @@ public class MeshMapEditor : MonoBehaviour
                         TryAddTerrainLayer(texture);
                 }
 
-                float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, campaign.terrainData.textureIds.Count()];
+                //float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, campaign.terrainData.textureIds.Count()];
+                float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, 1];
                 Buffer.BlockCopy(campaign.terrainData.splatMap, 0, unflattenedAlphas, 0, _terrainAlphaMapResolution * _terrainAlphaMapResolution * campaign.terrainData.textureIds.Count());
                 _terrainData.SetAlphamaps(0, 0, unflattenedAlphas);
             }
