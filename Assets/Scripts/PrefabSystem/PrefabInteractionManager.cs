@@ -87,11 +87,11 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
         CheckValidClick();
 
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
-        if (_currentTargetingType != TargetingType.PrefabPlacement)
+        if (_currentTargetingType == TargetingType.None || _currentTargetingType == TargetingType.Prefab)
         {
             TrySelectObject();
         }
-        else if (_currentTargetingType == TargetingType.PrefabPlacement)
+        else if (_currentTargetingType == TargetingType.PrefabPlacement || _currentTargetingType == TargetingType.CharacterPlacement)
         {
             TryPlacePrefab();
             TryRotateObject();
@@ -206,6 +206,12 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
         else if (objectToSelect.layer == Constants.PrefabPlacementLayer)
         {
             _currentTargetingType = TargetingType.PrefabPlacement;
+
+            CharacterInstanceData charInstance = objectToSelect.GetComponent<CharacterInstanceData>();
+            if (charInstance)
+            {
+                _currentTargetingType = TargetingType.CharacterPlacement;
+            }
         }
 
         FocusValidObjects();
@@ -265,7 +271,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
     private void TryCancelPrefabPlacement()
     {
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
 		{
             CancelPrefabPlacement();
         }
@@ -324,15 +330,21 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
         // Check if the ray intersects the tilemap. If it does, snap the object to the terrain
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainLayerMask))
         {
-            BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
-
             Vector3 snappedPosition = rayHit.point;
 
-            if (myCollider)
+            if (_currentTargetingType == TargetingType.CharacterPlacement)
             {
-                // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
-                //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+                snappedPosition.x = Mathf.Round(snappedPosition.x) + 0.5f;
+                snappedPosition.z = Mathf.Round(snappedPosition.z) + 0.5f;
+                snappedPosition.y = TerrainManager.Instance.meshMapEditor.terrain.SampleHeight(snappedPosition);
             }
+
+            // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
+            //BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
+            //if (myCollider)
+            //{
+            //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+            //}
 
             _targetObjects[0].transform.position = snappedPosition;
         }
@@ -608,7 +620,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
     private void ToggleZoomAbility()
     {
-        bool canZoom = _currentTargetingType != TargetingType.PrefabPlacement;
+        bool canZoom = _currentTargetingType == TargetingType.Prefab || _currentTargetingType == TargetingType.None;
         RTFocusCamera.Get.ZoomSettings.IsZoomEnabled = canZoom;
     }
     #endregion

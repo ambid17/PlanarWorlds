@@ -73,8 +73,7 @@ public class MovementUI : MonoBehaviour
             lineRenderer.gameObject.SetActive(true);
         }
 
-        int distanceInFeet = Mathf.RoundToInt(offset.magnitude * 5);
-        if (distanceInFeet > _characterToTrack.characterSpeed)
+        if (GetDistanceInFeet(offset) > _characterToTrack.characterSpeed)
         {
             lineRenderer.material.color = _invalidColor;
         }
@@ -87,10 +86,14 @@ public class MovementUI : MonoBehaviour
     private void UpdateMovementText()
     {
         Vector3 offset = _characterToTrack.transform.position - _startingPosition;
+        movementText.text = $"{GetDistanceInFeet(offset)} feet";
+    }
 
-        offset.y = 0; // only account for horizontal movement
-        int distanceInFeet = Mathf.RoundToInt(offset.magnitude * 5);
-        movementText.text = $"{distanceInFeet} feet";
+    private int GetDistanceInFeet(Vector3 offset)
+    {
+        int xInFeet = Mathf.RoundToInt(Mathf.Abs(offset.x) * 5);
+        int zInFeet = Mathf.RoundToInt(Mathf.Abs(offset.z) * 5);
+        return Mathf.Max(xInFeet, zInFeet);
     }
 
     public void ShowMovement(CharacterInstanceData characterToTrack)

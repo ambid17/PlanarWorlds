@@ -135,10 +135,23 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         // Build a ray using the current mouse cursor position
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
+        bool isSmoothing = Input.GetKeyDown(KeyCode.LeftControl);
+
         // Check if the ray intersects the terrain. If it does, snap the object to the terrain
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainLayerMask))
         {
-            selectedCharacter.transform.position = rayHit.point;
+            if (isSmoothing)
+            {
+                selectedCharacter.transform.position = rayHit.point;
+            }
+            else
+            {
+                Vector3 roundedHit = rayHit.point;
+                roundedHit.x = Mathf.Round(roundedHit.x) + 0.5f;
+                roundedHit.z = Mathf.Round(roundedHit.z) + 0.5f;
+                roundedHit.y = TerrainManager.Instance.meshMapEditor.terrain.SampleHeight(roundedHit);
+                selectedCharacter.transform.position = roundedHit;
+            }
         }
         else
         {
