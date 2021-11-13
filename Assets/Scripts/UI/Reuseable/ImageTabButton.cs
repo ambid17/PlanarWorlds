@@ -9,9 +9,23 @@ public class ImageTabButton : ButtonBase
 
     public override void Awake()
     {
-        button = GetComponent<Button>();
-        buttonImage = GetComponent<Image>();
-        innerImage = transform.GetChild(0).GetComponent<Image>();
+        Button myButton = GetComponent<Button>();
+        if (myButton)
+        {
+            button = myButton;
+        }
+
+        Image myImage = GetComponent<Image>();
+        if (myImage)
+        {
+            buttonImage = myImage;
+        }
+
+        Image myInnerImage = transform.GetChild(0).GetComponent<Image>();
+        if (myInnerImage)
+        {
+            innerImage = myInnerImage;
+        }
     }
 
     public void Setup(Sprite sprite, Action callback)

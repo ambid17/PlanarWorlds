@@ -86,6 +86,7 @@ public class InitiativeUI : MonoBehaviour
             Texture2D previewTexture = PrefabManager.Instance.LookupPrefab(characterInstance.prefabType, characterInstance.prefabId).previewTexture;
             Sprite characterSprite = Sprite.Create(previewTexture, new Rect(0, 0, previewTexture.width, previewTexture.height), new Vector2(0.5f, 0.5f));
             iconButton.Setup(characterSprite, () => SetCurrentCharacter(characterInstance));
+            iconButton.buttonText.text = characterInstance.characterName;
 
             _characterIcons.Add(characterInstance, iconButton);
         }
@@ -131,12 +132,20 @@ public class InitiativeUI : MonoBehaviour
         if (characterInstance)
         {
             _characterIcons.TryGetValue(characterInstance, out buttonForCharacter);
-
         }
         _currentImageButton = buttonForCharacter;
         if (_currentImageButton)
         {
             _currentImageButton.Select();
+        }
+    }
+
+    public void UpdateCharacterName(CharacterInstanceData characterInstance)
+    {
+        if (characterInstance)
+        {
+            _characterIcons.TryGetValue(characterInstance, out ImageTabButton buttonForCharacter);
+            buttonForCharacter.buttonText.text = characterInstance.characterName;
         }
     }
 }

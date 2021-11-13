@@ -15,6 +15,8 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
     [SerializeField]
     private InitiativeUI _initiativeUI;
     [SerializeField]
+    private MovementUI _movementUI;
+    [SerializeField]
     private LayerMask _characterLayerMask;
     [SerializeField]
     private LayerMask _terrainLayerMask;
@@ -120,6 +122,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
             && selectedCharacter != null)
         {
             _isMovingCharacter = true;
+            _movementUI.ShowMovement(selectedCharacter.gameObject);
             _moveStartPosition = selectedCharacter.transform.position;
         }
     }
@@ -140,6 +143,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         else
         {
             _isMovingCharacter = false;
+            _movementUI.HideMovement();
             selectedCharacter.transform.position = _moveStartPosition;
         }
     }
@@ -149,11 +153,13 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         if (Input.GetMouseButton(0))
         {
             _isMovingCharacter = false;
+            _movementUI.HideMovement();
         }
 
         if(Input.GetMouseButton(1))
         {
             _isMovingCharacter = false;
+            _movementUI.HideMovement();
             selectedCharacter.transform.position = _moveStartPosition;
         }
     }
@@ -190,6 +196,11 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
             _characters.Remove(selectedCharacter);
             OnCharacterChanged(null);
         }
+    }
+
+    public void OnNameUpdated()
+    {
+        _initiativeUI.UpdateCharacterName(selectedCharacter);
     }
 
     public CharacterInstanceData GetNextCharacter()
