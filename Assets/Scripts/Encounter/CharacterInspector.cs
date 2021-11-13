@@ -47,8 +47,7 @@ public class CharacterInspector : MonoBehaviour
     private void OnHpUpdated()
     {
         int parsedValue = InputValidation.ValidateInt(text: characterHpInput.text, defaultValue: 0);
-        EncounterManager.Instance.selectedCharacter.characterHp = parsedValue;
-        EncounterManager.Instance.OnHpUpdated();
+        EncounterManager.Instance.OnHpUpdated(parsedValue);
     }
 
     public void OnCharacterDowned()

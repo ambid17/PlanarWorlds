@@ -187,19 +187,30 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
         _initiativeUI.RefreshCharacterList();
     }
 
-    public void OnHpUpdated()
+    public void OnHpUpdated(int newHp)
     {
         if (selectedCharacter 
-            && selectedCharacter.characterHp <= 0
+            && newHp <= 0
             && selectedCharacter.prefabType == PrefabType.Monster)
         {
             selectedCharacter.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
-            _initiativeUI.RefreshCharacterList();
             _characters.Remove(selectedCharacter);
-            OnCharacterChanged(null);
-            // When manually toggling the UI, it doesn't disable properly
-            _uiManager.isEditingValues = false;
+            _initiativeUI.RefreshCharacterList();
         }
+
+        // revive a dead character
+        if(selectedCharacter
+            && newHp > 0
+            && selectedCharacter.characterHp <= 0
+            && selectedCharacter.prefabType == PrefabType.Monster)
+        {
+            selectedCharacter.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            _characters.Add(selectedCharacter);
+            _initiativeUI.RefreshCharacterList();
+        }
+
+        EncounterManager.Instance.selectedCharacter.characterHp = newHp;
+
     }
 
     public void OnNameUpdated()
