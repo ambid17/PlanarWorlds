@@ -109,15 +109,17 @@ public class InitiativeUI : MonoBehaviour
             _currentImageButton.Unselect();
         }
 
-        ImageTabButton buttonForCharacter = null;
         if (characterInstance)
         {
-            _characterIcons.TryGetValue(characterInstance, out buttonForCharacter);
+            _characterIcons.TryGetValue(characterInstance, out ImageTabButton buttonForCharacter);
 
+            if (buttonForCharacter)
+            {
+                _currentImageButton = buttonForCharacter;
+                _currentImageButton.Select();
+            }
         }
-
-        _currentImageButton = buttonForCharacter;
-        _currentImageButton.Select();
+        
         EncounterManager.Instance.OnCharacterChanged(characterInstance);
     }
 
@@ -128,16 +130,17 @@ public class InitiativeUI : MonoBehaviour
             _currentImageButton.Unselect();
         }
 
-        ImageTabButton buttonForCharacter = null;
         if (characterInstance)
         {
-            _characterIcons.TryGetValue(characterInstance, out buttonForCharacter);
+            _characterIcons.TryGetValue(characterInstance, out ImageTabButton buttonForCharacter);
+
+            if (buttonForCharacter)
+            {
+                _currentImageButton = buttonForCharacter;
+                _currentImageButton.Select();
+            }
         }
-        _currentImageButton = buttonForCharacter;
-        if (_currentImageButton)
-        {
-            _currentImageButton.Select();
-        }
+        
     }
 
     public void UpdateCharacterName(CharacterInstanceData characterInstance)
@@ -145,7 +148,11 @@ public class InitiativeUI : MonoBehaviour
         if (characterInstance)
         {
             _characterIcons.TryGetValue(characterInstance, out ImageTabButton buttonForCharacter);
-            buttonForCharacter.buttonText.text = characterInstance.characterName;
+
+            if (buttonForCharacter)
+            {
+                buttonForCharacter.buttonText.text = characterInstance.characterName;
+            }
         }
     }
 }

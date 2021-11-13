@@ -122,7 +122,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
             && selectedCharacter != null)
         {
             _isMovingCharacter = true;
-            _movementUI.ShowMovement(selectedCharacter.gameObject);
+            _movementUI.ShowMovement(selectedCharacter);
             _moveStartPosition = selectedCharacter.transform.position;
         }
     }
@@ -189,12 +189,16 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
 
     public void OnHpUpdated()
     {
-        if (selectedCharacter && selectedCharacter.characterHp <= 0)
+        if (selectedCharacter 
+            && selectedCharacter.characterHp <= 0
+            && selectedCharacter.prefabType == PrefabType.Monster)
         {
             selectedCharacter.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
             _initiativeUI.RefreshCharacterList();
             _characters.Remove(selectedCharacter);
             OnCharacterChanged(null);
+            // When manually toggling the UI, it doesn't disable properly
+            _uiManager.isEditingValues = false;
         }
     }
 
