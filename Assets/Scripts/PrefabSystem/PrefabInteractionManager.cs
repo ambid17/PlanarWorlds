@@ -235,6 +235,13 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
     {
         _hierarchyManager.DeselectItems(_targetObjects);
         ToggleOutlineRender(false);
+
+        //if (_currentTargetingType == TargetingType.CharacterPlacement
+        //    || _currentTargetingType == TargetingType.PrefabPlacement)
+        //{
+        //    _currentTargetingType = TargetingType.None;
+        //    DeleteSelectedObjects();
+        //}
         _targetObjects.Clear();
         _currentTargetingType = TargetingType.None;
     }
@@ -273,28 +280,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
         if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
 		{
-            CancelPrefabPlacement();
-        }
-    }
-
-    private void CancelPrefabPlacement()
-    {
-        // destroy the current object, set target object to null, call on target change
-        if (_targetObjects.Count > 0)
-        {
-            foreach (GameObject go in _targetObjects)
-            {
-                _hierarchyManager.RemoveItem(go);
-
-                CharacterInstanceData characterInstance = go.GetComponent<CharacterInstanceData>();
-                if (characterInstance)
-                {
-                    EncounterManager.Instance.RemoveCharacter(characterInstance);
-                }
-
-                Destroy(go);
-            }
-            ForceClearSelection();
+            DeleteSelectedObjects();
         }
     }
 
@@ -304,14 +290,15 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
         if (Input.GetMouseButtonDown(0))
         {
+            // If the user clicks on UI, delete the selected prefab
             if (EventSystem.current.IsPointerOverGameObject())
             {
-                CancelPrefabPlacement();
+                DeleteSelectedObjects();
                 return;
             }
             List<GameObject> newTargets = Duplicate();
 
-            // Change the non-duplicated object's layer so it can be targeted
+            // Change the non-duplicated object's layer so it can be targeted now that it's "placed"
             _targetObjects[0].layer = Constants.PrefabParentLayer;
 
             // THEN change the target object, so we keep the PrefabPlacementLayer
@@ -455,15 +442,27 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
     {
         if(HotKeyManager.GetKeyDown(HotkeyConstants.DeletePrefab))
         {
-            if (_targetObjects.Count > 0) 
+            DeleteSelectedObjects();
+        }
+    }
+
+    void DeleteSelectedObjects()
+    {
+        if (_targetObjects.Count > 0)
+        {
+            foreach (GameObject go in _targetObjects)
             {
-                foreach(GameObject go in _targetObjects)
+                _hierarchyManager.RemoveItem(go);
+
+                CharacterInstanceData characterInstance = go.GetComponent<CharacterInstanceData>();
+                if (characterInstance)
                 {
-                    _hierarchyManager.RemoveItem(go);
-                    Destroy(go);
+                    EncounterManager.Instance.RemoveCharacter(characterInstance);
                 }
-                ForceClearSelection();
+
+                Destroy(go);
             }
+            ForceClearSelection();
         }
     }
 
