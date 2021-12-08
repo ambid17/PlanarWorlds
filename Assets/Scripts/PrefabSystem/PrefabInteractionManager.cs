@@ -7,10 +7,10 @@ using RTG;
 
 public enum TargetingType
 {
-    Prefab, PrefabPlacement, None
+    Prefab, PrefabPlacement, CharacterPlacement, None
 }
 
-public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
+public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionManager>
 {
     public RectTransform inspectorRectTransform;
     public RectTransform hierarchyRectTransform;
@@ -87,11 +87,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         CheckValidClick();
 
         // We need to do this first, otherwise the targetingType may change and this could get called in the same frame
-        if (_currentTargetingType != TargetingType.PrefabPlacement)
+        if (_currentTargetingType == TargetingType.None || _currentTargetingType == TargetingType.Prefab)
         {
             TrySelectObject();
         }
-        else if (_currentTargetingType == TargetingType.PrefabPlacement)
+        else if (_currentTargetingType == TargetingType.PrefabPlacement || _currentTargetingType == TargetingType.CharacterPlacement)
         {
             TryPlacePrefab();
             TryRotateObject();
@@ -206,6 +206,12 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         else if (objectToSelect.layer == Constants.PrefabPlacementLayer)
         {
             _currentTargetingType = TargetingType.PrefabPlacement;
+
+            CharacterInstanceData charInstance = objectToSelect.GetComponent<CharacterInstanceData>();
+            if (charInstance)
+            {
+                _currentTargetingType = TargetingType.CharacterPlacement;
+            }
         }
 
         FocusValidObjects();
@@ -229,6 +235,13 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         _hierarchyManager.DeselectItems(_targetObjects);
         ToggleOutlineRender(false);
+
+        //if (_currentTargetingType == TargetingType.CharacterPlacement
+        //    || _currentTargetingType == TargetingType.PrefabPlacement)
+        //{
+        //    _currentTargetingType = TargetingType.None;
+        //    DeleteSelectedObjects();
+        //}
         _targetObjects.Clear();
         _currentTargetingType = TargetingType.None;
     }
@@ -250,6 +263,11 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
                 foreach (Renderer renderer in renderers)
                 {
+                    // The Player's name text is a child, don't change its material
+                    if (renderer.gameObject.name == "PlayerNameText")
+                    {
+                        continue;
+                    }
                     Material[] materials = renderer.materials;
                     foreach (Material material in materials)
                     {
@@ -265,23 +283,9 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     private void TryCancelPrefabPlacement()
     {
         // when 'holding' a prefab, but before placement we need to add right click or escape to discontinue placing the prefab
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
 		{
-            CancelPrefabPlacement();
-        }
-    }
-
-    private void CancelPrefabPlacement()
-    {
-        // destroy the current object, set target object to null, call on target change
-        if (_targetObjects.Count > 0)
-        {
-            foreach (GameObject go in _targetObjects)
-            {
-                _hierarchyManager.RemoveItem(go);
-                Destroy(go);
-            }
-            ForceClearSelection();
+            DeleteSelectedObjects();
         }
     }
 
@@ -289,16 +293,17 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         UpdatePrefabPosition();
 
-        if (Input.GetMouseButtonDown(0) )
+        if (Input.GetMouseButtonDown(0))
         {
+            // If the user clicks on UI, delete the selected prefab
             if (EventSystem.current.IsPointerOverGameObject())
             {
-                CancelPrefabPlacement();
+                DeleteSelectedObjects();
                 return;
             }
             List<GameObject> newTargets = Duplicate();
 
-            // Change the non-duplicated object's layer so it can be targeted
+            // Change the non-duplicated object's layer so it can be targeted now that it's "placed"
             _targetObjects[0].layer = Constants.PrefabParentLayer;
 
             // THEN change the target object, so we keep the PrefabPlacementLayer
@@ -317,15 +322,21 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
         // Check if the ray intersects the tilemap. If it does, snap the object to the terrain
         if (Physics.Raycast(ray, out RaycastHit rayHit, float.MaxValue, _terrainLayerMask))
         {
-            BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
-
             Vector3 snappedPosition = rayHit.point;
 
-            if (myCollider)
+            if (_currentTargetingType == TargetingType.CharacterPlacement)
             {
-                // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
-                //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+                snappedPosition.x = Mathf.Round(snappedPosition.x) + 0.5f;
+                snappedPosition.z = Mathf.Round(snappedPosition.z) + 0.5f;
+                snappedPosition.y = TerrainManager.Instance.meshMapEditor.terrain.SampleHeight(snappedPosition);
             }
+
+            // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
+            //BoxCollider myCollider = _targetObjects[0].GetComponent<BoxCollider>();
+            //if (myCollider)
+            //{
+            //snappedPosition.y += myCollider.bounds.size.y / 2; // add half of my height
+            //}
 
             _targetObjects[0].transform.position = snappedPosition;
         }
@@ -436,15 +447,27 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
     {
         if(HotKeyManager.GetKeyDown(HotkeyConstants.DeletePrefab))
         {
-            if (_targetObjects.Count > 0) 
+            DeleteSelectedObjects();
+        }
+    }
+
+    void DeleteSelectedObjects()
+    {
+        if (_targetObjects.Count > 0)
+        {
+            foreach (GameObject go in _targetObjects)
             {
-                foreach(GameObject go in _targetObjects)
+                _hierarchyManager.RemoveItem(go);
+
+                CharacterInstanceData characterInstance = go.GetComponent<CharacterInstanceData>();
+                if (characterInstance)
                 {
-                    _hierarchyManager.RemoveItem(go);
-                    Destroy(go);
+                    EncounterManager.Instance.RemoveCharacter(characterInstance);
                 }
-                ForceClearSelection();
+
+                Destroy(go);
             }
+            ForceClearSelection();
         }
     }
 
@@ -517,6 +540,12 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
             duplicateObject.layer = go.layer;
             duplicateObject.transform.parent = go.transform.parent;
             duplicateObject.name = go.name;
+
+            CharacterInstanceData instanceData = go.GetComponent<CharacterInstanceData>();
+            if (instanceData)
+            {
+                EncounterManager.Instance.AddCharacter(instanceData);
+            }
 
             toReturn.Add(duplicateObject);
             _hierarchyManager.AddItem(duplicateObject);
@@ -595,7 +624,7 @@ public class PrefabGizmoManager : StaticMonoBehaviour<PrefabGizmoManager>
 
     private void ToggleZoomAbility()
     {
-        bool canZoom = _currentTargetingType != TargetingType.PrefabPlacement;
+        bool canZoom = _currentTargetingType == TargetingType.Prefab || _currentTargetingType == TargetingType.None;
         RTFocusCamera.Get.ZoomSettings.IsZoomEnabled = canZoom;
     }
     #endregion

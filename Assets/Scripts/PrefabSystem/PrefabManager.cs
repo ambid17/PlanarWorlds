@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using TMPro;
 
 public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 {
     public Transform prefabContainer;
-    public PrefabList prefabList;
+    public PrefabList propList;
+    public PrefabList playerList;
+    public PrefabList monsterList;
+    public GameObject playerNameTextPrefab;
 
     private HierarchyManager _hierarchyManager;
 
+    private int instanceIdCounter = 0;
 
     protected override void Awake()
     {
@@ -23,7 +28,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     public void LoadPrefabFromSave(PrefabModel model)
     {
-        Prefab prefab = prefabList.prefabs.Where(p => p.prefabId == model.prefabId).FirstOrDefault();
+        Prefab prefab = LookupPrefab(model.prefabType, model.prefabId);
 
         GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
         instance.transform.position = model.position;
@@ -32,8 +37,29 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         instance.layer = Constants.PrefabParentLayer;
         instance.name = model.name;
 
-        PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
-        container.prefabId = model.prefabId;
+        if (model.prefabType == PrefabType.Prop)
+        {
+            PrefabInstanceData instanceData = instance.AddComponent<PrefabInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = model.prefabType;
+        }
+        else
+        {
+            CharacterModel characterModel = model as CharacterModel;
+            CharacterInstanceData instanceData = instance.AddComponent<CharacterInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = model.prefabType;
+            instanceData.characterName = characterModel.name;
+            instanceData.characterHp = characterModel.characterHp;
+            instanceData.characterInitiative = characterModel.characterInitiative;
+            instanceData.characterSpeed = characterModel.characterSpeed;
+            instanceData.instanceId = ++instanceIdCounter;
+
+            TMP_Text nameText = instance.GetComponentInChildren<TMP_Text>();
+            nameText.text = instanceData.characterName;
+
+            EncounterManager.Instance.AddCharacter(instanceData);
+        }
 
         SetObjectShader(instance);
         CreateObjectCollider(instance);
@@ -41,13 +67,53 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         _hierarchyManager.AddItem(instance);
     }
 
-    public GameObject CreatePrefabInstance(GameObject prefabToInstantiate, int prefabId, string name)
+    public Prefab LookupPrefab(PrefabType prefabType, int prefabId)
     {
-        GameObject instance = Instantiate(prefabToInstantiate, prefabContainer);
-        instance.name = name;
+        Prefab toReturn = new Prefab();
 
-        PrefabModelContainer container = instance.AddComponent<PrefabModelContainer>();
-        container.prefabId = prefabId;
+        if (prefabType == PrefabType.Prop)
+        {
+            toReturn = propList.prefabs.Where(p => p.prefabId == prefabId).FirstOrDefault();
+        }
+        else if (prefabType == PrefabType.Player)
+        {
+            toReturn = playerList.prefabs.Where(p => p.prefabId == prefabId).FirstOrDefault();
+        }
+        else
+        {
+            toReturn = monsterList.prefabs.Where(p => p.prefabId == prefabId).FirstOrDefault();
+        }
+
+        return toReturn;
+    }
+
+    public GameObject CreatePrefabInstance(Prefab prefab, PrefabType prefabType)
+    {
+        GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
+        instance.name = prefab.prefabName;
+
+        if(prefabType == PrefabType.Prop)
+        {
+            PrefabInstanceData instanceData = instance.AddComponent<PrefabInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = prefabType;
+        }
+        else
+        {
+            CharacterInstanceData instanceData = instance.AddComponent<CharacterInstanceData>();
+            instanceData.prefabId = prefab.prefabId;
+            instanceData.prefabType = prefabType;
+            instanceData.characterName = prefab.prefabName;
+            instanceData.characterHp = 10;
+            instanceData.characterInitiative = 0;
+            instanceData.characterSpeed = 30;
+            instanceData.instanceId = ++instanceIdCounter;
+            
+            TMP_Text nameText = instance.GetComponentInChildren<TMP_Text>();
+            nameText.text = instanceData.characterName;
+
+            EncounterManager.Instance.AddCharacter(instanceData);
+        }
 
         SetObjectShader(instance);
         CreateObjectCollider(instance);
@@ -61,6 +127,11 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         MeshRenderer[] renderers = instance.GetComponentsInChildren<MeshRenderer>();
         foreach (MeshRenderer renderer in renderers)
         {
+            // The Player's name text is a child, don't change its material
+            if (renderer.gameObject.name == "PlayerNameText")
+            {
+                continue;
+            }
             Material[] materials = renderer.materials;
             foreach (Material material in materials)
             {
@@ -74,11 +145,13 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     // Create a parent collider, and make it encapsulate all it's child meshes
     public void CreateObjectCollider(GameObject instance)
     {
-        BoxCollider myCollider = instance.GetComponent<BoxCollider>();
-        if (!myCollider)
+        Collider myCollider = instance.GetComponent<Collider>();
+        if (myCollider != null)
         {
-            myCollider = instance.AddComponent<BoxCollider>();
+            return;
         }
+
+        BoxCollider myBoxCollider = instance.AddComponent<BoxCollider>();
 
         // Unity will auto calculate collider size for only one object, we don't need the rest of the code if the model is set up properly
         if (instance.transform.childCount == 0)
@@ -91,8 +164,8 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             bounds.Encapsulate(myRenderer.bounds);
         }
 
-        myCollider.center = bounds.center - instance.transform.position;
-        myCollider.size = bounds.size;
+        myBoxCollider.center = bounds.center - instance.transform.position;
+        myBoxCollider.size = bounds.size;
 
         Transform[] children = instance.GetComponentsInChildren<Transform>();
         foreach (Transform child in children)
@@ -105,26 +178,41 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             {
                 bounds.Encapsulate(childRenderer.bounds);
             }
-            myCollider.center = bounds.center - instance.transform.position;
-            myCollider.size = bounds.size;
+            myBoxCollider.center = bounds.center - instance.transform.position;
+            myBoxCollider.size = bounds.size;
         }
     }
 
     public void LoadCampaign(Campaign campaign)
     {
-        foreach (PrefabModel campaignPrefab in campaign.prefabs)
+        foreach (PrefabModel propModel in campaign.props)
         {
-            LoadPrefabFromSave(campaignPrefab);
+            LoadPrefabFromSave(propModel);
+        }
+
+        foreach (CharacterModel characterModel in campaign.characters)
+        {
+            LoadPrefabFromSave(characterModel);
         }
     }
 
     public void PopulateCampaign(Campaign campaign)
     {
-        campaign.prefabs = new List<PrefabModel>();
+        campaign.props = new List<PrefabModel>();
+        campaign.characters = new List<CharacterModel>();
+
         foreach (Transform child in prefabContainer)
         {
-            PrefabModelContainer container = child.GetComponent<PrefabModelContainer>();
-            campaign.prefabs.Add(container.GetPrefabModel());
+            PrefabInstanceData instanceData = child.GetComponent<PrefabInstanceData>();
+            if(instanceData.prefabType == PrefabType.Prop)
+            {
+                campaign.props.Add(instanceData.GetPrefabModel());
+            }
+            else
+            {
+                CharacterInstanceData characterInstance = instanceData as CharacterInstanceData;
+                campaign.characters.Add(characterInstance.GetCharacterModel());
+            }
         }
     }
 
@@ -135,5 +223,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         {
             Destroy(child.gameObject);
         }
+
+        instanceIdCounter = 0;
     }
 }

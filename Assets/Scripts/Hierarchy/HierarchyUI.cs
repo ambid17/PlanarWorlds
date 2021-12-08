@@ -13,11 +13,11 @@ public class HierarchyUI : MonoBehaviour
     public ScrollRect scrollRect;
 
     private List<HierarchyItem> hierarchyItems;
-    private PrefabGizmoManager _prefabGizmoManager;
+    private PrefabInteractionManager _prefabGizmoManager;
 
     void Awake()
     {
-        _prefabGizmoManager = PrefabGizmoManager.GetInstance();
+        _prefabGizmoManager = PrefabInteractionManager.GetInstance();
         hierarchyItems = new List<HierarchyItem>();
     }
 
@@ -74,6 +74,12 @@ public class HierarchyUI : MonoBehaviour
 
     public void Clear()
     {
+        // When loading a campaign, if the hierarchy hasn't been opened yet the hierarchyItems will be bull
+        if(hierarchyItems == null)
+        {
+            hierarchyItems = new List<HierarchyItem>();
+        }
+
         foreach (HierarchyItem item in hierarchyItems)
         {
             Destroy(item.gameObject);

@@ -16,4 +16,11 @@ public class PrefabModel
     public int prefabId;
     [SerializeField]
     public string name;
+    [SerializeField]
+    public PrefabType prefabType;
+}
+
+public enum PrefabType
+{
+    Prop, Player, Monster
 }

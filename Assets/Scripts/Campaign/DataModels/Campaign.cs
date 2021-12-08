@@ -8,7 +8,9 @@ using UnityEngine;
 public class Campaign
 {
     [SerializeField]
-    public List<PrefabModel> prefabs;
+    public List<PrefabModel> props;
+    [SerializeField]
+    public List<CharacterModel> characters;
     [SerializeField]
     public List<TileModel> tiles;
     [SerializeField]
@@ -18,7 +20,8 @@ public class Campaign
 
     public Campaign()
     {
-        prefabs = new List<PrefabModel>();
+        props = new List<PrefabModel>();
+        characters = new List<CharacterModel>();
         tiles = new List<TileModel>();
     }
 

@@ -28,14 +28,14 @@ public class InspectorManager : StaticMonoBehaviour<InspectorManager>
     public GameObject objectInspectorParent;
 
 
-    private PrefabGizmoManager _prefabGizmoManager;
+    private PrefabInteractionManager _prefabGizmoManager;
     private UIManager _uiManager;
 
     private string multiSelectMismatch = "-";
 
     void Start()
     {
-        _prefabGizmoManager = PrefabGizmoManager.GetInstance();
+        _prefabGizmoManager = PrefabInteractionManager.GetInstance();
         _uiManager = UIManager.GetInstance();
 
         InitInputFields();

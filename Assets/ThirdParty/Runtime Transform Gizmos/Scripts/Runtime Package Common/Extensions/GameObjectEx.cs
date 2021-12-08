@@ -190,7 +190,7 @@ namespace RTG
 
         public static Mesh GetMesh(this GameObject gameObject)
         {
-            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+            MeshFilter meshFilter = gameObject.GetComponentInChildren<MeshFilter>();
             if (meshFilter != null && meshFilter.sharedMesh != null) return meshFilter.sharedMesh;
 
             SkinnedMeshRenderer skinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();

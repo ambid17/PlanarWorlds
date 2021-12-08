@@ -67,8 +67,16 @@ public class MeshMapEditor : MonoBehaviour
         _terrainLayerIds = new List<int>();
 
         _isDragging = false;
+
     }
 
+    private void Start()
+    {
+        UIManager.OnEditModeChanged += EditModeChanged;
+    }
+
+
+    private bool updateTerrain = true;
     private void Update()
     {
         if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.TileMap)
@@ -89,7 +97,11 @@ public class MeshMapEditor : MonoBehaviour
             // https://docs.unity3d.com/ScriptReference/TerrainData.SetHeightsDelayLOD.html
             _terrainData.SyncHeightmap();
         }
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            updateTerrain = !updateTerrain;
+        }
+        if (!EventSystem.current.IsPointerOverGameObject() && updateTerrain)
         {
             UpdateTerrainHighlight();
         }
@@ -543,13 +555,14 @@ public class MeshMapEditor : MonoBehaviour
                         TryAddTerrainLayer(texture);
                 }
 
-                float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, campaign.terrainData.textureIds.Count()];
+                //float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, campaign.terrainData.textureIds.Count()];
+                float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, 1];
                 Buffer.BlockCopy(campaign.terrainData.splatMap, 0, unflattenedAlphas, 0, _terrainAlphaMapResolution * _terrainAlphaMapResolution * campaign.terrainData.textureIds.Count());
                 _terrainData.SetAlphamaps(0, 0, unflattenedAlphas);
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error laoding mesh map: \n{e.Message}\n{e.StackTrace}");
+                Debug.LogError($"Error loading mesh map: \n{e.Message}\n{e.StackTrace}");
             }
         }
     }
@@ -569,7 +582,7 @@ public class MeshMapEditor : MonoBehaviour
     {
         if (newEditMode != EditMode.Terrain)
         {
-            // Cleanup
+            terrainMaterial.SetVector("_Center", new Vector3(-10000, 0, -10000));
         }
     }
     #endregion

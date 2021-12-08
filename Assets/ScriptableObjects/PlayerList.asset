@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73ee794f5062b2c45b1624cb414d1eac, type: 3}
+  m_Name: PlayerList
+  m_EditorClassIdentifier: 
+  prefabs:
+  - gameObject: {fileID: 2215436831833173579, guid: 81862c663e57f0d468e94e52b6baa5d3, type: 3}
+    previewTexture: {fileID: 2800000, guid: 276ef004d9b6927489acd420a9329d36, type: 3}
+    prefabId: 0
+    prefabName: Barbarian
+  - gameObject: {fileID: 2215436831833173579, guid: 6dda51fe8b3f1574a943a01644ae3adb, type: 3}
+    previewTexture: {fileID: 2800000, guid: 3fd6f35c735d53c45928f4081f06c672, type: 3}
+    prefabId: 1
+    prefabName: Druid
+  - gameObject: {fileID: 2215436831833173579, guid: f097c5a6fb402d345a5bd18384db3ff7, type: 3}
+    previewTexture: {fileID: 2800000, guid: a190a9c652927fe41942ae0f6d6615e6, type: 3}
+    prefabId: 2
+    prefabName: Fighter
+  - gameObject: {fileID: 2215436831833173579, guid: d73fec88e0998fd469976a775c87bd31, type: 3}
+    previewTexture: {fileID: 2800000, guid: 82fd2bc0817510f4890498d815493a42, type: 3}
+    prefabId: 3
+    prefabName: Monk
+  - gameObject: {fileID: 2215436831833173579, guid: d858c820a42214e419ae42d78b8fefcb, type: 3}
+    previewTexture: {fileID: 2800000, guid: ca8813b52ac2cdb47be4263a16de15c7, type: 3}
+    prefabId: 4
+    prefabName: Sorcero
