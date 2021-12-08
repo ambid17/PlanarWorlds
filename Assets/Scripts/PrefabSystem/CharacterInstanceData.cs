@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CharacterInstanceData : PrefabInstanceData, IComparable, IEquatable<CharacterInstanceData>
@@ -12,6 +13,13 @@ public class CharacterInstanceData : PrefabInstanceData, IComparable, IEquatable
     public int characterHp;
     public int characterSpeed;
     public int characterInitiative;
+
+    private TMP_Text nameText;
+
+    private void Start()
+    {
+        nameText = GetComponentInChildren<TMP_Text>();
+    }
 
     public CharacterModel GetCharacterModel()
     {
@@ -29,6 +37,12 @@ public class CharacterInstanceData : PrefabInstanceData, IComparable, IEquatable
         };
 
         return myModel;
+    }
+
+    public void UpdateName(string newName)
+    {
+        characterName = newName;
+        nameText.text = newName;
     }
 
     // Sorts the players in descending initiative order

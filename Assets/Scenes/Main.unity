@@ -19884,6 +19884,7 @@ MonoBehaviour:
   propList: {fileID: 11400000, guid: e33288ae4f43702499019075e456fc1c, type: 2}
   playerList: {fileID: 11400000, guid: 86a0328e4faad964fa2ae9acd89ba8ca, type: 2}
   monsterList: {fileID: 11400000, guid: a5a5450fbbfdfba44a9dfab9498df66e, type: 2}
+  playerNameTextPrefab: {fileID: 0}
 --- !u!114 &797217225
 MonoBehaviour:
   m_ObjectHideFlags: 0

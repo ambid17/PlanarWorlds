@@ -106,6 +106,11 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
 
             foreach (Renderer renderer in renderers)
             {
+                // The Player's name text is a child, don't change its material
+                if (renderer.gameObject.name == "PlayerNameText")
+                {
+                    continue;
+                }
                 Material[] materials = renderer.materials;
                 foreach (Material material in materials)
                 {

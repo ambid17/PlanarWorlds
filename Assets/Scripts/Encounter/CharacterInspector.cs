@@ -40,7 +40,7 @@ public class CharacterInspector : MonoBehaviour
 
     private void OnNameUpdated()
     {
-        EncounterManager.Instance.selectedCharacter.characterName = characterNameInput.text;
+        EncounterManager.Instance.selectedCharacter.UpdateName(characterNameInput.text);
         EncounterManager.Instance.OnNameUpdated();
     }
 

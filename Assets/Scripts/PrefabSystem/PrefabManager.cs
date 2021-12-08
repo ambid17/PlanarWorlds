@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using TMPro;
 
 public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 {
@@ -9,6 +10,7 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     public PrefabList propList;
     public PrefabList playerList;
     public PrefabList monsterList;
+    public GameObject playerNameTextPrefab;
 
     private HierarchyManager _hierarchyManager;
 
@@ -52,6 +54,9 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             instanceData.characterInitiative = characterModel.characterInitiative;
             instanceData.characterSpeed = characterModel.characterSpeed;
             instanceData.instanceId = ++instanceIdCounter;
+
+            TMP_Text nameText = instance.GetComponentInChildren<TMP_Text>();
+            nameText.text = instanceData.characterName;
 
             EncounterManager.Instance.AddCharacter(instanceData);
         }
@@ -103,6 +108,9 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
             instanceData.characterInitiative = 0;
             instanceData.characterSpeed = 30;
             instanceData.instanceId = ++instanceIdCounter;
+            
+            TMP_Text nameText = instance.GetComponentInChildren<TMP_Text>();
+            nameText.text = instanceData.characterName;
 
             EncounterManager.Instance.AddCharacter(instanceData);
         }
@@ -119,6 +127,11 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         MeshRenderer[] renderers = instance.GetComponentsInChildren<MeshRenderer>();
         foreach (MeshRenderer renderer in renderers)
         {
+            // The Player's name text is a child, don't change its material
+            if (renderer.gameObject.name == "PlayerNameText")
+            {
+                continue;
+            }
             Material[] materials = renderer.materials;
             foreach (Material material in materials)
             {
