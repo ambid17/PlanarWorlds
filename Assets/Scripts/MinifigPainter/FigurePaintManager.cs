@@ -90,5 +90,8 @@ public class FigurePaintManager : MonoBehaviour
         //meshMaterial.SetVector("_MousePosition", mouseWorldPosition);
         //meshMaterial.SetFloat("_BrushOpacity", 1);
         Shader.SetGlobalVector("_MousePosition", mouseWorldPosition);
+        Shader.SetGlobalVector("_BrushColor", new Vector4(1,0,0,0));
+        Shader.SetGlobalFloat("_BrushOpacity", 1);
+        Shader.SetGlobalFloat("_BrushSize", 1);
     }
 }
