@@ -10,61 +10,61 @@ namespace RTG
     public class CameraHotkeys : Settings
     {
         [SerializeField]
-        private Hotkeys _moveForward = new Hotkeys("Move forward")
+        private Hotkeys _moveForward = new Hotkeys(HotkeyConstants.CameraMoveForward)
         {
             Key = KeyCode.W,
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _moveBack = new Hotkeys("Move back")
+        private Hotkeys _moveBack = new Hotkeys(HotkeyConstants.CameraMoveBack)
         {
             Key = KeyCode.S,
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _strafeLeft = new Hotkeys("Strafe left")
+        private Hotkeys _strafeLeft = new Hotkeys(HotkeyConstants.CameraStrafeLeft)
         {
             Key = KeyCode.A,
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _strafeRight = new Hotkeys("Strafe right")
+        private Hotkeys _strafeRight = new Hotkeys(HotkeyConstants.CameraStrafeRight)
         {
             Key = KeyCode.D,
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _moveUp = new Hotkeys("Move up")
+        private Hotkeys _moveUp = new Hotkeys(HotkeyConstants.CameraMoveUp)
         {
             Key = KeyCode.E,
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _moveDown = new Hotkeys("Move down")
+        private Hotkeys _moveDown = new Hotkeys(HotkeyConstants.CameraMoveDown)
         {
             Key = KeyCode.Q,
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _pan = new Hotkeys("Pan")
+        private Hotkeys _pan = new Hotkeys(HotkeyConstants.CameraPan)
         {
             UseStrictModifierCheck = false,
             MMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _lookAround = new Hotkeys("Look around")
+        private Hotkeys _lookAround = new Hotkeys(HotkeyConstants.CameraLookAround)
         {
             UseStrictModifierCheck = false,
             RMouseButton = true
         };
         [SerializeField]
-        private Hotkeys _orbit = new Hotkeys("Orbit")
+        private Hotkeys _orbit = new Hotkeys(HotkeyConstants.CameraOrbit)
         {
             UseStrictModifierCheck = false,
             LAlt = true,

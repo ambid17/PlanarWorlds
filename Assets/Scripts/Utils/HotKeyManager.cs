@@ -10,7 +10,7 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
 
     public static HotKeyManager Instance;
 
-    public event Action<KeyCode, KeyCode> onHotKeySet;   
+    public event Action<KeyCode, KeyCode> onHotKeySet;
 
     private void Start()
     {
@@ -101,7 +101,7 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
         AddDefaultKey(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleDefault);
         AddDefaultKey(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabDefault);
         AddDefaultKey(HotkeyConstants.Focus, HotkeyConstants.FocusDefault);
-        AddDefaultKey(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateDefault);
+        AddDefaultKey(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateDefault); 
     }
 
     public void AddDefaultKey(string keyName, string defaultValue)

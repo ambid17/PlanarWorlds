@@ -31,4 +31,20 @@ public static class HotkeyConstants
     public static string Duplicate = "Duplicate";
     public static string DuplicateDefault = "D";
     public static string DuplicateTooltip = "*** Duplicate the currently selected object";
+
+    // Camera hotkeys
+    public static string CameraMoveForward = "Move forward";
+    public static string CameraMoveBack = "Move back";
+    public static string CameraStrafeLeft = "Strafe left";
+    public static string CameraStrafeRight = "Strafe right";
+    public static string CameraMoveUp = "Move up";
+    public static string CameraMoveDown = "Move down";
+    public static string CameraPan = "Pan";
+    public static string CameraLookAround = "Look around";
+    public static string CameraOrbit = "Orbit";
+
+    // Gizmos hotkeys
+    public static string GizmosEnable2DMode = "Enable 2D mode";
+    public static string GizmosEnableSnapping = "Enable snapping";
+    public static string GizmosEnableVertexSnapping = "Enable vertex snapping";
 }
