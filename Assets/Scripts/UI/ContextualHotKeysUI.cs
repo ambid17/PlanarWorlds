@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ContextualHotKeysUI : MonoBehaviour
 {
     public Transform scrollViewContent;
     public GameObject hotKeyPrefab;
+
+    [SerializeField] private Button closeButton;
 
     Dictionary<string, TMP_Text> buttonKeyCodeTexts;
 
@@ -22,6 +25,9 @@ public class ContextualHotKeysUI : MonoBehaviour
         _hotKeyManager = HotKeyManager.GetInstance();
 
         UIManager.OnEditModeChanged += PopulateHotkeysBasedOnGameMode;
+
+        closeButton.onClick.RemoveAllListeners();
+        closeButton.onClick.AddListener(ToggleUI);
     }
 
     private void PopulateHotkeysBasedOnGameMode(EditMode editMode)
@@ -66,5 +72,10 @@ public class ContextualHotKeysUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+    }
+
+    public void ToggleUI()
+    {
+        gameObject.SetActive(!gameObject.activeSelf);
     }
 }

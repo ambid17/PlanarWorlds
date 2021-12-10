@@ -13,6 +13,9 @@ public class ToolbarUI : MonoBehaviour
     public Button terrainButton;
     public TerrainMenu terrainMenu;
 
+    public Button TooltipButton;
+    public ContextualHotKeysUI ContextualHotKeysUI;
+
     private UIManager _uiManager;
 
     void Start()
@@ -26,6 +29,9 @@ public class ToolbarUI : MonoBehaviour
 
         terrainButton.onClick.AddListener(TerrainButtonClicked);
         terrainMenu.gameObject.SetActive(false);
+
+        TooltipButton.onClick.RemoveAllListeners();
+        TooltipButton.onClick.AddListener(ContextualHotKeysUI.ToggleUI);
     }
 
     void Update()
@@ -80,7 +86,6 @@ public class ToolbarUI : MonoBehaviour
                 fileMenu.OnOpenFolder();
             }
         }
-        
     }
 
     private void EditModeChanged(EditMode newEditMode)
