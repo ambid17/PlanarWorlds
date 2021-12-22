@@ -4,14 +4,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Based on the game mode, we show the corresponding hotkeys in the hotkey window
+// When the player changes game mode, the hotkey are updated accordingly, even when the keys are rebound
+
 public class ContextualHotKeysUI : MonoBehaviour
 {
-    public Transform scrollViewContent;
-    public GameObject hotKeyPrefab;
-
     [SerializeField] private Button closeButton;
 
-    Dictionary<string, TMP_Text> buttonKeyCodeTexts;
+    [SerializeField] private OptionsMenu optionsMenu;
+
+    public Transform scrollViewContent;
+    public GameObject hotKeyPrefab;
 
     private HotKeyManager _hotKeyManager;
 
@@ -19,12 +22,15 @@ public class ContextualHotKeysUI : MonoBehaviour
 
     private HashSet<string> propHotKeys = new HashSet<string> { HotkeyConstants.DeletePrefab, HotkeyConstants.Focus, HotkeyConstants.Duplicate };
 
+    private Dictionary<string, HotKeyItem> currentHotkeyItemsInGame = new Dictionary<string, HotKeyItem>();
+
 
     private void Awake()
     {
         _hotKeyManager = HotKeyManager.GetInstance();
 
         UIManager.OnEditModeChanged += PopulateHotkeysBasedOnGameMode;
+        optionsMenu.RebindKeyEvent += UpdateHotKeyItem;
 
         closeButton.onClick.RemoveAllListeners();
         closeButton.onClick.AddListener(ToggleUI);
@@ -44,26 +50,29 @@ public class ContextualHotKeysUI : MonoBehaviour
         else
             editModeKeys = propHotKeys;
 
-
-        buttonKeyCodeTexts = new Dictionary<string, TMP_Text>();
-        foreach (string hotkey in keys.Keys)
+        foreach (string hotkeyName in keys.Keys)
         {
-            if (hotkey == HotkeyConstants.ModifierKey)
-                return;
-
-            if (editModeKeys.Contains(hotkey) == false)
+            if (!editModeKeys.Contains(hotkeyName))
                 continue;
 
-            GameObject newItem = Instantiate(hotKeyPrefab);
-            newItem.transform.SetParent(scrollViewContent, false);
+            GameObject newItem = Instantiate(hotKeyPrefab, scrollViewContent);
 
             HotKeyItem item = newItem.GetComponentInChildren<HotKeyItem>();
-            item.SetItemText(hotkey);
-            item.SetButtonText(keys[hotkey].ToString());
-            item.tooltip.SetTooltipText(tooltips[hotkey]);
+            item.SetItemText(hotkeyName);
+            item.SetButtonText(keys[hotkeyName].ToString());
+            item.tooltip.SetTooltipText(tooltips[hotkeyName]);
 
-            buttonKeyCodeTexts.Add(hotkey, item.GetButtonText());
+            currentHotkeyItemsInGame.Add(hotkeyName,item);
         }
+    }
+
+    private void UpdateHotKeyItem(string hotkeyName)
+    {
+        Dictionary<string, KeyCode> keys = _hotKeyManager.GetHotKeys();
+
+        HotKeyItem hotKey = currentHotkeyItemsInGame[hotkeyName];
+
+        currentHotkeyItemsInGame[hotkeyName].SetButtonText(hotKey.ToString());
     }
 
     private void CleanScrollView()
@@ -72,6 +81,8 @@ public class ContextualHotKeysUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+
+        currentHotkeyItemsInGame.Clear();
     }
 
     public void ToggleUI()

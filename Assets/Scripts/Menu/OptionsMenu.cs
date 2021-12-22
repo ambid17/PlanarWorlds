@@ -18,6 +18,8 @@ public class OptionsMenu : MonoBehaviour
 
     private HotKeyManager _hotKeyManager;
 
+    public Action<string> RebindKeyEvent;
+
     private void Awake()
     {
         _hotKeyManager = HotKeyManager.GetInstance();
@@ -41,6 +43,7 @@ public class OptionsMenu : MonoBehaviour
                     {
                         _hotKeyManager.SetButtonForKey(keyToRebind, keyCode);
                         buttonKeyCodeTexts[keyToRebind].text = keyCode.ToString();
+                        RebindKeyEvent(keyToRebind);
                         keyToRebind = null;
                         break;
                     }
