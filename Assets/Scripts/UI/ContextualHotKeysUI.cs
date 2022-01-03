@@ -66,11 +66,9 @@ public class ContextualHotKeysUI : MonoBehaviour
         }
     }
 
-    private void UpdateHotKeyItem(string hotkeyName)
+    private void UpdateHotKeyItem(string hotkeyName, KeyCode keyCode)
     {
-        HotKeyItem hotKey = displayedHotkeys[hotkeyName];
-
-        displayedHotkeys[hotkeyName].SetButtonText(hotKey.ToString());
+        displayedHotkeys[hotkeyName].SetButtonText(keyCode.ToString());
     }
 
     private void CleanScrollView()

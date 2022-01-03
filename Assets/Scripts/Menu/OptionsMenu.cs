@@ -18,7 +18,7 @@ public class OptionsMenu : MonoBehaviour
 
     private HotKeyManager _hotKeyManager;
 
-    public Action<string> RebindKeyEvent;
+    public Action<string,KeyCode> RebindKeyEvent;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class OptionsMenu : MonoBehaviour
                     {
                         _hotKeyManager.SetButtonForKey(keyToRebind, keyCode);
                         buttonKeyCodeTexts[keyToRebind].text = keyCode.ToString();
-                        RebindKeyEvent(keyToRebind);
+                        RebindKeyEvent(keyToRebind, keyCode);
                         keyToRebind = null;
                         break;
                     }
