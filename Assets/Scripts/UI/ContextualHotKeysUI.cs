@@ -22,7 +22,7 @@ public class ContextualHotKeysUI : MonoBehaviour
 
     private HashSet<string> propHotKeys = new HashSet<string> { HotkeyConstants.DeletePrefab, HotkeyConstants.Focus, HotkeyConstants.Duplicate };
 
-    private Dictionary<string, HotKeyItem> currentHotkeyItemsInGame = new Dictionary<string, HotKeyItem>();
+    private Dictionary<string, HotKeyItem> displayedHotkeys = new Dictionary<string, HotKeyItem>();
 
 
     private void Awake()
@@ -62,17 +62,15 @@ public class ContextualHotKeysUI : MonoBehaviour
             item.SetButtonText(keys[hotkeyName].ToString());
             item.tooltip.SetTooltipText(tooltips[hotkeyName]);
 
-            currentHotkeyItemsInGame.Add(hotkeyName,item);
+            displayedHotkeys.Add(hotkeyName,item);
         }
     }
 
     private void UpdateHotKeyItem(string hotkeyName)
     {
-        Dictionary<string, KeyCode> keys = _hotKeyManager.GetHotKeys();
+        HotKeyItem hotKey = displayedHotkeys[hotkeyName];
 
-        HotKeyItem hotKey = currentHotkeyItemsInGame[hotkeyName];
-
-        currentHotkeyItemsInGame[hotkeyName].SetButtonText(hotKey.ToString());
+        displayedHotkeys[hotkeyName].SetButtonText(hotKey.ToString());
     }
 
     private void CleanScrollView()
@@ -82,7 +80,7 @@ public class ContextualHotKeysUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        currentHotkeyItemsInGame.Clear();
+        displayedHotkeys.Clear();
     }
 
     public void ToggleUI()
