@@ -51,6 +51,9 @@ public class MeshMapEditor : MonoBehaviour
     private Vector3 _mouseDragStartPosition;
     private Vector3 _startingHitPoint;
     private bool _isDragging;
+    
+    private bool updateTerrain = true;
+
 
     void Awake()
     {
@@ -76,7 +79,6 @@ public class MeshMapEditor : MonoBehaviour
     }
 
 
-    private bool updateTerrain = true;
     private void Update()
     {
         if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.TileMap)
