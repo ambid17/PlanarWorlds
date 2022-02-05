@@ -190,8 +190,11 @@ public class MeshMapEditor : MonoBehaviour
         int startingXIndex = terrainX - brushRadius;
         int startingYIndex = terrainY - brushRadius;
 
+        // TODO: fix the bounds of the terrain cursor, otherwise we get index out of bounds error
         startingXIndex = Mathf.Max(0, startingXIndex);
+        startingXIndex = Mathf.Min(_terrainHeightMapResolution, startingXIndex);
         startingYIndex = Mathf.Max(0, startingYIndex);
+        startingYIndex = Mathf.Min(_terrainHeightMapResolution, startingYIndex);
 
 
         // Note: Terrain heights are 0-1, indexed as y,x
