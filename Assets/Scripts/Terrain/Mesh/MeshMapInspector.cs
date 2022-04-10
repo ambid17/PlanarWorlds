@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Michsky.UI.ModernUIPack;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -17,6 +18,10 @@ public class MeshMapInspector : MonoBehaviour
     public TMP_InputField brushSizeInput;
     public TMP_InputField brushHeightInput;
     public TMP_InputField brushStrengthInput;
+
+    public SliderManager brushSizeSlider;
+    public SliderManager brushHeightSlider;
+    public SliderManager brushStrengthSlider;
 
     public GameObject brushSizeContainer;
     public GameObject brushHeightContainer;
@@ -47,6 +52,7 @@ public class MeshMapInspector : MonoBehaviour
     {
         SetupButtons();
         SetupInputs();
+        SetupSliders();
         SetupPaints();
         SetupTrees();
         SetupFoliage();
@@ -68,20 +74,81 @@ public class MeshMapInspector : MonoBehaviour
 
     private void SetupInputs()
     {
-        brushSizeInput.onValueChanged.AddListener((newText) => BrushSizeUpdated());
+        brushSizeInput.onValueChanged.AddListener((newText) => BrushSizeTextUpdated());
         brushSizeInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
         brushSizeInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
         brushSizeInput.text = "1";
 
-        brushHeightInput.onValueChanged.AddListener((newText) => BrushHeightUpdated());
+        brushHeightInput.onValueChanged.AddListener((newText) => BrushHeightTextUpdated());
         brushHeightInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
         brushHeightInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
         brushHeightInput.text = "0";
 
-        brushStrengthInput.onValueChanged.AddListener((newText) => BrushStrengthUpdated());
+        brushStrengthInput.onValueChanged.AddListener((newText) => BrushStrengthTextUpdated());
         brushStrengthInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
         brushStrengthInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
         brushStrengthInput.text = "0.01";
+    }
+
+    private void SetupSliders()
+    {
+        brushSizeSlider.mainSlider.wholeNumbers = true;
+        brushSizeSlider.mainSlider.minValue = 1;
+        brushSizeSlider.mainSlider.maxValue = 40;
+        brushSizeSlider.mainSlider.value = 1;
+        brushSizeSlider.mainSlider.onValueChanged.AddListener( BrushSizeSliderUpdated );
+        
+        brushHeightSlider.mainSlider.wholeNumbers = true;
+        brushHeightSlider.mainSlider.minValue = 1;
+        brushHeightSlider.mainSlider.maxValue = 40;
+        brushHeightSlider.mainSlider.value = 1;
+        brushHeightSlider.mainSlider.onValueChanged.AddListener( BrushHeightSliderUpdated );
+        
+        brushStrengthSlider.mainSlider.wholeNumbers = false;
+        brushStrengthSlider.mainSlider.minValue = 0;
+        brushStrengthSlider.mainSlider.maxValue = 1;
+        brushStrengthSlider.mainSlider.value = 0.1f;
+        brushStrengthSlider.mainSlider.onValueChanged.AddListener( BrushStrengthSliderUpdated );
+    }
+    
+    private void BrushSizeTextUpdated()
+    {
+        int validatedSize = InputValidation.ValidateInt(brushSizeInput.text, 1);
+        brushSizeSlider.mainSlider.value = validatedSize;
+        _terrainManager.meshMapEditor.SetBrushSize(validatedSize);
+    }
+    
+    private void BrushSizeSliderUpdated(float sliderValue)
+    {
+        int newSize = Mathf.RoundToInt(sliderValue);
+        brushSizeInput.text = newSize.ToString();
+        _terrainManager.meshMapEditor.SetBrushSize(newSize);
+    }
+
+    private void BrushHeightTextUpdated()
+    {
+        float validatedHeight = InputValidation.ValidateFloat(brushHeightInput.text, 0);
+        brushHeightSlider.mainSlider.value = validatedHeight;
+        _terrainManager.meshMapEditor.SetBrushHeight(validatedHeight);
+    }
+    
+    private void BrushHeightSliderUpdated(float sliderValue)
+    {
+        brushHeightInput.text = sliderValue.ToString();
+        _terrainManager.meshMapEditor.SetBrushHeight(sliderValue);
+    }
+
+    private void BrushStrengthTextUpdated()
+    {
+        float validatedStrength = InputValidation.ValidateFloat(brushStrengthInput.text, 0);
+        brushStrengthSlider.mainSlider.value = validatedStrength;
+        _terrainManager.meshMapEditor.brushStrength = validatedStrength;
+    }
+    
+    private void BrushStrengthSliderUpdated(float sliderValue)
+    {
+        brushStrengthInput.text = sliderValue.ToString();
+        _terrainManager.meshMapEditor.brushStrength = sliderValue;
     }
 
     private void SetupPaints()
@@ -231,21 +298,4 @@ public class MeshMapInspector : MonoBehaviour
         _myVerticalLayoutGroup.SetLayoutVertical();
     }
 
-    private void BrushSizeUpdated()
-    {
-        int validatedSize = InputValidation.ValidateInt(brushSizeInput.text, 1);
-        _terrainManager.meshMapEditor.SetBrushSize(validatedSize);
-    }
-
-    private void BrushHeightUpdated()
-    {
-        float validatedHeight = InputValidation.ValidateFloat(brushHeightInput.text, 0);
-        _terrainManager.meshMapEditor.SetBrushHeight(validatedHeight);
-    }
-
-    private void BrushStrengthUpdated()
-    {
-        float validatedStrength = InputValidation.ValidateFloat(brushStrengthInput.text, 0);
-        _terrainManager.meshMapEditor.brushStrength = validatedStrength;
-    }
 }
