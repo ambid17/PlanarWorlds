@@ -19,9 +19,11 @@ public class MeshMapInspector : MonoBehaviour
     public TMP_InputField brushHeightInput;
     public TMP_InputField brushStrengthInput;
 
+    public TMP_Text terrainToolText;
     public SliderManager brushSizeSlider;
     public SliderManager brushHeightSlider;
     public SliderManager brushStrengthSlider;
+    public SwitchManager eraseSwitch;
 
     public GameObject brushSizeContainer;
     public GameObject brushHeightContainer;
@@ -29,10 +31,10 @@ public class MeshMapInspector : MonoBehaviour
     public GameObject paintContainer;
     public GameObject treeContainer;
     public GameObject foliageContainer;
+    public GameObject eraseContainer;
 
     public GameObject imageButtonPrefab;
 
-    public TMP_Text terrainToolText;
 
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
@@ -90,6 +92,9 @@ public class MeshMapInspector : MonoBehaviour
         brushStrengthInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
         brushStrengthInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
         brushStrengthInput.text = "0.01";
+        
+        eraseSwitch.OnEvents.AddListener(EraseToggled);
+        eraseSwitch.OffEvents.AddListener(EraseToggled);
     }
 
     private void SetupSliders()
@@ -151,6 +156,11 @@ public class MeshMapInspector : MonoBehaviour
     {
         brushStrengthInput.text = sliderValue.ToString();
         _terrainManager.meshMapEditor.brushStrength = sliderValue;
+    }
+
+    private void EraseToggled()
+    {
+        _terrainManager.meshMapEditor.isErasing = eraseSwitch.isOn;
     }
 
     private void SetupPaints()
@@ -320,5 +330,6 @@ public class MeshMapInspector : MonoBehaviour
         paintContainer.SetActive(newMode == TerrainModificationMode.Paint);
         treeContainer.SetActive(newMode == TerrainModificationMode.Trees);
         foliageContainer.SetActive(newMode == TerrainModificationMode.Foliage);
+        eraseContainer.SetActive(newMode == TerrainModificationMode.Trees || newMode == TerrainModificationMode.Foliage);
     }
 }

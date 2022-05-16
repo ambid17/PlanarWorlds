@@ -22,6 +22,7 @@ public class MeshMapEditor : MonoBehaviour
     public int brushSize;
     public float brushStrength;
     public float brushHeight;
+    public bool isErasing;
     public LayerMask modificationLayerMask;
     public MeshMapInspector mapInspector;
     public TerrainLayerTextures terrainLayerTextures;
@@ -175,11 +176,26 @@ public class MeshMapEditor : MonoBehaviour
         }
         else if(currentMode == TerrainModificationMode.Trees)
         {
-            AddTree(_currentHitPoint);
+            if (isErasing)
+            {
+                DeleteTree(_currentHitPoint);
+            }
+            else
+            {
+                AddTree(_currentHitPoint);
+            }
         }
         else if (currentMode == TerrainModificationMode.Foliage)
         {
-            AddDetail(_currentHitPoint);
+            if (isErasing)
+            {
+                DeleteDetail(_currentHitPoint);
+            }
+            else
+            {
+                AddDetail(_currentHitPoint);
+
+            }
         }
         else
         {
@@ -295,7 +311,9 @@ public class MeshMapEditor : MonoBehaviour
         {
            return; 
         }
+        
         float treePlacementCount = brushStrength * 10;
+        
         for(int i = 0; i < treePlacementCount; i++)
         {
             float randomX = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
@@ -319,6 +337,36 @@ public class MeshMapEditor : MonoBehaviour
         
         terrain.Flush();
         
+    }
+
+    // TODO: this is HORRIBLY inefficient, either need to:
+    // - make multiple, smaller terrains
+    // - make the trees gameobjects instead of baked into the terrain
+    private void DeleteTree(Vector3 hitPoint)
+    {
+        TreeInstance[] trees = _terrainData.treeInstances;
+
+        List<TreeInstance> newTreeInstances = new List<TreeInstance>();
+        foreach (var treeInstance in trees)
+        {
+            Vector3 treePos = treeInstance.position;
+
+            float xPos = (treePos.x - 0.5f) * terrain.terrainData.size.x;
+            float zPos = (treePos.z - 0.5f) * terrain.terrainData.size.z;
+
+            Vector3 treeWorldPosition = new Vector3(xPos, 0, zPos);
+            
+            
+            Vector3 offset = treeWorldPosition - new Vector3(hitPoint.x, 0, hitPoint.z);
+            
+            // Only let this tree continue to exist if it's outside of the brush radius
+            if (offset.magnitude > (float)brushSize / 2)
+            {
+                newTreeInstances.Add(treeInstance);
+            }
+        }
+
+        _terrainData.treeInstances = newTreeInstances.ToArray();
     }
 
     private void AddDetail(Vector3 hitPoint)
@@ -347,6 +395,39 @@ public class MeshMapEditor : MonoBehaviour
             for (int y = 0; y < brushSize; y++)
             {
                 details[x, y] = currentFoliageIndex;
+            }
+        }
+
+        _terrainData.SetDetailLayer(startingXIndex, startingYIndex, currentFoliageIndex, details);
+        terrain.Flush();
+    }
+
+    private void DeleteDetail(Vector3 hitPoint)
+    {
+        int brushRadius = brushSize / 2;
+
+        float relativeHitX = hitPoint.x - terrain.transform.position.x;
+        float relativeHitY = hitPoint.z - terrain.transform.position.z;
+
+        float terX = relativeHitX / _terrainData.size.x;
+        float terY = relativeHitY / _terrainData.size.z;
+
+        int terrainX = Mathf.RoundToInt(terX * _terrainData.detailResolution);
+        int terrainY = Mathf.RoundToInt(terY * _terrainData.detailResolution);
+
+        int startingXIndex = terrainX - brushRadius;
+        int startingYIndex = terrainY - brushRadius;
+
+        startingXIndex = Mathf.Max(0, startingXIndex);
+        startingYIndex = Mathf.Max(0, startingYIndex);
+
+        int[,] details = _terrainData.GetDetailLayer(startingXIndex, startingYIndex, brushSize, brushSize, currentFoliageIndex);
+
+        for (int x = 0; x < brushSize; x++)
+        {
+            for (int y = 0; y < brushSize; y++)
+            {
+                details[x, y] = 0;
             }
         }
 
