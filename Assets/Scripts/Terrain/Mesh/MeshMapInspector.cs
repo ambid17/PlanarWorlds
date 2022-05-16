@@ -32,6 +32,8 @@ public class MeshMapInspector : MonoBehaviour
 
     public GameObject imageButtonPrefab;
 
+    public TMP_Text terrainToolText;
+
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
 
@@ -255,6 +257,31 @@ public class MeshMapInspector : MonoBehaviour
         foliageButton.Unselect();
 
         _terrainManager.meshMapEditor.SwitchTerrainModificationMode(newMode);
+
+        switch (newMode)
+        {
+            case TerrainModificationMode.Foliage:
+                terrainToolText.text = "Foliage";
+                break;
+            case TerrainModificationMode.Lower:
+                terrainToolText.text = "Lower Terrain";
+                break;
+            case TerrainModificationMode.Raise:
+                terrainToolText.text = "Raise Terrain";
+                break;
+            case TerrainModificationMode.Trees:
+                terrainToolText.text = "Trees";
+                break;
+            case TerrainModificationMode.Smooth:
+                terrainToolText.text = "Smooth Terrain";
+                break;
+            case TerrainModificationMode.SetHeight:
+                terrainToolText.text = "Set Height";
+                break;
+            case TerrainModificationMode.Paint:
+                terrainToolText.text = "Paint Terrain";
+                break;
+        }
     }
 
     public void TerrainModificationModeChanged(TerrainModificationMode newMode)
@@ -293,9 +320,5 @@ public class MeshMapInspector : MonoBehaviour
         paintContainer.SetActive(newMode == TerrainModificationMode.Paint);
         treeContainer.SetActive(newMode == TerrainModificationMode.Trees);
         foliageContainer.SetActive(newMode == TerrainModificationMode.Foliage);
-
-        _myVerticalLayoutGroup.CalculateLayoutInputHorizontal();
-        _myVerticalLayoutGroup.SetLayoutVertical();
     }
-
 }
