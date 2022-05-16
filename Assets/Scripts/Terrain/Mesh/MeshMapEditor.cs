@@ -48,9 +48,10 @@ public class MeshMapEditor : MonoBehaviour
     private List<int> _terrainLayerIds;
 
 
-    private Vector3 _mouseDragStartPosition;
-    private Vector3 _startingHitPoint;
+    private Vector3 _mouseDragLastPosition;
+    private Vector3 _currentHitPoint;
     private bool _isDragging;
+    private bool _hasMouseMoved; // Has the mouse moved since the last operation?
     
     private bool updateTerrain = true;
 
@@ -70,6 +71,7 @@ public class MeshMapEditor : MonoBehaviour
         _terrainLayerIds = new List<int>();
 
         _isDragging = false;
+        _hasMouseMoved = false;
 
     }
 
@@ -99,6 +101,8 @@ public class MeshMapEditor : MonoBehaviour
             // https://docs.unity3d.com/ScriptReference/TerrainData.SetHeightsDelayLOD.html
             _terrainData.SyncHeightmap();
         }
+        
+        // Disable terrain highlight updates for debugging the shader
         if (Input.GetKeyDown(KeyCode.K))
         {
             updateTerrain = !updateTerrain;
@@ -137,42 +141,49 @@ public class MeshMapEditor : MonoBehaviour
         // If we are just starting a drag, save off the starting points
         if(!_isDragging)
         {
-            _mouseDragStartPosition = Input.mousePosition;
+            _mouseDragLastPosition = Input.mousePosition;
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
             {
-                _startingHitPoint = hit.point;
+                _currentHitPoint = hit.point;
+                _isDragging = true;
+                _hasMouseMoved = true;
             }
-            _isDragging = true;
         }
         else // If we are in a drag, only raycast if the user has moved the mouse
         {
-            Vector3 mouseDelta = Input.mousePosition - _mouseDragStartPosition;
-            if (mouseDelta.magnitude > 1f)
+            Vector3 mouseDelta = Input.mousePosition - _mouseDragLastPosition;
+            if (mouseDelta.magnitude > 20f)
             {
                 Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
                 {
-                    _startingHitPoint = hit.point;
+                    _currentHitPoint = hit.point;
+                    _hasMouseMoved = true;
+                    _mouseDragLastPosition = Input.mousePosition;
                 }
+            }
+            else
+            {
+                _hasMouseMoved = false;
             }
         }
 
         if (currentMode == TerrainModificationMode.Paint)
         {
-            PaintTerrain(_startingHitPoint);
+            PaintTerrain(_currentHitPoint);
         }
         else if(currentMode == TerrainModificationMode.Trees)
         {
-            AddTree(_startingHitPoint);
+            AddTree(_currentHitPoint);
         }
         else if (currentMode == TerrainModificationMode.Foliage)
         {
-            AddDetail(_startingHitPoint);
+            AddDetail(_currentHitPoint);
         }
         else
         {
-            ModifyTerrain(_startingHitPoint);
+            ModifyTerrain(_currentHitPoint);
         }
     }
 
@@ -280,33 +291,33 @@ public class MeshMapEditor : MonoBehaviour
 
     private void AddTree(Vector3 hitPoint)
     {
-        Vector3 mouseDelta = Input.mousePosition - _mouseDragStartPosition;
-        if (mouseDelta.magnitude > 50)
+        if (!_hasMouseMoved)
         {
-            _mouseDragStartPosition = Input.mousePosition;
-            for(int i = 0; i < brushSize / 2; i++)
-            {
-                float randomX = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
-                float randomY = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
-
-                TreeInstance instance = new TreeInstance();
-
-                Vector3 relativePosition = hitPoint;
-                relativePosition.x -= terrain.transform.position.x + randomX;
-                relativePosition.z -= terrain.transform.position.z + randomY;
-                relativePosition.x /= _terrainData.size.x;
-                relativePosition.z /= _terrainData.size.x;
-
-                instance.position = relativePosition;
-                instance.prototypeIndex = currentTreeIndex;
-                instance.color = new Color32(1, 1, 1, 1);
-                instance.heightScale = 1;
-                instance.widthScale = 1;
-                terrain.AddTreeInstance(instance);
-            }
-            
-            terrain.Flush();
+           return; 
         }
+        float treePlacementCount = brushStrength * 10;
+        for(int i = 0; i < treePlacementCount; i++)
+        {
+            float randomX = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
+            float randomY = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
+
+            TreeInstance instance = new TreeInstance();
+
+            Vector3 relativePosition = hitPoint;
+            relativePosition.x -= terrain.transform.position.x + randomX;
+            relativePosition.z -= terrain.transform.position.z + randomY;
+            relativePosition.x /= _terrainData.size.x;
+            relativePosition.z /= _terrainData.size.x;
+
+            instance.position = relativePosition;
+            instance.prototypeIndex = currentTreeIndex;
+            instance.color = new Color32(1, 1, 1, 1);
+            instance.heightScale = 1;
+            instance.widthScale = 1;
+            terrain.AddTreeInstance(instance);
+        }
+        
+        terrain.Flush();
         
     }
 
