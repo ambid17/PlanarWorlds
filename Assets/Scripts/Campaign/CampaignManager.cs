@@ -12,13 +12,11 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
-    private HierarchyManager _hierarchyManager;
 
     private void Start()
     {
         _prefabManager = PrefabManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
-        _hierarchyManager = HierarchyManager.GetInstance();
 
         LoadRecentCampaigns();
     }
@@ -104,7 +102,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     #region Load Utils
     private void ClearOldData()
     {
-        _hierarchyManager.Clear();
         _terrainManager.ClearAllTerrain();
         _prefabManager.Clear();
     }

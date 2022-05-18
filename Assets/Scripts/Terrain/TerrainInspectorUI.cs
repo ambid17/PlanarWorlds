@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class MeshMapInspector : MonoBehaviour
+public class TerrainInspectorUI : MonoBehaviour
 {
     public ImageTabButton raiseButton;
     public ImageTabButton lowerButton;
@@ -19,9 +19,11 @@ public class MeshMapInspector : MonoBehaviour
     public TMP_InputField brushHeightInput;
     public TMP_InputField brushStrengthInput;
 
+    public TMP_Text terrainToolText;
     public SliderManager brushSizeSlider;
     public SliderManager brushHeightSlider;
     public SliderManager brushStrengthSlider;
+    public SwitchManager eraseSwitch;
 
     public GameObject brushSizeContainer;
     public GameObject brushHeightContainer;
@@ -29,8 +31,10 @@ public class MeshMapInspector : MonoBehaviour
     public GameObject paintContainer;
     public GameObject treeContainer;
     public GameObject foliageContainer;
+    public GameObject eraseContainer;
 
     public GameObject imageButtonPrefab;
+
 
     private TerrainManager _terrainManager;
     private UIManager _uiManager;
@@ -88,6 +92,9 @@ public class MeshMapInspector : MonoBehaviour
         brushStrengthInput.onSelect.AddListener(delegate { _uiManager.isEditingValues = true; });
         brushStrengthInput.onDeselect.AddListener(delegate { _uiManager.isEditingValues = false; });
         brushStrengthInput.text = "0.01";
+        
+        eraseSwitch.OnEvents.AddListener(EraseToggled);
+        eraseSwitch.OffEvents.AddListener(EraseToggled);
     }
 
     private void SetupSliders()
@@ -115,46 +122,51 @@ public class MeshMapInspector : MonoBehaviour
     {
         int validatedSize = InputValidation.ValidateInt(brushSizeInput.text, 1);
         brushSizeSlider.mainSlider.value = validatedSize;
-        _terrainManager.meshMapEditor.SetBrushSize(validatedSize);
+        _terrainManager.terrainEditor.SetBrushSize(validatedSize);
     }
     
     private void BrushSizeSliderUpdated(float sliderValue)
     {
         int newSize = Mathf.RoundToInt(sliderValue);
         brushSizeInput.text = newSize.ToString();
-        _terrainManager.meshMapEditor.SetBrushSize(newSize);
+        _terrainManager.terrainEditor.SetBrushSize(newSize);
     }
 
     private void BrushHeightTextUpdated()
     {
         float validatedHeight = InputValidation.ValidateFloat(brushHeightInput.text, 0);
         brushHeightSlider.mainSlider.value = validatedHeight;
-        _terrainManager.meshMapEditor.SetBrushHeight(validatedHeight);
+        _terrainManager.terrainEditor.SetBrushHeight(validatedHeight);
     }
     
     private void BrushHeightSliderUpdated(float sliderValue)
     {
         brushHeightInput.text = sliderValue.ToString();
-        _terrainManager.meshMapEditor.SetBrushHeight(sliderValue);
+        _terrainManager.terrainEditor.SetBrushHeight(sliderValue);
     }
 
     private void BrushStrengthTextUpdated()
     {
         float validatedStrength = InputValidation.ValidateFloat(brushStrengthInput.text, 0);
         brushStrengthSlider.mainSlider.value = validatedStrength;
-        _terrainManager.meshMapEditor.brushStrength = validatedStrength;
+        _terrainManager.terrainEditor.brushStrength = validatedStrength;
     }
     
     private void BrushStrengthSliderUpdated(float sliderValue)
     {
         brushStrengthInput.text = sliderValue.ToString();
-        _terrainManager.meshMapEditor.brushStrength = sliderValue;
+        _terrainManager.terrainEditor.brushStrength = sliderValue;
+    }
+
+    private void EraseToggled()
+    {
+        _terrainManager.terrainEditor.isErasing = eraseSwitch.isOn;
     }
 
     private void SetupPaints()
     {
         bool isFirst = true;
-        foreach (TerrainLayerTexture layer in _terrainManager.meshMapEditor.terrainLayerTextures.layers)
+        foreach (TerrainLayerTexture layer in _terrainManager.terrainEditor.terrainLayerTextures.layers)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, paintContainer.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
@@ -174,7 +186,7 @@ public class MeshMapInspector : MonoBehaviour
     private void SetupTrees()
     {
         bool isFirst = true;
-        foreach (Prefab prefab in _terrainManager.meshMapEditor.treePrefabList.prefabs)
+        foreach (Prefab prefab in _terrainManager.treePrefabList.prefabs)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, treeContainer.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
@@ -194,7 +206,7 @@ public class MeshMapInspector : MonoBehaviour
     private void SetupFoliage()
     {
         bool isFirst = true;
-        foreach (Prefab prefab in _terrainManager.meshMapEditor.foliagePrefabList.prefabs)
+        foreach (Prefab prefab in _terrainManager.foliagePrefabList.prefabs)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, foliageContainer.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
@@ -218,7 +230,7 @@ public class MeshMapInspector : MonoBehaviour
             _currentLayerButton.Unselect();
         }
 
-        _terrainManager.meshMapEditor.TryAddTerrainLayer(layer);
+        _terrainManager.terrainEditor.TryAddTerrainLayer(layer);
         _currentLayerButton = tabButton;
     }
 
@@ -229,7 +241,7 @@ public class MeshMapInspector : MonoBehaviour
             _currentTreeButton.Unselect();
         }
 
-        _terrainManager.meshMapEditor.TryAddTree(prefab);
+        _terrainManager.terrainEditor.TryAddTree(prefab);
         _currentTreeButton = tabButton;
     }
 
@@ -240,7 +252,7 @@ public class MeshMapInspector : MonoBehaviour
             _currentFoliageButton.Unselect();
         }
 
-        _terrainManager.meshMapEditor.TryAddFoliageMesh(prefab);
+        _terrainManager.terrainEditor.TryAddFoliageMesh(prefab);
         _currentFoliageButton = tabButton;
     }
 
@@ -254,7 +266,32 @@ public class MeshMapInspector : MonoBehaviour
         treeButton.Unselect();
         foliageButton.Unselect();
 
-        _terrainManager.meshMapEditor.SwitchTerrainModificationMode(newMode);
+        _terrainManager.terrainEditor.SwitchTerrainModificationMode(newMode);
+
+        switch (newMode)
+        {
+            case TerrainModificationMode.Foliage:
+                terrainToolText.text = "Foliage";
+                break;
+            case TerrainModificationMode.Lower:
+                terrainToolText.text = "Lower Terrain";
+                break;
+            case TerrainModificationMode.Raise:
+                terrainToolText.text = "Raise Terrain";
+                break;
+            case TerrainModificationMode.Trees:
+                terrainToolText.text = "Trees";
+                break;
+            case TerrainModificationMode.Smooth:
+                terrainToolText.text = "Smooth Terrain";
+                break;
+            case TerrainModificationMode.SetHeight:
+                terrainToolText.text = "Set Height";
+                break;
+            case TerrainModificationMode.Paint:
+                terrainToolText.text = "Paint Terrain";
+                break;
+        }
     }
 
     public void TerrainModificationModeChanged(TerrainModificationMode newMode)
@@ -293,9 +330,6 @@ public class MeshMapInspector : MonoBehaviour
         paintContainer.SetActive(newMode == TerrainModificationMode.Paint);
         treeContainer.SetActive(newMode == TerrainModificationMode.Trees);
         foliageContainer.SetActive(newMode == TerrainModificationMode.Foliage);
-
-        _myVerticalLayoutGroup.CalculateLayoutInputHorizontal();
-        _myVerticalLayoutGroup.SetLayoutVertical();
+        eraseContainer.SetActive(newMode == TerrainModificationMode.Trees || newMode == TerrainModificationMode.Foliage);
     }
-
 }

@@ -16,17 +16,17 @@ public enum TerrainModificationMode
     Foliage
 }
 
-public class MeshMapEditor : MonoBehaviour
+public class TerrainEditor : MonoBehaviour
 {
     [Header("Settings")]
     public int brushSize;
     public float brushStrength;
     public float brushHeight;
+    public bool isErasing;
     public LayerMask modificationLayerMask;
-    public MeshMapInspector mapInspector;
+    public TerrainInspectorUI terrainInspectorUI;
     public TerrainLayerTextures terrainLayerTextures;
-    public PrefabList treePrefabList;
-    public PrefabList foliagePrefabList;
+    
     public Material terrainMaterial;
 
     // State
@@ -38,8 +38,6 @@ public class MeshMapEditor : MonoBehaviour
 
     private Camera _mainCamera;
     private bool _isDirty;
-    private UIManager _uiManager;
-    private TerrainManager _terrainManager;
 
     private int currentTerrainLayerIndex;
     private int currentTreeIndex;
@@ -48,20 +46,18 @@ public class MeshMapEditor : MonoBehaviour
     private List<int> _terrainLayerIds;
 
 
-    private Vector3 _mouseDragStartPosition;
-    private Vector3 _startingHitPoint;
+    private Vector3 _mouseDragLastPosition;
+    private Vector3 _currentHitPoint;
     private bool _isDragging;
+    private bool _hasMouseMoved; // Has the mouse moved since the last operation?
     
-    private bool updateTerrain = true;
+    private bool debugTerrainHighlight = true;
 
 
     void Awake()
     {
         _isDirty = false;
         _mainCamera = Camera.main;
-
-        _uiManager = UIManager.GetInstance();
-        _terrainManager = TerrainManager.GetInstance();
 
         _terrainData = terrain.terrainData;
         _terrainHeightMapResolution = _terrainData.heightmapResolution;
@@ -70,6 +66,7 @@ public class MeshMapEditor : MonoBehaviour
         _terrainLayerIds = new List<int>();
 
         _isDragging = false;
+        _hasMouseMoved = false;
 
     }
 
@@ -81,7 +78,7 @@ public class MeshMapEditor : MonoBehaviour
 
     private void Update()
     {
-        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.TileMap)
+        if (UIManager.Instance.EditMode != EditMode.Terrain || UIManager.Instance.isPaused || UIManager.Instance.isFileBrowserOpen)
             return;
 
         if (Input.GetMouseButtonDown(0))
@@ -99,11 +96,13 @@ public class MeshMapEditor : MonoBehaviour
             // https://docs.unity3d.com/ScriptReference/TerrainData.SetHeightsDelayLOD.html
             _terrainData.SyncHeightmap();
         }
+        
+        // Disable terrain highlight updates for debugging the shader
         if (Input.GetKeyDown(KeyCode.K))
         {
-            updateTerrain = !updateTerrain;
+            debugTerrainHighlight = !debugTerrainHighlight;
         }
-        if (!EventSystem.current.IsPointerOverGameObject() && updateTerrain)
+        if (!EventSystem.current.IsPointerOverGameObject() && debugTerrainHighlight)
         {
             UpdateTerrainHighlight();
         }
@@ -137,42 +136,64 @@ public class MeshMapEditor : MonoBehaviour
         // If we are just starting a drag, save off the starting points
         if(!_isDragging)
         {
-            _mouseDragStartPosition = Input.mousePosition;
+            _mouseDragLastPosition = Input.mousePosition;
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
             {
-                _startingHitPoint = hit.point;
+                _currentHitPoint = hit.point;
+                _isDragging = true;
+                _hasMouseMoved = true;
             }
-            _isDragging = true;
         }
         else // If we are in a drag, only raycast if the user has moved the mouse
         {
-            Vector3 mouseDelta = Input.mousePosition - _mouseDragStartPosition;
-            if (mouseDelta.magnitude > 1f)
+            Vector3 mouseDelta = Input.mousePosition - _mouseDragLastPosition;
+            if (mouseDelta.magnitude > 20f)
             {
                 Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, modificationLayerMask))
                 {
-                    _startingHitPoint = hit.point;
+                    _currentHitPoint = hit.point;
+                    _hasMouseMoved = true;
+                    _mouseDragLastPosition = Input.mousePosition;
                 }
+            }
+            else
+            {
+                _hasMouseMoved = false;
             }
         }
 
         if (currentMode == TerrainModificationMode.Paint)
         {
-            PaintTerrain(_startingHitPoint);
+            PaintTerrain(_currentHitPoint);
         }
         else if(currentMode == TerrainModificationMode.Trees)
         {
-            AddTree(_startingHitPoint);
+            if (isErasing)
+            {
+                DeleteTree(_currentHitPoint);
+            }
+            else
+            {
+                AddTree(_currentHitPoint);
+            }
         }
         else if (currentMode == TerrainModificationMode.Foliage)
         {
-            AddDetail(_startingHitPoint);
+            if (isErasing)
+            {
+                DeleteDetail(_currentHitPoint);
+            }
+            else
+            {
+                AddDetail(_currentHitPoint);
+
+            }
         }
         else
         {
-            ModifyTerrain(_startingHitPoint);
+            ModifyTerrain(_currentHitPoint);
         }
     }
 
@@ -280,34 +301,66 @@ public class MeshMapEditor : MonoBehaviour
 
     private void AddTree(Vector3 hitPoint)
     {
-        Vector3 mouseDelta = Input.mousePosition - _mouseDragStartPosition;
-        if (mouseDelta.magnitude > 50)
+        if (!_hasMouseMoved)
         {
-            _mouseDragStartPosition = Input.mousePosition;
-            for(int i = 0; i < brushSize / 2; i++)
-            {
-                float randomX = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
-                float randomY = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
-
-                TreeInstance instance = new TreeInstance();
-
-                Vector3 relativePosition = hitPoint;
-                relativePosition.x -= terrain.transform.position.x + randomX;
-                relativePosition.z -= terrain.transform.position.z + randomY;
-                relativePosition.x /= _terrainData.size.x;
-                relativePosition.z /= _terrainData.size.x;
-
-                instance.position = relativePosition;
-                instance.prototypeIndex = currentTreeIndex;
-                instance.color = new Color32(1, 1, 1, 1);
-                instance.heightScale = 1;
-                instance.widthScale = 1;
-                terrain.AddTreeInstance(instance);
-            }
-            
-            terrain.Flush();
+           return; 
         }
         
+        float treePlacementCount = brushStrength * 10;
+        
+        for(int i = 0; i < treePlacementCount; i++)
+        {
+            float randomX = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
+            float randomY = UnityEngine.Random.Range(-brushSize / 2, brushSize / 2);
+
+            TreeInstance instance = new TreeInstance();
+
+            Vector3 relativePosition = hitPoint;
+            relativePosition.x -= terrain.transform.position.x + randomX;
+            relativePosition.z -= terrain.transform.position.z + randomY;
+            relativePosition.x /= _terrainData.size.x;
+            relativePosition.z /= _terrainData.size.x;
+
+            instance.position = relativePosition;
+            instance.prototypeIndex = currentTreeIndex;
+            instance.color = new Color32(1, 1, 1, 1);
+            instance.heightScale = 1;
+            instance.widthScale = 1;
+            terrain.AddTreeInstance(instance);
+        }
+        
+        terrain.Flush();
+        
+    }
+
+    // TODO: this is HORRIBLY inefficient, either need to:
+    // - make multiple, smaller terrains
+    // - make the trees gameobjects instead of baked into the terrain
+    private void DeleteTree(Vector3 hitPoint)
+    {
+        TreeInstance[] trees = _terrainData.treeInstances;
+
+        List<TreeInstance> newTreeInstances = new List<TreeInstance>();
+        foreach (var treeInstance in trees)
+        {
+            Vector3 treePos = treeInstance.position;
+
+            float xPos = (treePos.x - 0.5f) * terrain.terrainData.size.x;
+            float zPos = (treePos.z - 0.5f) * terrain.terrainData.size.z;
+
+            Vector3 treeWorldPosition = new Vector3(xPos, 0, zPos);
+            
+            
+            Vector3 offset = treeWorldPosition - new Vector3(hitPoint.x, 0, hitPoint.z);
+            
+            // Only let this tree continue to exist if it's outside of the brush radius
+            if (offset.magnitude > (float)brushSize / 2)
+            {
+                newTreeInstances.Add(treeInstance);
+            }
+        }
+
+        _terrainData.treeInstances = newTreeInstances.ToArray();
     }
 
     private void AddDetail(Vector3 hitPoint)
@@ -336,6 +389,39 @@ public class MeshMapEditor : MonoBehaviour
             for (int y = 0; y < brushSize; y++)
             {
                 details[x, y] = currentFoliageIndex;
+            }
+        }
+
+        _terrainData.SetDetailLayer(startingXIndex, startingYIndex, currentFoliageIndex, details);
+        terrain.Flush();
+    }
+
+    private void DeleteDetail(Vector3 hitPoint)
+    {
+        int brushRadius = brushSize / 2;
+
+        float relativeHitX = hitPoint.x - terrain.transform.position.x;
+        float relativeHitY = hitPoint.z - terrain.transform.position.z;
+
+        float terX = relativeHitX / _terrainData.size.x;
+        float terY = relativeHitY / _terrainData.size.z;
+
+        int terrainX = Mathf.RoundToInt(terX * _terrainData.detailResolution);
+        int terrainY = Mathf.RoundToInt(terY * _terrainData.detailResolution);
+
+        int startingXIndex = terrainX - brushRadius;
+        int startingYIndex = terrainY - brushRadius;
+
+        startingXIndex = Mathf.Max(0, startingXIndex);
+        startingYIndex = Mathf.Max(0, startingYIndex);
+
+        int[,] details = _terrainData.GetDetailLayer(startingXIndex, startingYIndex, brushSize, brushSize, currentFoliageIndex);
+
+        for (int x = 0; x < brushSize; x++)
+        {
+            for (int y = 0; y < brushSize; y++)
+            {
+                details[x, y] = 0;
             }
         }
 
@@ -499,7 +585,7 @@ public class MeshMapEditor : MonoBehaviour
     public void SwitchTerrainModificationMode(TerrainModificationMode mode)
     {
         currentMode = mode;
-        mapInspector.TerrainModificationModeChanged(mode);
+        terrainInspectorUI.TerrainModificationModeChanged(mode);
     }
     #endregion
 
