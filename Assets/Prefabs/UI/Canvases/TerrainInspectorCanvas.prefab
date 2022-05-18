@@ -1301,7 +1301,7 @@ GameObject:
   - component: {fileID: 3430455888773504923}
   - component: {fileID: 3430455888773504922}
   m_Layer: 5
-  m_Name: MeshMapInspector
+  m_Name: TerrainInspector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3382,7 +3382,6 @@ GameObject:
   - component: {fileID: 3430455889739469126}
   - component: {fileID: 3430455889739469127}
   - component: {fileID: 3430455889739469120}
-  - component: {fileID: 3430455889739469125}
   m_Layer: 0
   m_Name: TerrainInspectorCanvas
   m_TagString: Untagged
@@ -3471,20 +3470,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3430455889739469125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3430455889739469122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 372d52396d9a30d4893a57d788c1f5dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileMapInspector: {fileID: 0}
-  meshMapInspector: {fileID: 3430455888773504933}
 --- !u!1 &3430455889829619812
 GameObject:
   m_ObjectHideFlags: 0

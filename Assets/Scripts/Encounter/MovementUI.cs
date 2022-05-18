@@ -53,7 +53,7 @@ public class MovementUI : MonoBehaviour
         {
             float lerpFactor = (float)i / (float)lineSegments;
             Vector3 lerpedPosition = Vector3.Lerp(_startingPosition, _characterToTrack.transform.position, lerpFactor);
-            lerpedPosition.y = TerrainManager.Instance.meshMapEditor.terrain.SampleHeight(lerpedPosition) + _lineOffsetFromTerrain;
+            lerpedPosition.y = TerrainManager.Instance.terrainEditor.terrain.SampleHeight(lerpedPosition) + _lineOffsetFromTerrain;
             segmentPositions[i] = lerpedPosition;
         }
         lineRenderer.positionCount = segmentPositions.Length;

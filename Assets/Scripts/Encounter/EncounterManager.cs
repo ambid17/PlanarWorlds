@@ -154,7 +154,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
                 Vector3 roundedHit = rayHit.point;
                 roundedHit.x = Mathf.Round(roundedHit.x) + 0.5f;
                 roundedHit.z = Mathf.Round(roundedHit.z) + 0.5f;
-                roundedHit.y = TerrainManager.Instance.meshMapEditor.terrain.SampleHeight(roundedHit);
+                roundedHit.y = TerrainManager.Instance.terrainEditor.terrain.SampleHeight(roundedHit);
                 selectedCharacter.transform.position = roundedHit;
             }
         }

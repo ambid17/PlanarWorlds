@@ -16,7 +16,7 @@ public enum TerrainModificationMode
     Foliage
 }
 
-public class MeshMapEditor : MonoBehaviour
+public class TerrainEditor : MonoBehaviour
 {
     [Header("Settings")]
     public int brushSize;
@@ -24,7 +24,7 @@ public class MeshMapEditor : MonoBehaviour
     public float brushHeight;
     public bool isErasing;
     public LayerMask modificationLayerMask;
-    public MeshMapInspector mapInspector;
+    public TerrainInspector mapInspector;
     public TerrainLayerTextures terrainLayerTextures;
     public PrefabList treePrefabList;
     public PrefabList foliagePrefabList;

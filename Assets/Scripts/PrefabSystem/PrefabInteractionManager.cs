@@ -319,7 +319,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
             {
                 snappedPosition.x = Mathf.Round(snappedPosition.x) + 0.5f;
                 snappedPosition.z = Mathf.Round(snappedPosition.z) + 0.5f;
-                snappedPosition.y = TerrainManager.Instance.meshMapEditor.terrain.SampleHeight(snappedPosition);
+                snappedPosition.y = TerrainManager.Instance.terrainEditor.terrain.SampleHeight(snappedPosition);
             }
 
             // TODO: we can possibly take this out, doesn't seem to be necessary with logans models
