@@ -12,7 +12,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
 {
     public GameObject PrefabCanvas;
     public GameObject InspectorCanvas;
-    public GameObject HierarchyCanvas;
     public GameObject TerrainInspectorCanvas;
     public GameObject EncounterCanvas;
 
@@ -66,7 +65,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
 
     private void UpdateActiveWindows()
     {
-        HierarchyCanvas.SetActive(hierarchyWindowShouldBeActive);
         InspectorCanvas.SetActive(inspectorWindowShouldBeActive);
         PrefabCanvas.SetActive(prefabWindowShouldBeActive);
         TerrainInspectorCanvas.SetActive(terrainInspectorWindowShouldBeActive);
