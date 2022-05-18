@@ -84,7 +84,7 @@ public class MeshMapEditor : MonoBehaviour
 
     private void Update()
     {
-        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen || _terrainManager.currentTerrainMode == TerrainMode.TileMap)
+        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen)
             return;
 
         if (Input.GetMouseButtonDown(0))

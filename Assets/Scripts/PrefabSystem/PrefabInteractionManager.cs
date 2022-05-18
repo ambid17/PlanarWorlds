@@ -13,7 +13,6 @@ public enum TargetingType
 public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionManager>
 {
     public RectTransform inspectorRectTransform;
-    public RectTransform hierarchyRectTransform;
 
     [SerializeField]
     private LayerMask _prefabLayerMask;
@@ -22,7 +21,6 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
     private InspectorManager _inspectorManager;
     private UIManager _uiManager;
-    private HierarchyManager _hierarchyManager;
 
     private ObjectTransformGizmo positionGizmo;
     private ObjectTransformGizmo rotationGizmo;
@@ -50,7 +48,6 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
         _inspectorManager = InspectorManager.GetInstance();
         _uiManager = UIManager.GetInstance();
-        _hierarchyManager = HierarchyManager.GetInstance();
 
         // TODO enable snapping setup
         positionGizmo = RTGizmosEngine.Get.CreateObjectMoveGizmo();
@@ -115,7 +112,6 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
         // If we click on the UI:
         // deselect the current object if we click on anything other than:
         // - the inspector
-        // - the hierarchy
         if(Input.GetMouseButtonDown(0)
             && RTGizmosEngine.Get.HoveredGizmo == null
             && EventSystem.current.IsPointerOverGameObject())
@@ -123,10 +119,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
             Vector2 mousePosition = inspectorRectTransform.InverseTransformPoint(Input.mousePosition);
             bool mouseIsOnInspector= inspectorRectTransform.rect.Contains(mousePosition);
 
-            mousePosition = hierarchyRectTransform.InverseTransformPoint(Input.mousePosition);
-            bool mouseIsOnHierarchy = hierarchyRectTransform.rect.Contains(mousePosition);
-
-            if(!mouseIsOnHierarchy && !mouseIsOnInspector)
+            if(!mouseIsOnInspector)
             {
                 ForceClearSelection();
             }
@@ -228,12 +221,10 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
     {
         ToggleOutlineRender(true);
         _inspectorManager.UpdateInputFields();
-        _hierarchyManager.SelectItems(_targetObjects);
     }
 
     private void ClearSelection()
     {
-        _hierarchyManager.DeselectItems(_targetObjects);
         ToggleOutlineRender(false);
 
         //if (_currentTargetingType == TargetingType.CharacterPlacement
@@ -436,7 +427,6 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
             List<GameObject> duplicateObjects = Duplicate();
 
             ToggleOutlineRender(false);
-            _hierarchyManager.DeselectItems(_targetObjects);
             _targetObjects.Clear();
 
             ForceSelectPrefabs(duplicateObjects);
@@ -457,8 +447,6 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
         {
             foreach (GameObject go in _targetObjects)
             {
-                _hierarchyManager.RemoveItem(go);
-
                 CharacterInstanceData characterInstance = go.GetComponent<CharacterInstanceData>();
                 if (characterInstance)
                 {
@@ -548,7 +536,6 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
             }
 
             toReturn.Add(duplicateObject);
-            _hierarchyManager.AddItem(duplicateObject);
         }
         
         return toReturn;

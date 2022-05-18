@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TerrainInspector : MonoBehaviour
 {
-    public GameObject tileMapInspector;
     public GameObject meshMapInspector;
 
     void Start()
@@ -12,9 +11,8 @@ public class TerrainInspector : MonoBehaviour
         
     }
 
-    public void SetTerrainMode(TerrainMode newMode)
+    public void SetTerrainMode()
     {
-        tileMapInspector.SetActive(newMode == TerrainMode.TileMap);
-        meshMapInspector.SetActive(newMode == TerrainMode.Mesh);
+        meshMapInspector.SetActive(true);
     }
 }

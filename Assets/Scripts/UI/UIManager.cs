@@ -21,7 +21,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
 
     public bool UserCantInput { get => isEditingValues || isFileBrowserOpen || isPaused; }
 
-    public bool hierarchyWindowShouldBeActive;
     public bool inspectorWindowShouldBeActive;
     public bool prefabWindowShouldBeActive;
     public bool terrainInspectorWindowShouldBeActive;
@@ -51,7 +50,6 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         _currentEditmode = editMode;
 
-        hierarchyWindowShouldBeActive = editMode == EditMode.Prefab;
         inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
         prefabWindowShouldBeActive = editMode == EditMode.Prefab;
         terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;

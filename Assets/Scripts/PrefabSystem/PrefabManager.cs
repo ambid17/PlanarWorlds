@@ -12,7 +12,6 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
     public PrefabList monsterList;
     public GameObject playerNameTextPrefab;
 
-    private HierarchyManager _hierarchyManager;
 
     private int instanceIdCounter = 0;
 
@@ -23,7 +22,6 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
     private void Start()
     {
-        _hierarchyManager = HierarchyManager.GetInstance();
     }
 
     public void LoadPrefabFromSave(PrefabModel model)
@@ -63,8 +61,6 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
 
         SetObjectShader(instance);
         CreateObjectCollider(instance);
-
-        _hierarchyManager.AddItem(instance);
     }
 
     public Prefab LookupPrefab(PrefabType prefabType, int prefabId)
@@ -118,7 +114,6 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         SetObjectShader(instance);
         CreateObjectCollider(instance);
 
-        _hierarchyManager.AddItem(instance);
         return instance;
     }
 
