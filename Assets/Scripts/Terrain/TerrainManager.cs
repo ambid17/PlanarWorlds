@@ -6,6 +6,9 @@ using UnityEngine;
 public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 {
     public TerrainEditor terrainEditor;
+    
+    public PrefabList treePrefabList;
+    public PrefabList foliagePrefabList;
 
     void Start()
     {

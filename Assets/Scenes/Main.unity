@@ -690,7 +690,7 @@ GameObject:
   - component: {fileID: 797217226}
   - component: {fileID: 797217228}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GameManagers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -834,6 +834,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrainEditor: {fileID: 1562729110}
+  treePrefabList: {fileID: 11400000, guid: 990bbcf7c3edf9848858fbcdcf758ec6, type: 2}
+  foliagePrefabList: {fileID: 11400000, guid: fedb33bfc3118a14eba021aab9d989f6, type: 2}
 --- !u!114 &797217228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4621,10 +4623,8 @@ MonoBehaviour:
   modificationLayerMask:
     serializedVersion: 2
     m_Bits: 256
-  mapInspector: {fileID: 907538016}
+  terrainInspector: {fileID: 907538016}
   terrainLayerTextures: {fileID: 11400000, guid: c60dc30a99fc8ee45b0fc9a28767c9b5, type: 2}
-  treePrefabList: {fileID: 11400000, guid: 990bbcf7c3edf9848858fbcdcf758ec6, type: 2}
-  foliagePrefabList: {fileID: 11400000, guid: fedb33bfc3118a14eba021aab9d989f6, type: 2}
   terrainMaterial: {fileID: 2100000, guid: 12c46d10e41b3104cbcd8037adb4c823, type: 2}
   currentMode: 0
   terrain: {fileID: 386636511}
@@ -6272,7 +6272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3430455888699878956, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430455888699878956, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6280,7 +6280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3430455888699878956, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430455888699878956, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6312,7 +6312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889164954334, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889164954334, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6320,7 +6320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889164954334, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889164954334, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6492,7 +6492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889829619801, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889829619801, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6500,7 +6500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889829619801, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430455889829619801, guid: 93442ab8da0c7f84f966253474229fed, type: 3}
       propertyPath: m_AnchoredPosition.y

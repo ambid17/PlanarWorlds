@@ -24,10 +24,9 @@ public class TerrainEditor : MonoBehaviour
     public float brushHeight;
     public bool isErasing;
     public LayerMask modificationLayerMask;
-    public TerrainInspector mapInspector;
+    public TerrainInspectorUI terrainInspectorUI;
     public TerrainLayerTextures terrainLayerTextures;
-    public PrefabList treePrefabList;
-    public PrefabList foliagePrefabList;
+    
     public Material terrainMaterial;
 
     // State
@@ -39,8 +38,6 @@ public class TerrainEditor : MonoBehaviour
 
     private Camera _mainCamera;
     private bool _isDirty;
-    private UIManager _uiManager;
-    private TerrainManager _terrainManager;
 
     private int currentTerrainLayerIndex;
     private int currentTreeIndex;
@@ -54,16 +51,13 @@ public class TerrainEditor : MonoBehaviour
     private bool _isDragging;
     private bool _hasMouseMoved; // Has the mouse moved since the last operation?
     
-    private bool updateTerrain = true;
+    private bool debugTerrainHighlight = true;
 
 
     void Awake()
     {
         _isDirty = false;
         _mainCamera = Camera.main;
-
-        _uiManager = UIManager.GetInstance();
-        _terrainManager = TerrainManager.GetInstance();
 
         _terrainData = terrain.terrainData;
         _terrainHeightMapResolution = _terrainData.heightmapResolution;
@@ -84,7 +78,7 @@ public class TerrainEditor : MonoBehaviour
 
     private void Update()
     {
-        if (_uiManager.EditMode != EditMode.Terrain || _uiManager.isPaused || _uiManager.isFileBrowserOpen)
+        if (UIManager.Instance.EditMode != EditMode.Terrain || UIManager.Instance.isPaused || UIManager.Instance.isFileBrowserOpen)
             return;
 
         if (Input.GetMouseButtonDown(0))
@@ -106,9 +100,9 @@ public class TerrainEditor : MonoBehaviour
         // Disable terrain highlight updates for debugging the shader
         if (Input.GetKeyDown(KeyCode.K))
         {
-            updateTerrain = !updateTerrain;
+            debugTerrainHighlight = !debugTerrainHighlight;
         }
-        if (!EventSystem.current.IsPointerOverGameObject() && updateTerrain)
+        if (!EventSystem.current.IsPointerOverGameObject() && debugTerrainHighlight)
         {
             UpdateTerrainHighlight();
         }
@@ -591,7 +585,7 @@ public class TerrainEditor : MonoBehaviour
     public void SwitchTerrainModificationMode(TerrainModificationMode mode)
     {
         currentMode = mode;
-        mapInspector.TerrainModificationModeChanged(mode);
+        terrainInspectorUI.TerrainModificationModeChanged(mode);
     }
     #endregion
 

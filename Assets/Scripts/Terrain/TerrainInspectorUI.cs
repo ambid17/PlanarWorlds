@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class TerrainInspector : MonoBehaviour
+public class TerrainInspectorUI : MonoBehaviour
 {
     public ImageTabButton raiseButton;
     public ImageTabButton lowerButton;
@@ -186,7 +186,7 @@ public class TerrainInspector : MonoBehaviour
     private void SetupTrees()
     {
         bool isFirst = true;
-        foreach (Prefab prefab in _terrainManager.terrainEditor.treePrefabList.prefabs)
+        foreach (Prefab prefab in _terrainManager.treePrefabList.prefabs)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, treeContainer.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
@@ -206,7 +206,7 @@ public class TerrainInspector : MonoBehaviour
     private void SetupFoliage()
     {
         bool isFirst = true;
-        foreach (Prefab prefab in _terrainManager.terrainEditor.foliagePrefabList.prefabs)
+        foreach (Prefab prefab in _terrainManager.foliagePrefabList.prefabs)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, foliageContainer.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
