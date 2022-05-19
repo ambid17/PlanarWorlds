@@ -1,0 +1,17 @@
+{
+    "name": "Digger.Core",
+    "references": [
+        "Unity.Mathematics",
+        "Unity.Burst",
+        "JBooth.MicroSplat.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
