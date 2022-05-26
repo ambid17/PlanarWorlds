@@ -1,0 +1,20 @@
+{
+    "name": "Digger.Core.Editor",
+    "references": [
+        "Unity.Mathematics",
+        "Digger.Core",
+        "JBooth.MicroSplat.Core",
+        "JBooth.MicroSplat.Core.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

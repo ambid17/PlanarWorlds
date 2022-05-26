@@ -166,7 +166,7 @@ public class TerrainInspectorUI : MonoBehaviour
     private void SetupPaints()
     {
         bool isFirst = true;
-        foreach (TerrainLayerTexture layer in _terrainManager.terrainEditor.terrainLayerTextures.layers)
+        foreach (TerrainLayerTexture layer in _terrainManager.terrainLayers.layers)
         {
             GameObject newButton = Instantiate(imageButtonPrefab, paintContainer.transform);
             ImageTabButton tabButton = newButton.GetComponent<ImageTabButton>();
@@ -230,7 +230,7 @@ public class TerrainInspectorUI : MonoBehaviour
             _currentLayerButton.Unselect();
         }
 
-        _terrainManager.terrainEditor.TryAddTerrainLayer(layer);
+        _terrainManager.terrainEditor.SetTerrainLayer(layer);
         _currentLayerButton = tabButton;
     }
 
@@ -241,7 +241,7 @@ public class TerrainInspectorUI : MonoBehaviour
             _currentTreeButton.Unselect();
         }
 
-        _terrainManager.terrainEditor.TryAddTree(prefab);
+        _terrainManager.terrainEditor.SetTree(prefab);
         _currentTreeButton = tabButton;
     }
 
@@ -252,7 +252,7 @@ public class TerrainInspectorUI : MonoBehaviour
             _currentFoliageButton.Unselect();
         }
 
-        _terrainManager.terrainEditor.TryAddFoliageMesh(prefab);
+        _terrainManager.terrainEditor.SetDetailMesh(prefab);
         _currentFoliageButton = tabButton;
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -25,7 +26,6 @@ public class TerrainEditor : MonoBehaviour
     public bool isErasing;
     public LayerMask modificationLayerMask;
     public TerrainInspectorUI terrainInspectorUI;
-    public TerrainLayerTextures terrainLayerTextures;
     
     public Material terrainMaterial;
 
@@ -43,7 +43,6 @@ public class TerrainEditor : MonoBehaviour
     private int currentTreeIndex;
     private int currentFoliageIndex;
 
-    private List<int> _terrainLayerIds;
 
 
     private Vector3 _mouseDragLastPosition;
@@ -63,7 +62,6 @@ public class TerrainEditor : MonoBehaviour
         _terrainHeightMapResolution = _terrainData.heightmapResolution;
         _terrainAlphaMapResolution = _terrainData.alphamapResolution;
 
-        _terrainLayerIds = new List<int>();
 
         _isDragging = false;
         _hasMouseMoved = false;
@@ -73,6 +71,15 @@ public class TerrainEditor : MonoBehaviour
     private void Start()
     {
         UIManager.OnEditModeChanged += EditModeChanged;
+        SetupTerrain();
+    }
+
+    void SetupTerrain()
+    {
+        //_terrainData.detailPrototypes
+        SetupTerrainLayers();
+        SetupDetailLayers();
+        SetupTrees();
     }
 
 
@@ -330,7 +337,8 @@ public class TerrainEditor : MonoBehaviour
         }
         
         terrain.Flush();
-        
+
+        TreeInstance[] instances = terrain.terrainData.treeInstances;
     }
 
     // TODO: this is HORRIBLY inefficient, either need to:
@@ -471,11 +479,11 @@ public class TerrainEditor : MonoBehaviour
     #endregion
 
     #region Settings
-    public void TryAddTerrainLayer(TerrainLayerTexture layer)
+
+    public void SetTerrainLayer(TerrainLayerTexture layer)
     {
         TerrainLayer[] oldLayers = _terrainData.terrainLayers;
-
-        // check to see that we are not adding a duplicate TerrainLayer
+        
         for (int i = 0; i < oldLayers.Length; ++i)
         {
             if (oldLayers[i].diffuseTexture == layer.diffuse)
@@ -484,27 +492,31 @@ public class TerrainEditor : MonoBehaviour
                 return;
             }
         }
+    }
+    
+    /// <summary>
+    /// Convert from our Scriptable Object to TerrainLayer, populating the terrain with the layers so they can be painted
+    /// </summary>
+    public void SetupTerrainLayers()
+    {
+        List<TerrainLayerTexture> layerTextures = TerrainManager.Instance.terrainLayers.layers;
+        TerrainLayer[] newLayers = new TerrainLayer[layerTextures.Count];
+        
+        for(int i = 0; i < layerTextures.Count; i++)
+        {
+            TerrainLayer newLayer = new TerrainLayer();
+            newLayer.diffuseTexture = layerTextures[i].diffuse;
 
-        TerrainLayer newLayer = new TerrainLayer();
-        newLayer.diffuseTexture = layer.diffuse;
+            if (layerTextures[i].normal != null)
+                newLayer.normalMapTexture = layerTextures[i].normal;
 
-        if (layer.normal != null)
-            newLayer.normalMapTexture = layer.normal;
-
-        TerrainLayer[] newLayers = new TerrainLayer[oldLayers.Length + 1];
-
-        // copy old array into new array
-        Array.Copy(oldLayers, newLayers, oldLayers.Length);
-
-        // add new TerrainLayer to the end of the new array
-        int layerIndex = newLayers.Length - 1;
-        newLayers[layerIndex] = newLayer;
+            newLayers[i] = newLayer;
+        }
+        
         terrain.terrainData.terrainLayers = newLayers;
-        currentTerrainLayerIndex = layerIndex;
-        _terrainLayerIds.Add(layerIndex);
     }
 
-    public void TryAddTree(GameObject treePrefab)
+    public void SetTree(GameObject treePrefab)
     {
         TreePrototype[] oldPrototypes = _terrainData.treePrototypes;
 
@@ -516,23 +528,25 @@ public class TerrainEditor : MonoBehaviour
                 return;
             }
         }
-
-        TreePrototype newPrototype = new TreePrototype();
-        newPrototype.prefab = treePrefab;
-
-        TreePrototype[] newPrototypes = new TreePrototype[oldPrototypes.Length + 1];
-
-        // copy old array into new array
-        Array.Copy(oldPrototypes, newPrototypes, oldPrototypes.Length);
-
-        // add new TerrainLayer to the end of the new array
-        int index = newPrototypes.Length - 1;
-        newPrototypes[index] = newPrototype;
-        terrain.terrainData.treePrototypes = newPrototypes;
-        currentTreeIndex = index;
     }
 
-    public void TryAddFoliageMesh(GameObject foliagePrefab)
+    public void SetupTrees()
+    {
+        Prefab[] trees = TerrainManager.Instance.treePrefabList.prefabs;
+        TreePrototype[] newPrototypes = new TreePrototype[trees.Length];
+        
+        for(int i = 0; i < newPrototypes.Length; i++)
+        {
+            TreePrototype newPrototype = new TreePrototype();
+            newPrototype.prefab = trees[i].gameObject;
+
+            newPrototypes[i] = newPrototype;
+        }
+        
+        terrain.terrainData.treePrototypes = newPrototypes;
+    }
+
+    public void SetDetailMesh(GameObject foliagePrefab)
     {
         DetailPrototype[] oldPrototypes = _terrainData.detailPrototypes;
 
@@ -544,27 +558,29 @@ public class TerrainEditor : MonoBehaviour
                 return;
             }
         }
+    }
+    
+    public void SetupDetailLayers()
+    {
+        Prefab[] details = TerrainManager.Instance.foliagePrefabList.prefabs;
+        DetailPrototype[] newPrototypes = new DetailPrototype[details.Length];
+        
+        for(int i = 0; i < newPrototypes.Length; i++)
+        {
+            DetailPrototype newPrototype = new DetailPrototype();
+            newPrototype.usePrototypeMesh = true;
+            newPrototype.prototype = details[i].gameObject;
+            newPrototype.maxHeight = 2;
+            newPrototype.maxWidth = 2;
+            newPrototype.minHeight = 0.5f;
+            newPrototype.minWidth = 0.5f;
+            newPrototype.noiseSpread = 0.5f;
+            newPrototype.renderMode = DetailRenderMode.Grass;
 
-        DetailPrototype newPrototype = new DetailPrototype();
-        newPrototype.usePrototypeMesh = true;
-        newPrototype.prototype = foliagePrefab;
-        newPrototype.maxHeight = 2;
-        newPrototype.maxWidth = 2;
-        newPrototype.minHeight = 0.5f;
-        newPrototype.minWidth = 0.5f;
-        newPrototype.noiseSpread = 0.5f;
-        newPrototype.renderMode = DetailRenderMode.Grass;
-
-        DetailPrototype[] newPrototypes = new DetailPrototype[oldPrototypes.Length + 1];
-
-        // copy old array into new array
-        Array.Copy(oldPrototypes, newPrototypes, oldPrototypes.Length);
-
-        // add new TerrainLayer to the end of the new array
-        int index = newPrototypes.Length - 1;
-        newPrototypes[index] = newPrototype;
+            newPrototypes[i] = newPrototype;
+        }
+        
         terrain.terrainData.detailPrototypes = newPrototypes;
-        currentFoliageIndex = index;
     }
 
     public void SetBrushHeight(float newHeight)
@@ -609,24 +625,49 @@ public class TerrainEditor : MonoBehaviour
     public void SaveIntoCampaign(Campaign campaign)
     {
         TerrainModel newModel = new TerrainModel();
+        
         try
         {
-            float[] flattenedHeights = new float[_terrainHeightMapResolution * _terrainHeightMapResolution];
-            float[,] a = _terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution);
-            Buffer.BlockCopy(a, 0, flattenedHeights, 0, flattenedHeights.Length * sizeof(float));
-            newModel.heightMap = flattenedHeights;
-
-            float[] flattenedAlphaMaps = new float[_terrainAlphaMapResolution * _terrainAlphaMapResolution * _terrainLayerIds.Count];
-            Buffer.BlockCopy(_terrainData.GetAlphamaps(0, 0, _terrainAlphaMapResolution, _terrainAlphaMapResolution), 0, flattenedAlphaMaps, 0, flattenedAlphaMaps.Length * sizeof(float));
-            newModel.splatMap = flattenedAlphaMaps;
-            newModel.textureIds = _terrainLayerIds.ToArray();
+            newModel.heightMap = _terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution);
+            newModel.alphaMap = _terrainData.GetAlphamaps(0, 0, _terrainAlphaMapResolution, _terrainAlphaMapResolution);
+            newModel.detailMap = GetDetailMap();
+            newModel.treeMap = GetTreeMap();
         }catch(Exception e)
         {
             Debug.LogError($"Error saving mesh map: \n{e.Message}\n{e.StackTrace}");
         }
-        
 
         campaign.terrainData = newModel;
+    }
+
+    private int[][,] GetDetailMap()
+    {
+        int[][,] detailMap = new int[TerrainManager.Instance.foliagePrefabList.prefabs.Length][,];
+            
+        for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
+        {
+            detailMap[i] = _terrainData.GetDetailLayer(0, 0, _terrainData.detailResolution, _terrainData.detailResolution, i);
+        }
+
+        return detailMap;
+    }
+
+    private SerializedTree[] GetTreeMap()
+    {
+        SerializedTree[] trees = new SerializedTree[_terrainData.treeInstances.Length];
+        for(int i = 0; i < _terrainData.treeInstances.Length; i++)
+        {
+            TreeInstance treeInstance = _terrainData.treeInstances[i];
+            trees[i] = new SerializedTree()
+            {
+                x = treeInstance.position.x,
+                y = treeInstance.position.y,
+                z = treeInstance.position.z,
+                prefabIndex = treeInstance.prototypeIndex
+            };
+        }
+
+        return trees;
     }
 
     public void LoadFromCampaign(Campaign campaign)
@@ -635,27 +676,47 @@ public class TerrainEditor : MonoBehaviour
         {
             try
             {
-                float[,] unflattenedHeights = new float[_terrainHeightMapResolution, _terrainHeightMapResolution];
-                Buffer.BlockCopy(campaign.terrainData.heightMap, 0, unflattenedHeights, 0, _terrainHeightMapResolution * _terrainHeightMapResolution);
-                _terrainData.SetHeights(0, 0, unflattenedHeights);
-
-                foreach (int id in campaign.terrainData.textureIds)
-                {
-                    TerrainLayerTexture texture = terrainLayerTextures.layers.Where(layer => layer.Id == id).FirstOrDefault();
-                    if (texture != null)
-                        TryAddTerrainLayer(texture);
-                }
-
-                //float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, campaign.terrainData.textureIds.Count()];
-                float[,,] unflattenedAlphas = new float[_terrainAlphaMapResolution, _terrainAlphaMapResolution, 1];
-                Buffer.BlockCopy(campaign.terrainData.splatMap, 0, unflattenedAlphas, 0, _terrainAlphaMapResolution * _terrainAlphaMapResolution * campaign.terrainData.textureIds.Count());
-                _terrainData.SetAlphamaps(0, 0, unflattenedAlphas);
+                _terrainData.SetHeights(0, 0, campaign.terrainData.heightMap);
+                _terrainData.SetAlphamaps(0, 0, campaign.terrainData.alphaMap);
+                LoadDetails(campaign.terrainData.detailMap);
+                LoadTrees(campaign.terrainData.treeMap);
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error loading mesh map: \n{e.Message}\n{e.StackTrace}");
             }
         }
+    }
+    
+    private void LoadDetails(int[][,] detailMap)
+    {
+        for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
+        {
+            _terrainData.SetDetailLayer(0, 0, i, detailMap[i]);
+        }
+    }
+    
+    private void LoadTrees(SerializedTree[] treeMap)
+    {
+        TreeInstance[] treeInstances = new TreeInstance[treeMap.Length];
+
+        for (int i = 0; i < treeInstances.Length; i++)
+        {
+            SerializedTree serializedTree = treeMap[i];
+            TreeInstance instance = new TreeInstance()
+            {
+                position = new Vector3(serializedTree.x, serializedTree.y, serializedTree.z),
+                prototypeIndex = serializedTree.prefabIndex,
+                heightScale = 1,
+                widthScale = 1,
+                color = new Color32(0,0,0,0),
+                rotation = 0,
+                lightmapColor = new Color32(0,0,0,0)
+            };
+                
+            treeInstances[i] = instance;
+        }
+        _terrainData.SetTreeInstances(treeInstances, true);
     }
 
     public void Clear()
@@ -667,6 +728,9 @@ public class TerrainEditor : MonoBehaviour
         terrain.terrainData.SetHeights(0, 0, heights);
 
         terrain.terrainData.detailPrototypes = new DetailPrototype[0];
+        
+        
+        SetupTerrain();
     }
 
     private void EditModeChanged(EditMode newEditMode)

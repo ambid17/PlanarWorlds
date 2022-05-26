@@ -1,0 +1,10 @@
+DOCUMENTATION
+=============
+
+Documentation can be found online here: https://ofux.github.io/Digger-Documentation/
+
+
+SUPPORT
+=======
+
+Support is provided on Discord: https://discord.gg/C2X6C6s

@@ -1,0 +1,17 @@
+{
+    "name": "Digger.Runtime",
+    "references": [
+        "Unity.Mathematics",
+        "Digger.Core",
+        "NavMeshComponents"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
