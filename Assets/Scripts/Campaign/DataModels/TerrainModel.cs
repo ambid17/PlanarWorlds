@@ -12,5 +12,19 @@ public class TerrainModel
     public float[,,] alphaMap;
     [SerializeField] 
     public int[][,] detailMap;
+    [SerializeField]
+    public SerializedTree[] treeMap;
+}
 
+[Serializable]
+public class SerializedTree
+{
+    [SerializeField]
+    public float x;
+    [SerializeField]
+    public float y;
+    [SerializeField]
+    public float z;
+    [SerializeField]
+    public int prefabIndex;
 }

@@ -241,7 +241,7 @@ public class TerrainInspectorUI : MonoBehaviour
             _currentTreeButton.Unselect();
         }
 
-        _terrainManager.terrainEditor.TryAddTree(prefab);
+        _terrainManager.terrainEditor.SetTree(prefab);
         _currentTreeButton = tabButton;
     }
 

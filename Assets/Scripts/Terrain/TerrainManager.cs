@@ -23,7 +23,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
 
     public void LoadCampaign(Campaign campaign)
     {
-        if (campaign.terrainData != null && campaign.terrainData.heightMap != null)
+        if (campaign.terrainData != null)
         {
             terrainEditor.LoadFromCampaign(campaign);
         }

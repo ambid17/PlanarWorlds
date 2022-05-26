@@ -79,6 +79,7 @@ public class TerrainEditor : MonoBehaviour
         //_terrainData.detailPrototypes
         SetupTerrainLayers();
         SetupDetailLayers();
+        SetupTrees();
     }
 
 
@@ -336,7 +337,8 @@ public class TerrainEditor : MonoBehaviour
         }
         
         terrain.Flush();
-        
+
+        TreeInstance[] instances = terrain.terrainData.treeInstances;
     }
 
     // TODO: this is HORRIBLY inefficient, either need to:
@@ -514,7 +516,7 @@ public class TerrainEditor : MonoBehaviour
         terrain.terrainData.terrainLayers = newLayers;
     }
 
-    public void TryAddTree(GameObject treePrefab)
+    public void SetTree(GameObject treePrefab)
     {
         TreePrototype[] oldPrototypes = _terrainData.treePrototypes;
 
@@ -526,20 +528,22 @@ public class TerrainEditor : MonoBehaviour
                 return;
             }
         }
+    }
 
-        TreePrototype newPrototype = new TreePrototype();
-        newPrototype.prefab = treePrefab;
+    public void SetupTrees()
+    {
+        Prefab[] trees = TerrainManager.Instance.treePrefabList.prefabs;
+        TreePrototype[] newPrototypes = new TreePrototype[trees.Length];
+        
+        for(int i = 0; i < newPrototypes.Length; i++)
+        {
+            TreePrototype newPrototype = new TreePrototype();
+            newPrototype.prefab = trees[i].gameObject;
 
-        TreePrototype[] newPrototypes = new TreePrototype[oldPrototypes.Length + 1];
-
-        // copy old array into new array
-        Array.Copy(oldPrototypes, newPrototypes, oldPrototypes.Length);
-
-        // add new TerrainLayer to the end of the new array
-        int index = newPrototypes.Length - 1;
-        newPrototypes[index] = newPrototype;
+            newPrototypes[i] = newPrototype;
+        }
+        
         terrain.terrainData.treePrototypes = newPrototypes;
-        currentTreeIndex = index;
     }
 
     public void SetDetailMesh(GameObject foliagePrefab)
@@ -554,8 +558,8 @@ public class TerrainEditor : MonoBehaviour
                 return;
             }
         }
-
     }
+    
     public void SetupDetailLayers()
     {
         Prefab[] details = TerrainManager.Instance.foliagePrefabList.prefabs;
@@ -626,22 +630,44 @@ public class TerrainEditor : MonoBehaviour
         {
             newModel.heightMap = _terrainData.GetHeights(0, 0, _terrainHeightMapResolution, _terrainHeightMapResolution);
             newModel.alphaMap = _terrainData.GetAlphamaps(0, 0, _terrainAlphaMapResolution, _terrainAlphaMapResolution);
-
-            int[][,] detailMap = new int[TerrainManager.Instance.foliagePrefabList.prefabs.Length][,];
-
-            for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
-            {
-                detailMap[i] = _terrainData.GetDetailLayer(0, 0, _terrainData.detailResolution, _terrainData.detailResolution, i);
-            }
-
-            newModel.detailMap = detailMap;
-
+            newModel.detailMap = GetDetailMap();
+            newModel.treeMap = GetTreeMap();
         }catch(Exception e)
         {
             Debug.LogError($"Error saving mesh map: \n{e.Message}\n{e.StackTrace}");
         }
 
         campaign.terrainData = newModel;
+    }
+
+    private int[][,] GetDetailMap()
+    {
+        int[][,] detailMap = new int[TerrainManager.Instance.foliagePrefabList.prefabs.Length][,];
+            
+        for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
+        {
+            detailMap[i] = _terrainData.GetDetailLayer(0, 0, _terrainData.detailResolution, _terrainData.detailResolution, i);
+        }
+
+        return detailMap;
+    }
+
+    private SerializedTree[] GetTreeMap()
+    {
+        SerializedTree[] trees = new SerializedTree[_terrainData.treeInstances.Length];
+        for(int i = 0; i < _terrainData.treeInstances.Length; i++)
+        {
+            TreeInstance treeInstance = _terrainData.treeInstances[i];
+            trees[i] = new SerializedTree()
+            {
+                x = treeInstance.position.x,
+                y = treeInstance.position.y,
+                z = treeInstance.position.z,
+                prefabIndex = treeInstance.prototypeIndex
+            };
+        }
+
+        return trees;
     }
 
     public void LoadFromCampaign(Campaign campaign)
@@ -652,19 +678,45 @@ public class TerrainEditor : MonoBehaviour
             {
                 _terrainData.SetHeights(0, 0, campaign.terrainData.heightMap);
                 _terrainData.SetAlphamaps(0, 0, campaign.terrainData.alphaMap);
-                
-                
-                for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
-                {
-                    _terrainData.SetDetailLayer(0, 0, i, campaign.terrainData.detailMap[i]);
-
-                }
+                LoadDetails(campaign.terrainData.detailMap);
+                LoadTrees(campaign.terrainData.treeMap);
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error loading mesh map: \n{e.Message}\n{e.StackTrace}");
             }
         }
+    }
+    
+    private void LoadDetails(int[][,] detailMap)
+    {
+        for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
+        {
+            _terrainData.SetDetailLayer(0, 0, i, detailMap[i]);
+        }
+    }
+    
+    private void LoadTrees(SerializedTree[] treeMap)
+    {
+        TreeInstance[] treeInstances = new TreeInstance[treeMap.Length];
+
+        for (int i = 0; i < treeInstances.Length; i++)
+        {
+            SerializedTree serializedTree = treeMap[i];
+            TreeInstance instance = new TreeInstance()
+            {
+                position = new Vector3(serializedTree.x, serializedTree.y, serializedTree.z),
+                prototypeIndex = serializedTree.prefabIndex,
+                heightScale = 1,
+                widthScale = 1,
+                color = new Color32(0,0,0,0),
+                rotation = 0,
+                lightmapColor = new Color32(0,0,0,0)
+            };
+                
+            treeInstances[i] = instance;
+        }
+        _terrainData.SetTreeInstances(treeInstances, true);
     }
 
     public void Clear()
