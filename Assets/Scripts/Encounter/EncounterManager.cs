@@ -54,7 +54,7 @@ public class EncounterManager : StaticMonoBehaviour<EncounterManager>
             TryCancelMove();
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (HotKeyManager.GetKeyDown(HotKeyName.Focus))
         {
             FocusOnCharacter();
         }

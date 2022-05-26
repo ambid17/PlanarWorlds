@@ -11,8 +11,9 @@ public class OptionsMenu : MonoBehaviour
     public Transform scrollViewContent;
     public GameObject hotKeyPrefab;
 
-    string keyToRebind = null;
-    Dictionary<string, TMP_Text> buttonKeyCodeTexts;
+    HotKeyName keyToRebind;
+    private bool isBindingKey = false;
+    Dictionary<HotKeyName, TMP_Text> buttonKeyCodeTexts;
 
     public static event Action onSetDefaults;
 
@@ -30,21 +31,26 @@ public class OptionsMenu : MonoBehaviour
 
     private void Update()
     {
-        if (keyToRebind != null)
+        // If we aren't binding a key, and there's nothing pressed, don't try to bind
+        if (!isBindingKey || !Input.anyKeyDown)
         {
-            if (Input.anyKeyDown)
+            return;
+        }
+
+        TryBindKey();
+    }
+
+    void TryBindKey()
+    {
+        // Loop through all possible keys and see if it was pressed down
+        foreach (KeyCode keyCode in Enum.GetValues(typeof(KeyCode)))
+        {
+            if (Input.GetKeyDown(keyCode))
             {
-                // Loop through all possible keys and see if it was pressed down
-                foreach (KeyCode keyCode in Enum.GetValues(typeof(KeyCode)))
-                {
-                    if (Input.GetKeyDown(keyCode))
-                    {
-                        _hotKeyManager.SetButtonForKey(keyToRebind, keyCode);
-                        buttonKeyCodeTexts[keyToRebind].text = keyCode.ToString();
-                        keyToRebind = null;
-                        break;
-                    }
-                }
+                _hotKeyManager.SetButtonForKey(keyToRebind, keyCode);
+                buttonKeyCodeTexts[keyToRebind].text = keyCode.ToString();
+                isBindingKey = false;
+                break;
             }
         }
     }
@@ -53,13 +59,6 @@ public class OptionsMenu : MonoBehaviour
     {
         CleanScrollView();
         PopulateHotkeys();
-    }
-
-    void StartRebindFor(string keyName)
-    {
-        Debug.Log("StartRebindFor: " + keyName);
-
-        keyToRebind = keyName;
     }
 
     private void CleanScrollView()
@@ -72,33 +71,30 @@ public class OptionsMenu : MonoBehaviour
 
     private void PopulateHotkeys()
     {
-        Dictionary<string, KeyCode> keys = _hotKeyManager.GetHotKeys();
-        Dictionary<string, string> tooltips = _hotKeyManager.GetTooltips();
-
-        buttonKeyCodeTexts = new Dictionary<string, TMP_Text>();
-        foreach (string hotkey in keys.Keys)
+        List<Hotkey> keys = _hotKeyManager.GetHotKeys();
+        foreach (Hotkey hotkey in keys)
         {
-            if (hotkey == HotkeyConstants.ModifierKey)
+            if (hotkey.hotkeyName == HotKeyName.ControlModifier)
                 return;
 
-            GameObject newItem = Instantiate(hotKeyPrefab);
-            newItem.transform.SetParent(scrollViewContent, false);
-
-            HotKeyItem item = newItem.GetComponentInChildren<HotKeyItem>();
-            item.SetItemText(hotkey);
-            item.SetButtonText(keys[hotkey].ToString());
-            item.tooltip.SetTooltipText(tooltips[hotkey]);
-            item.itemButton.onClick.AddListener(() => StartRebindFor(hotkey.ToString()));
-
-            buttonKeyCodeTexts.Add(hotkey, item.GetButtonText());
+            GameObject newItem = Instantiate(hotKeyPrefab, scrollViewContent);
+            HotKeyItem item = newItem.GetComponent<HotKeyItem>();
+            item.Init(hotkey, StartRebindFor);
+            buttonKeyCodeTexts.Add(hotkey.hotkeyName, item.GetButtonText());
         }
+    }
+    
+    void StartRebindFor(HotKeyName keyName)
+    {
+        Debug.Log($"StartRebindFor: {keyName}");
+        isBindingKey = true;
+        keyToRebind = keyName;
     }
 
     public void SetDefaults()
     {
-        Debug.Log("set hotkey defaults");
+        Debug.Log("Setting hotkeys to defaults");
         _hotKeyManager.SetDefaults();
-        onSetDefaults?.Invoke();
         ReloadUI();
     }
 }

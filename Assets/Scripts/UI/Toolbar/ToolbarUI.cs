@@ -12,6 +12,9 @@ public class ToolbarUI : MonoBehaviour
 
     public Button terrainButton;
     public TerrainMenu terrainMenu;
+    
+    public Button hotkeyButton;
+    public HotkeyMenu hotkeyMenu;
 
     private UIManager _uiManager;
 
@@ -26,6 +29,9 @@ public class ToolbarUI : MonoBehaviour
 
         terrainButton.onClick.AddListener(TerrainButtonClicked);
         terrainMenu.gameObject.SetActive(false);
+        
+        hotkeyButton.onClick.AddListener(HotkeyButtonClicked);
+        hotkeyMenu.gameObject.SetActive(false);
     }
 
     void Update()
@@ -44,6 +50,11 @@ public class ToolbarUI : MonoBehaviour
     private void TerrainButtonClicked()
     {
         terrainMenu.gameObject.SetActive(true);
+    }
+    
+    private void HotkeyButtonClicked()
+    {
+        hotkeyMenu.gameObject.SetActive(true);
     }
 
     public void UpdateCampaignName(string newName)

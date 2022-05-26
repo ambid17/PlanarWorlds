@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,10 +7,12 @@ using TMPro;
 
 public class HotKeyItem : MonoBehaviour
 {
-    public TMP_Text itemText;
-    public Button itemButton;
-    public TMP_Text buttonText;
-    public TooltipItem tooltip;
+    [SerializeField] private TMP_Text itemText;
+    [SerializeField] private Button itemButton;
+    [SerializeField] private TMP_Text buttonText;
+    [SerializeField] private TooltipItem tooltip;
+
+    public delegate void ButtonPressDelegate();
 
     private RectTransform rectTransform;
 
@@ -26,18 +29,28 @@ public class HotKeyItem : MonoBehaviour
         tooltip.gameObject.SetActive(mouseIsOnToolip);
     }
 
-    public void SetItemText(string text)
-    {
-        itemText.text = text;
-    }
-
-    public void SetButtonText(string text)
-    {
-        buttonText.text = text;
-    }
-
     public TMP_Text GetButtonText()
     {
         return buttonText;
     }
+
+    public void Init(Hotkey hotkey, Action<HotKeyName> action)
+    {
+        itemText.text = hotkey.readableName;
+        buttonText.text = hotkey.savedKeyCode.ToString();
+        tooltip.SetTooltipText(hotkey.tooltip);
+        
+        itemButton.onClick.AddListener(() =>
+        {
+            action(hotkey.hotkeyName);
+        });
+    }
+    
+    public void Init(Hotkey hotkey)
+    {
+        itemText.text = hotkey.readableName;
+        buttonText.text = hotkey.savedKeyCode.ToString();
+        tooltip.SetTooltipText(hotkey.tooltip);
+    }
+
 }
