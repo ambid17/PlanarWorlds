@@ -25,9 +25,9 @@ public class CharacterInstanceData : PrefabInstanceData, IComparable, IEquatable
     {
         CharacterModel myModel = new CharacterModel()
         {
-            position = transform.position,
-            rotation = transform.rotation.eulerAngles,
-            scale = transform.localScale,
+            position = new MyVector3(transform.position),
+            rotation = new MyVector3(transform.rotation.eulerAngles),
+            scale = new MyVector3(transform.localScale),
             prefabId = prefabId,
             name = characterName,
             prefabType = prefabType,

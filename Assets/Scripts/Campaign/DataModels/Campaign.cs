@@ -31,18 +31,6 @@ public class Campaign
         {
             SetTempFilePath();
         }
-
-        // string fileContents = JsonUtility.ToJson(this);
-        // try
-        // {
-        //     File.WriteAllText(filePath, fileContents);
-        // }
-        // catch (Exception e)
-        // {
-        //     Debug.LogError($"{e.Message}\n{e.StackTrace}");
-        // }
-        // Debug.Log($"Finished Saving campaign to {filePath}");
-        
         
         FileStream fs = new FileStream(filePath, FileMode.Create);
 
@@ -66,26 +54,6 @@ public class Campaign
     public static Campaign LoadFromPath(string filePath)
     {
         Campaign campaign = new Campaign();
-
-        // Debug.Log($"Loading campaign from: {filePath}");
-        // if (File.Exists(filePath))
-        // {
-        //     try
-        //     {
-        //         string fileContents = File.ReadAllText(filePath);
-        //         campaign = JsonUtility.FromJson<Campaign>(fileContents);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Debug.LogError($"{e.Message}\n{e.StackTrace}");
-        //         campaign = null;
-        //     }
-        // }
-        // else
-        // {
-        //     Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
-        //     campaign = null;
-        // }
         
         FileStream fs = new FileStream(filePath, FileMode.Open);
         try
