@@ -836,6 +836,7 @@ MonoBehaviour:
   terrainEditor: {fileID: 1562729110}
   treePrefabList: {fileID: 11400000, guid: 990bbcf7c3edf9848858fbcdcf758ec6, type: 2}
   foliagePrefabList: {fileID: 11400000, guid: fedb33bfc3118a14eba021aab9d989f6, type: 2}
+  terrainLayers: {fileID: 11400000, guid: c60dc30a99fc8ee45b0fc9a28767c9b5, type: 2}
 --- !u!114 &797217228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4624,7 +4625,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   terrainInspectorUI: {fileID: 907538016}
-  terrainLayerTextures: {fileID: 11400000, guid: c60dc30a99fc8ee45b0fc9a28767c9b5, type: 2}
   terrainMaterial: {fileID: 2100000, guid: 12c46d10e41b3104cbcd8037adb4c823, type: 2}
   currentMode: 0
   terrain: {fileID: 386636511}

@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 [Serializable]
@@ -12,8 +14,6 @@ public class Campaign
     [SerializeField]
     public List<CharacterModel> characters;
     [SerializeField]
-    public List<TileModel> tiles;
-    [SerializeField]
     public string filePath;
     [SerializeField]
     public TerrainModel terrainData;
@@ -22,7 +22,6 @@ public class Campaign
     {
         props = new List<PrefabModel>();
         characters = new List<CharacterModel>();
-        tiles = new List<TileModel>();
     }
 
     #region Serialization
@@ -33,40 +32,75 @@ public class Campaign
             SetTempFilePath();
         }
 
-        string fileContents = JsonUtility.ToJson(this);
+        // string fileContents = JsonUtility.ToJson(this);
+        // try
+        // {
+        //     File.WriteAllText(filePath, fileContents);
+        // }
+        // catch (Exception e)
+        // {
+        //     Debug.LogError($"{e.Message}\n{e.StackTrace}");
+        // }
+        // Debug.Log($"Finished Saving campaign to {filePath}");
+        
+        
+        FileStream fs = new FileStream(filePath, FileMode.Create);
+
+        // Construct a BinaryFormatter and use it to serialize the data to the stream.
+        BinaryFormatter formatter = new BinaryFormatter();
         try
         {
-            File.WriteAllText(filePath, fileContents);
+            formatter.Serialize(fs, this);
         }
-        catch (Exception e)
+        catch (SerializationException e)
         {
-            Debug.LogError($"{e.Message}\n{e.StackTrace}");
+            Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+            throw;
         }
-        Debug.Log($"Finished Saving campaign to {filePath}");
+        finally
+        {
+            fs.Close();
+        }
     }
 
     public static Campaign LoadFromPath(string filePath)
     {
         Campaign campaign = new Campaign();
 
-        Debug.Log($"Loading campaign from: {filePath}");
-        if (File.Exists(filePath))
+        // Debug.Log($"Loading campaign from: {filePath}");
+        // if (File.Exists(filePath))
+        // {
+        //     try
+        //     {
+        //         string fileContents = File.ReadAllText(filePath);
+        //         campaign = JsonUtility.FromJson<Campaign>(fileContents);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Debug.LogError($"{e.Message}\n{e.StackTrace}");
+        //         campaign = null;
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
+        //     campaign = null;
+        // }
+        
+        FileStream fs = new FileStream(filePath, FileMode.Open);
+        try
         {
-            try
-            {
-                string fileContents = File.ReadAllText(filePath);
-                campaign = JsonUtility.FromJson<Campaign>(fileContents);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"{e.Message}\n{e.StackTrace}");
-                campaign = null;
-            }
+            BinaryFormatter formatter = new BinaryFormatter();
+            campaign = (Campaign) formatter.Deserialize(fs);
         }
-        else
+        catch (SerializationException e)
         {
-            Debug.LogError($"Campaign.LoadFromName(): No file exists at: {filePath}");
-            campaign = null;
+            Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+            throw;
+        }
+        finally
+        {
+            fs.Close();
         }
 
         return campaign;

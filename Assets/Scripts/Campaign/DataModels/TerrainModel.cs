@@ -7,10 +7,10 @@ using System;
 public class TerrainModel
 {
     [SerializeField]
-    public float[] heightMap;
+    public float[,] heightMap;
     [SerializeField]
-    public float[] splatMap;
-    [SerializeField]
-    public int[] textureIds;
-    
+    public float[,,] alphaMap;
+    [SerializeField] 
+    public int[][,] detailMap;
+
 }

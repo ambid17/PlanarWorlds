@@ -9,6 +9,7 @@ public class TerrainManager : StaticMonoBehaviour<TerrainManager>
     
     public PrefabList treePrefabList;
     public PrefabList foliagePrefabList;
+    public TerrainLayerTextures terrainLayers;
 
     void Start()
     {

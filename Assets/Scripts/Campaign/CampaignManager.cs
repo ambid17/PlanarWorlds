@@ -23,10 +23,10 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void OnApplicationQuit()
     {
-        if (!CurrentDataIsSaved())
-        {
-            SaveTempCampaign();
-        }
+        // if (!CurrentDataIsSaved())
+        // {
+        //     SaveTempCampaign();
+        // }
     }
 
     #region Campaign Utils
