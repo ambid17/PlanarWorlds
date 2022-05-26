@@ -15,7 +15,49 @@ MonoBehaviour:
   hotkeys:
   - hotkeyName: 0
     defaultKeyCode: 122
-    savedKeyCode: 122
+    savedKeyCode: 121
     modifier: 0
-    readableName: Position Mode
-    tooltip: Set prefab mode to position
+    readableName: Position
+    tooltip: Sets the prefab mode to Position
+  - hotkeyName: 1
+    defaultKeyCode: 120
+    savedKeyCode: 120
+    modifier: 0
+    readableName: Rotation
+    tooltip: Sets the prefab mode to Rotation
+  - hotkeyName: 2
+    defaultKeyCode: 99
+    savedKeyCode: 99
+    modifier: 0
+    readableName: Scale
+    tooltip: Sets the prefab mode to Scale
+  - hotkeyName: 3
+    defaultKeyCode: 8
+    savedKeyCode: 8
+    modifier: 0
+    readableName: Delete
+    tooltip: Deletes the currently selected object
+  - hotkeyName: 4
+    defaultKeyCode: 102
+    savedKeyCode: 102
+    modifier: 0
+    readableName: Focus
+    tooltip: Focuses the camera on the current object
+  - hotkeyName: 5
+    defaultKeyCode: 100
+    savedKeyCode: 100
+    modifier: 306
+    readableName: Scal
+    tooltip: Scale
+  - hotkeyName: 6
+    defaultKeyCode: 119
+    savedKeyCode: 119
+    modifier: 0
+    readableName: Camera Forward
+    tooltip: Moves the camera forward while you hold right click
+  - hotkeyName: 7
+    defaultKeyCode: 115
+    savedKeyCode: 115
+    modifier: 0
+    readableName: Camera Back
+    tooltip: Moves the camera backward while you hold right click

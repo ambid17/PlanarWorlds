@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Michsky.UI.ModernUIPack;
 using UnityEngine;
 using UnityEngine.UI;
 using RTG;
@@ -10,6 +11,7 @@ public class OptionsMenu : MonoBehaviour
 {
     public Transform scrollViewContent;
     public GameObject hotKeyPrefab;
+    public TooltipContent tooltip;
 
     HotKeyName keyToRebind;
     private bool isBindingKey = false;
@@ -71,7 +73,9 @@ public class OptionsMenu : MonoBehaviour
 
     private void PopulateHotkeys()
     {
-        List<Hotkey> keys = _hotKeyManager.GetHotKeys();
+        buttonKeyCodeTexts = new Dictionary<HotKeyName, TMP_Text>();
+
+        Hotkey[] keys = _hotKeyManager.GetHotKeys();
         foreach (Hotkey hotkey in keys)
         {
             if (hotkey.hotkeyName == HotKeyName.ControlModifier)
@@ -79,7 +83,7 @@ public class OptionsMenu : MonoBehaviour
 
             GameObject newItem = Instantiate(hotKeyPrefab, scrollViewContent);
             HotKeyItem item = newItem.GetComponent<HotKeyItem>();
-            item.Init(hotkey, StartRebindFor);
+            item.Init(hotkey, tooltip, StartRebindFor);
             buttonKeyCodeTexts.Add(hotkey.hotkeyName, item.GetButtonText());
         }
     }

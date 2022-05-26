@@ -12,13 +12,13 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
 
     private void Start()
     {
-        LoadHotkeys();
+        //LoadHotkeys();
         PopulateMapping();
     }
 
     private void OnApplicationQuit()
     {
-        SaveHotkeys();
+        //SaveHotkeys();
     }
 
     void LoadHotkeys()
@@ -56,7 +56,7 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
     
     
     
-    public List<Hotkey> GetHotKeys()
+    public Hotkey[] GetHotKeys()
     {
         return _hotKeys.hotkeys;
     }

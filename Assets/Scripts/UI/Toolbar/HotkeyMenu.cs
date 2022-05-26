@@ -1,16 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Michsky.UI.ModernUIPack;
 using UnityEngine;
 
 public class HotkeyMenu : MonoBehaviour
 {
+    public TooltipContent tooltip;
+
     [SerializeField] private GameObject _hotkeyItemPrefab;
     [SerializeField] private Transform _listViewContainer;
-    
+
+
     void Start()
     {
         PopulateList();
     }
+
 
 
     void PopulateList()
@@ -19,7 +25,7 @@ public class HotkeyMenu : MonoBehaviour
         {
             GameObject hotkeyGO = Instantiate(_hotkeyItemPrefab, _listViewContainer);
             HotKeyItem hotKeyItem = hotkeyGO.GetComponent<HotKeyItem>();
-            hotKeyItem.Init(hotkey);
+            hotKeyItem.Init(hotkey,tooltip);
         }
     }
     

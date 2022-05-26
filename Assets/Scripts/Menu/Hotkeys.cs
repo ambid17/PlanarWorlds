@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+[Serializable]
 [CreateAssetMenu(fileName = "Hotkeys", menuName = "ScriptableObjects/Hotkeys")]
 public class Hotkeys : ScriptableObject
 {
     [SerializeField]
-    public List<Hotkey> hotkeys;
+    public Hotkey[] hotkeys;
 }
 
 [Serializable]

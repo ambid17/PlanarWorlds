@@ -1,32 +1,36 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Michsky.UI.ModernUIPack;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class HotKeyItem : MonoBehaviour
+public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField] private TMP_Text itemText;
     [SerializeField] private Button itemButton;
     [SerializeField] private TMP_Text buttonText;
-    [SerializeField] private TooltipItem tooltip;
+    
+    private TooltipContent _tooltip;
+    private string _tooltipDescription;
 
-    public delegate void ButtonPressDelegate();
-
-    private RectTransform rectTransform;
+    private RectTransform _rectTransform;
 
     private void Start()
     {
-        rectTransform = GetComponent<RectTransform>();
-        tooltip.gameObject.SetActive(false);
+        _rectTransform = GetComponent<RectTransform>();
     }
 
     private void Update()
     {
-        Vector2 mousePosition = rectTransform.InverseTransformPoint(Input.mousePosition);
-        bool mouseIsOnToolip = rectTransform.rect.Contains(mousePosition);
-        tooltip.gameObject.SetActive(mouseIsOnToolip);
+        
+    }
+    
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        _tooltip.description = _tooltipDescription;
     }
 
     public TMP_Text GetButtonText()
@@ -34,11 +38,12 @@ public class HotKeyItem : MonoBehaviour
         return buttonText;
     }
 
-    public void Init(Hotkey hotkey, Action<HotKeyName> action)
+    /// <summary>
+    /// Used by OptionsMenu to send a callback for binding the hotkey
+    /// </summary>
+    public void Init(Hotkey hotkey, TooltipContent tooltip, Action<HotKeyName> action)
     {
-        itemText.text = hotkey.readableName;
-        buttonText.text = hotkey.savedKeyCode.ToString();
-        tooltip.SetTooltipText(hotkey.tooltip);
+        Init(hotkey, tooltip);
         
         itemButton.onClick.AddListener(() =>
         {
@@ -46,11 +51,12 @@ public class HotKeyItem : MonoBehaviour
         });
     }
     
-    public void Init(Hotkey hotkey)
+    public void Init(Hotkey hotkey, TooltipContent tooltip)
     {
         itemText.text = hotkey.readableName;
         buttonText.text = hotkey.savedKeyCode.ToString();
-        tooltip.SetTooltipText(hotkey.tooltip);
+        _tooltipDescription = hotkey.tooltip;
+        _tooltip = tooltip;
     }
 
 }
