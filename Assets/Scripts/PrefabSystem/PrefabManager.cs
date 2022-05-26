@@ -29,9 +29,9 @@ public class PrefabManager : StaticMonoBehaviour<PrefabManager>
         Prefab prefab = LookupPrefab(model.prefabType, model.prefabId);
 
         GameObject instance = Instantiate(prefab.gameObject, prefabContainer);
-        instance.transform.position = model.position;
-        instance.transform.rotation = Quaternion.Euler(model.rotation);
-        instance.transform.localScale = model.scale;
+        instance.transform.position = model.position.ToVector3();
+        instance.transform.rotation = Quaternion.Euler(model.rotation.ToVector3());
+        instance.transform.localScale = model.scale.ToVector3();
         instance.layer = Constants.PrefabParentLayer;
         instance.name = model.name;
 
