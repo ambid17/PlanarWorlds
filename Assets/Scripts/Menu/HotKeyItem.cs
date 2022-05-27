@@ -13,7 +13,7 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private Button itemButton;
     [SerializeField] private TMP_Text buttonText;
     
-    private TooltipContent _tooltip;
+    private TooltipUI _tooltip;
     private string _tooltipDescription;
 
     private RectTransform _rectTransform;
@@ -30,7 +30,7 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
     
     public void OnPointerEnter(PointerEventData eventData)
     {
-        _tooltip.description = _tooltipDescription;
+        _tooltip.SetTooltip(_tooltipDescription);
     }
 
     public TMP_Text GetButtonText()
@@ -41,7 +41,7 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
     /// <summary>
     /// Used by OptionsMenu to send a callback for binding the hotkey
     /// </summary>
-    public void Init(Hotkey hotkey, TooltipContent tooltip, Action<HotKeyName> action)
+    public void Init(Hotkey hotkey, TooltipUI tooltip, Action<HotKeyName> action)
     {
         Init(hotkey, tooltip);
         
@@ -51,7 +51,7 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
         });
     }
     
-    public void Init(Hotkey hotkey, TooltipContent tooltip)
+    public void Init(Hotkey hotkey, TooltipUI tooltip)
     {
         itemText.text = hotkey.readableName;
         buttonText.text = hotkey.savedKeyCode.ToString();

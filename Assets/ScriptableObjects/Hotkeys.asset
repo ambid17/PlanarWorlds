@@ -47,8 +47,8 @@ MonoBehaviour:
     defaultKeyCode: 100
     savedKeyCode: 100
     modifier: 306
-    readableName: Scal
-    tooltip: Scale
+    readableName: Duplicate
+    tooltip: Duplicates the currently selected object
   - hotkeyName: 6
     defaultKeyCode: 119
     savedKeyCode: 119

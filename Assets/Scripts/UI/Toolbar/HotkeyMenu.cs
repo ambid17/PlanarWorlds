@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class HotkeyMenu : MonoBehaviour
 {
-    public TooltipContent tooltip;
+    public TooltipUI tooltip;
 
     [SerializeField] private GameObject _hotkeyItemPrefab;
     [SerializeField] private Transform _listViewContainer;
@@ -25,7 +25,7 @@ public class HotkeyMenu : MonoBehaviour
         {
             GameObject hotkeyGO = Instantiate(_hotkeyItemPrefab, _listViewContainer);
             HotKeyItem hotKeyItem = hotkeyGO.GetComponent<HotKeyItem>();
-            hotKeyItem.Init(hotkey,tooltip);
+            hotKeyItem.Init(hotkey, tooltip);
         }
     }
     

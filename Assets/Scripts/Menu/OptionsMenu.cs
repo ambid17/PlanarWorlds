@@ -11,7 +11,7 @@ public class OptionsMenu : MonoBehaviour
 {
     public Transform scrollViewContent;
     public GameObject hotKeyPrefab;
-    public TooltipContent tooltip;
+    public TooltipUI tooltip;
 
     HotKeyName keyToRebind;
     private bool isBindingKey = false;
