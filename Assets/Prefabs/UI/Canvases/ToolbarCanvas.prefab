@@ -16287,6 +16287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hotkeyItemPrefab: {fileID: 3911709839444522179, guid: 224dfc659275e724f80701dda6191008, type: 3}
   _listViewContainer: {fileID: 6176960710648805895}
+  _closeButton: {fileID: 2473282371392380336}
   _generalButton: {fileID: 7706481423213335540}
   _cameraButton: {fileID: 2191433936453909961}
   _terrainButton: {fileID: 315600414182228069}
