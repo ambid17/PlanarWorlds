@@ -12,7 +12,7 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
 
     private void Start()
     {
-        //LoadHotkeys();
+        LoadHotkeys();
         PopulateMapping();
     }
 
@@ -34,6 +34,7 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
         else
         {
             Debug.Log("No saved hotkeys, using defaults");
+            _hotKeys = DefaultHotkeys.GetDefaultHotkeys();
         }
     }
 
@@ -58,6 +59,11 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
     
     public Hotkey[] GetHotKeys()
     {
+        if (_hotKeys == null || _hotKeys.hotkeys == null || _hotKeys.hotkeys.Length == 0)
+        {
+            LoadHotkeys();
+        }
+        
         return _hotKeys.hotkeys;
     }
 

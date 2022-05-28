@@ -114,19 +114,19 @@ public class TerrainEditor : MonoBehaviour
             UpdateTerrainHighlight();
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainRaise))
             SwitchTerrainModificationMode(TerrainModificationMode.Raise);
-        if (Input.GetKeyDown(KeyCode.X))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainLower))
             SwitchTerrainModificationMode(TerrainModificationMode.Lower);
-        if (Input.GetKeyDown(KeyCode.C))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainSetHeight))
             SwitchTerrainModificationMode(TerrainModificationMode.SetHeight);
-        if (Input.GetKeyDown(KeyCode.V))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainSmooth))
             SwitchTerrainModificationMode(TerrainModificationMode.Smooth);
-        if (Input.GetKeyDown(KeyCode.B))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainPaint))
             SwitchTerrainModificationMode(TerrainModificationMode.Paint);
-        if (Input.GetKeyDown(KeyCode.N))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainTree))
             SwitchTerrainModificationMode(TerrainModificationMode.Trees);
-        if (Input.GetKeyDown(KeyCode.M))
+        if (HotKeyManager.GetKeyDown(HotKeyName.TerrainFoliage))
             SwitchTerrainModificationMode(TerrainModificationMode.Foliage);
     }
 

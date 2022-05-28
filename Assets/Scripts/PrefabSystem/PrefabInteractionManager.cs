@@ -357,19 +357,19 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
     #region Hotkeys
     private void TryChangeMode()
     {
-        if (HotKeyManager.GetKeyDown(HotKeyName.Position))
+        if (HotKeyManager.GetKeyDown(HotKeyName.PrefabPosition))
         {
             ChangeGimzoMode(TransformType.Position);
             _inspectorManager.GizmoModeChanged(TransformType.Position);
         }
 
-        if (HotKeyManager.GetKeyDown(HotKeyName.Rotation))
+        if (HotKeyManager.GetKeyDown(HotKeyName.PrefabRotation))
         {
             ChangeGimzoMode(TransformType.Rotation);
             _inspectorManager.GizmoModeChanged(TransformType.Rotation);
         }
 
-        if (HotKeyManager.GetKeyDown(HotKeyName.Scale))
+        if (HotKeyManager.GetKeyDown(HotKeyName.PrefabScale))
         {
             ChangeGimzoMode(TransformType.Scale);
             _inspectorManager.GizmoModeChanged(TransformType.Scale);
@@ -422,7 +422,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
     private void TryDuplicate()
     {
-        if (HotKeyManager.GetModifiedKeyDown(HotKeyName.Duplicate) && _targetObjects.Count > 0)
+        if (HotKeyManager.GetModifiedKeyDown(HotKeyName.PrefabDuplicate) && _targetObjects.Count > 0)
         {
             List<GameObject> duplicateObjects = Duplicate();
 
@@ -435,7 +435,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
     void TryDelete()
     {
-        if(HotKeyManager.GetKeyDown(HotKeyName.Delete))
+        if(HotKeyManager.GetKeyDown(HotKeyName.PrefabDelete))
         {
             DeleteSelectedObjects();
         }
@@ -461,7 +461,7 @@ public class PrefabInteractionManager : StaticMonoBehaviour<PrefabInteractionMan
 
     private void TryFocusObject()
     {
-        if(HotKeyManager.GetKeyDown(HotKeyName.Focus) && _targetObjects.Count > 0)
+        if(HotKeyManager.GetKeyDown(HotKeyName.PrefabFocus) && _targetObjects.Count > 0)
         {
             RTFocusCamera.Get.Focus(_targetObjects);
         }

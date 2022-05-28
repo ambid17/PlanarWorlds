@@ -5,8 +5,7 @@ using UnityEngine;
 
 
 [Serializable]
-[CreateAssetMenu(fileName = "Hotkeys", menuName = "ScriptableObjects/Hotkeys")]
-public class Hotkeys : ScriptableObject
+public class Hotkeys
 {
     [SerializeField]
     public Hotkey[] hotkeys;
@@ -33,19 +32,49 @@ public class Hotkey
 
 public enum HotKeyName
 {
-    Position,
-    Rotation,
-    Scale,
-    Delete,
-    Focus,
-    Duplicate,
+    // General Hotkeys
+    ControlModifier,
+    FileSave,
+    FileSaveAs,
+    FileNew,
+    FileOpen,
+
+    // Camera Hotkeys
+    CameraMovement,
     CameraForward,
     CameraBack,
     CameraUp,
     CameraDown,
     CameraLeft,
     CameraRight,
-    ControlModifier
+    
+    // Terrain Hotkeys
+    TerrainRaise,
+    TerrainLower,
+    TerrainSmooth,
+    TerrainSetHeight,
+    TerrainPaint,
+    TerrainTree,
+    TerrainFoliage,
+    
+    // Prefab Hotkeys
+    PrefabPosition,
+    PrefabRotation,
+    PrefabScale,
+    PrefabDelete,
+    PrefabFocus,
+    PrefabDuplicate,
+    PrefabMultiSelect,
+    PrefabSnap,
+    PrefabVertexSnap,
+    
+    // Encounter Hotkeys
+    EncounterFocus,
+    EncounterSelect,
+    EncounterMove,
+    EncounterPlace,
+    EncounterCancel,
+    EncounterIgnoreSnap,
 }
 
 public enum HotkeyFilterType
