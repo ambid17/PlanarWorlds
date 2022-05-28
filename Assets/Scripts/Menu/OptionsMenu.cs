@@ -83,7 +83,7 @@ public class OptionsMenu : MonoBehaviour
 
             GameObject newItem = Instantiate(hotKeyPrefab, scrollViewContent);
             HotKeyItem item = newItem.GetComponent<HotKeyItem>();
-            item.Init(hotkey, tooltip, StartRebindFor);
+            item.Init(hotkey, StartRebindFor);
             buttonKeyCodeTexts.Add(hotkey.hotkeyName, item.GetButtonText());
         }
     }

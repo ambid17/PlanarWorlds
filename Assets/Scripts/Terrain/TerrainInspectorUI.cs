@@ -66,13 +66,13 @@ public class TerrainInspectorUI : MonoBehaviour
 
     private void SetupButtons()
     {
-        raiseButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Raise));
-        lowerButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Lower));
-        setHeightButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.SetHeight));
-        smoothButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Smooth));
-        paintButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Paint));
-        treeButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Trees));
-        foliageButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Foliage));
+        raiseButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Raise), "Raise Terrain");
+        lowerButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Lower), "Lower Terrain");
+        setHeightButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.SetHeight), "Set Terrain Height");
+        smoothButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Smooth), "Smooth Terrain");
+        paintButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Paint), "Paint Terrain");
+        treeButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Trees), "Paint Trees");
+        foliageButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Foliage), "Paint Foliage");
 
     }
 

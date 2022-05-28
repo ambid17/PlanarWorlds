@@ -27,6 +27,8 @@ public class Hotkey
     public string readableName;
     [SerializeField]
     public string tooltip;
+    [SerializeField] 
+    public HotkeyFilterType filterType;
 }
 
 public enum HotKeyName
@@ -44,4 +46,13 @@ public enum HotKeyName
     CameraLeft,
     CameraRight,
     ControlModifier
+}
+
+public enum HotkeyFilterType
+{
+    General,
+    Camera,
+    Terrain,
+    Prefab,
+    Encounter
 }

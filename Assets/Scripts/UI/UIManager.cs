@@ -11,6 +11,7 @@ public enum EditMode
 
 public class UIManager : StaticMonoBehaviour<UIManager>
 {
+    public TooltipUI tooltipUI;
     public GameObject PrefabCanvas;
     public GameObject InspectorCanvas;
     public GameObject TerrainInspectorCanvas;
@@ -22,10 +23,10 @@ public class UIManager : StaticMonoBehaviour<UIManager>
 
     public bool UserCantInput { get => isEditingValues || isFileBrowserOpen || isPaused; }
 
-    public bool inspectorWindowShouldBeActive;
-    public bool prefabWindowShouldBeActive;
-    public bool terrainInspectorWindowShouldBeActive;
-    public bool encounterWindowShouldBeActive;
+    private bool _inspectorWindowShouldBeActive;
+    private bool _prefabWindowShouldBeActive;
+    private bool _terrainInspectorWindowShouldBeActive;
+    private bool _encounterWindowShouldBeActive;
 
     public static event Action<EditMode> OnEditModeChanged;
 
@@ -51,22 +52,22 @@ public class UIManager : StaticMonoBehaviour<UIManager>
     {
         _currentEditmode = editMode;
 
-        inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
-        prefabWindowShouldBeActive = editMode == EditMode.Prefab;
-        terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;
-        encounterWindowShouldBeActive = editMode == EditMode.Encounter;
+        _inspectorWindowShouldBeActive = editMode == EditMode.Prefab;
+        _prefabWindowShouldBeActive = editMode == EditMode.Prefab;
+        _terrainInspectorWindowShouldBeActive = editMode == EditMode.Terrain;
+        _encounterWindowShouldBeActive = editMode == EditMode.Encounter;
 
         //tell the UI scripts that are listening to clean their UI and affects before their scripts are toggled off
-        OnEditModeChanged.Invoke(editMode);
+        OnEditModeChanged?.Invoke(editMode);
 
         UpdateActiveWindows();
     }
 
     private void UpdateActiveWindows()
     {
-        InspectorCanvas.SetActive(inspectorWindowShouldBeActive);
-        PrefabCanvas.SetActive(prefabWindowShouldBeActive);
-        TerrainInspectorCanvas.SetActive(terrainInspectorWindowShouldBeActive);
-        EncounterCanvas.SetActive(encounterWindowShouldBeActive);
+        InspectorCanvas.SetActive(_inspectorWindowShouldBeActive);
+        PrefabCanvas.SetActive(_prefabWindowShouldBeActive);
+        TerrainInspectorCanvas.SetActive(_terrainInspectorWindowShouldBeActive);
+        EncounterCanvas.SetActive(_encounterWindowShouldBeActive);
     }
 }

@@ -7,14 +7,13 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
+public class HotKeyItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private TMP_Text itemText;
     [SerializeField] private Button itemButton;
     [SerializeField] private TMP_Text buttonText;
-    
-    private TooltipUI _tooltip;
-    private string _tooltipDescription;
+
+    public Hotkey hotkey;
 
     private RectTransform _rectTransform;
 
@@ -30,7 +29,12 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
     
     public void OnPointerEnter(PointerEventData eventData)
     {
-        _tooltip.SetTooltip(_tooltipDescription);
+        UIManager.Instance.tooltipUI.SetTooltip(hotkey.tooltip);
+    }
+    
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UIManager.Instance.tooltipUI.DisableTooltip();
     }
 
     public TMP_Text GetButtonText()
@@ -41,9 +45,9 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
     /// <summary>
     /// Used by OptionsMenu to send a callback for binding the hotkey
     /// </summary>
-    public void Init(Hotkey hotkey, TooltipUI tooltip, Action<HotKeyName> action)
+    public void Init(Hotkey hotkey, Action<HotKeyName> action)
     {
-        Init(hotkey, tooltip);
+        Init(hotkey);
         
         itemButton.onClick.AddListener(() =>
         {
@@ -51,12 +55,11 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler
         });
     }
     
-    public void Init(Hotkey hotkey, TooltipUI tooltip)
+    public void Init(Hotkey hotkey)
     {
+        this.hotkey = hotkey;
         itemText.text = hotkey.readableName;
         buttonText.text = hotkey.savedKeyCode.ToString();
-        _tooltipDescription = hotkey.tooltip;
-        _tooltip = tooltip;
     }
 
 }

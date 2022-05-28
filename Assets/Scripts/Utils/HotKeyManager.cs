@@ -46,7 +46,7 @@ public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
 
     void PopulateMapping()
     {
-        _hotKeyMapping = new Dictionary<HotKeyName, Hotkey>();
+         _hotKeyMapping = new Dictionary<HotKeyName, Hotkey>();
         
         foreach (var hotKey in _hotKeys.hotkeys)
         {
