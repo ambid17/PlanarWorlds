@@ -1463,7 +1463,7 @@ MonoBehaviour:
       _text: Scale gizmo
     - _tooltip: Allows you to change universal gizmo settings.
       _text: Universal gizmo
-    _activeTabIndex: 3
+    _activeTabIndex: 2
   _settings:
     _canBeDisplayed: 1
     _isExpanded: 1
@@ -1635,7 +1635,7 @@ MonoBehaviour:
     _isCamPrjSwitchLabelVisible: 1
   _moveGizmoSettings2D:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _dblSliderSettings:
       _areaHoverEps: 0.00001
       _borderLineHoverEps: 7
@@ -2330,9 +2330,9 @@ MonoBehaviour:
         _borderColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.8}
   _moveGizmoHotkeys:
     _canBeDisplayed: 1
-    _isExpanded: 0
+    _isExpanded: 1
     _enable2DMode:
-      _isEnabled: 1
+      _isEnabled: 0
       _key: 0
       _lCtrl: 0
       _lCmd: 0
