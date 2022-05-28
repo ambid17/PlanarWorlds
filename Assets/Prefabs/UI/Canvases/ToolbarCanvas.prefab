@@ -13704,26 +13704,26 @@ MonoBehaviour:
   hoverEvent:
     m_PersistentCalls:
       m_Calls: []
-  hoverSound: {fileID: 0}
-  clickSound: {fileID: 0}
+  hoverSound: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
+  clickSound: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
   buttonVar: {fileID: 0}
   normalText: {fileID: 2913680548913780322}
   highlightedText: {fileID: 2913680549370369504}
-  soundSource: {fileID: 0}
+  soundSource: {fileID: 5, guid: 0000000000000000f000000000000000, type: 0}
   rippleParent: {fileID: 2913680550493121862}
-  animationSolution: 1
-  fadingMultiplier: 8
+  animationSolution: 1645951136
+  fadingMultiplier: 9.3e-43
   useCustomContent: 0
   enableButtonSounds: 0
   useHoverSound: 1
   useClickSound: 1
   useRipple: 1
-  rippleUpdateMode: 1
-  rippleShape: {fileID: 21300000, guid: d25e2ce15dd1c67438e4b70f404fb197, type: 3}
-  speed: 2.4
-  maxSize: 6
-  startColor: {r: 0, g: 0, b: 0, a: 0.39215687}
-  transitionColor: {r: 0, g: 0, b: 0, a: 0}
+  rippleUpdateMode: 1646700288
+  rippleShape: {fileID: 0}
+  speed: 9.3e-43
+  maxSize: 0
+  startColor: {r: 3e-45, g: 3e-45, b: 0, a: 0}
+  transitionColor: {r: 1e-45, g: 0, b: 0, a: 3e-45}
   renderOnTop: 1
   centered: 0
 --- !u!114 &2913680550232470937

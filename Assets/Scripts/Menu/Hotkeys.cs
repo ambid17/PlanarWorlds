@@ -83,5 +83,6 @@ public enum HotkeyFilterType
     Camera,
     Terrain,
     Prefab,
-    Encounter
+    Encounter,
+    Hidden
 }

@@ -61,6 +61,17 @@ public class DefaultHotkeys : MonoBehaviour
             tooltip = "Opens a saved campaign",
             filterType = HotkeyFilterType.General
         });
+        
+        hotkeys.Add(new Hotkey()
+        {
+            hotkeyName = HotKeyName.ControlModifier,
+            defaultKeyCode = KeyCode.LeftControl,
+            savedKeyCode = KeyCode.LeftControl,
+            modifier = KeyCode.LeftControl,
+            readableName = "",
+            tooltip = "",
+            filterType = HotkeyFilterType.Hidden
+        });
         #endregion
         
         #region Camera Hotkeys

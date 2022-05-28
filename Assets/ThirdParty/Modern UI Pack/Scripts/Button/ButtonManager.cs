@@ -159,7 +159,10 @@ namespace Michsky.UI.ModernUIPack
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (enableButtonSounds == true && useHoverSound == true && buttonVar.interactable == true)
+            {
+                Debug.Log(gameObject.name);
                 soundSource.PlayOneShot(hoverSound);
+            }
 
             hoverEvent.Invoke();
             isPointerOn = true;
