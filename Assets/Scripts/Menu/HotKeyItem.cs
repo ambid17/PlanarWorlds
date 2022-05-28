@@ -59,15 +59,29 @@ public class HotKeyItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         this.hotkey = hotkey;
         itemText.text = hotkey.readableName;
-        string readableKeyCode = RenameKeyCodes(hotkey.savedKeyCode.ToString());
+        string readableKeyCode = GetHotkeyText();
         buttonText.text = readableKeyCode;
     }
 
     /// <summary>
     /// If the tooltip is being used for hotkeys, we want to rename them from Unity's "KeyCode" enum to a better readable name 
     /// </summary>
-    private string RenameKeyCodes(string text)
+    private string GetHotkeyText()
     {
+        string text = String.Empty;
+
+        if (hotkey.modifier != KeyCode.None)
+        {
+            text = $"{hotkey.modifier}+";
+        }
+
+        if (hotkey.secondModifier != KeyCode.None)
+        {
+            text += $"{hotkey.secondModifier}+";
+        }
+
+        text += $"{hotkey.savedKeyCode}";
+        
         if (text.Contains("Mouse0"))
         {
             text = text.Replace("Mouse0", "LMB");

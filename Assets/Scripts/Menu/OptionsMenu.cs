@@ -79,7 +79,7 @@ public class OptionsMenu : MonoBehaviour
         foreach (Hotkey hotkey in keys)
         {
             if (hotkey.hotkeyName == HotKeyName.ControlModifier)
-                return;
+                continue;
 
             GameObject newItem = Instantiate(hotKeyPrefab, scrollViewContent);
             HotKeyItem item = newItem.GetComponent<HotKeyItem>();

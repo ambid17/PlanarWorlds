@@ -34,7 +34,8 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.FileSaveAs,
             defaultKeyCode = KeyCode.S,
             savedKeyCode = KeyCode.S,
-            modifier = KeyCode.LeftShift,
+            modifier = KeyCode.LeftControl,
+            secondModifier = KeyCode.LeftShift,
             readableName = "Save Campaign As",
             tooltip = "Opens the folder dialog to choose campaign file location",
             filterType = HotkeyFilterType.General
@@ -54,9 +55,9 @@ public class DefaultHotkeys : MonoBehaviour
         hotkeys.Add(new Hotkey()
         {
             hotkeyName = HotKeyName.FileOpen,
-            defaultKeyCode = KeyCode.S,
-            savedKeyCode = KeyCode.S,
-            modifier = KeyCode.LeftShift,
+            defaultKeyCode = KeyCode.O,
+            savedKeyCode = KeyCode.O,
+            modifier = KeyCode.LeftControl,
             readableName = "Open Campaign",
             tooltip = "Opens a saved campaign",
             filterType = HotkeyFilterType.General
@@ -77,21 +78,10 @@ public class DefaultHotkeys : MonoBehaviour
         #region Camera Hotkeys
         hotkeys.Add(new Hotkey()
         {
-            hotkeyName = HotKeyName.CameraMovement,
-            defaultKeyCode = KeyCode.Mouse1,
-            savedKeyCode = KeyCode.Mouse1,
-            modifier = KeyCode.Joystick2Button0,
-            readableName = "Camera movement",
-            tooltip = "While holding right click, you may use WASD to move the camera",
-            filterType = HotkeyFilterType.Camera
-        });
-        
-        hotkeys.Add(new Hotkey()
-        {
             hotkeyName = HotKeyName.CameraForward,
             defaultKeyCode = KeyCode.W,
             savedKeyCode = KeyCode.W,
-            modifier = KeyCode.Joystick2Button0,
+            modifier = KeyCode.Mouse1,
             readableName = "Camera Forward",
             tooltip = "While holding right click, moves the camera Forward",
             filterType = HotkeyFilterType.Camera
@@ -102,7 +92,7 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.CameraBack,
             defaultKeyCode = KeyCode.S,
             savedKeyCode = KeyCode.S,
-            modifier = KeyCode.Joystick2Button0,
+            modifier = KeyCode.Mouse1,
             readableName = "Camera Back",
             tooltip = "While holding right click, moves the camera Back",
             filterType = HotkeyFilterType.Camera
@@ -113,7 +103,7 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.CameraLeft,
             defaultKeyCode = KeyCode.A,
             savedKeyCode = KeyCode.A,
-            modifier = KeyCode.Joystick2Button0,
+            modifier = KeyCode.Mouse1,
             readableName = "Camera Left",
             tooltip = "While holding right click, moves the camera Left",
             filterType = HotkeyFilterType.Camera
@@ -124,7 +114,7 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.CameraRight,
             defaultKeyCode = KeyCode.D,
             savedKeyCode = KeyCode.D,
-            modifier = KeyCode.Joystick2Button0,
+            modifier = KeyCode.Mouse1,
             readableName = "Camera Right",
             tooltip = "While holding right click, moves the camera Right",
             filterType = HotkeyFilterType.Camera
@@ -135,7 +125,7 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.CameraUp,
             defaultKeyCode = KeyCode.E,
             savedKeyCode = KeyCode.E,
-            modifier = KeyCode.Joystick2Button0,
+            modifier = KeyCode.Mouse1,
             readableName = "Camera Up",
             tooltip = "While holding right click, moves the camera Up",
             filterType = HotkeyFilterType.Camera
@@ -146,7 +136,7 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.CameraDown,
             defaultKeyCode = KeyCode.Q,
             savedKeyCode = KeyCode.Q,
-            modifier = KeyCode.Joystick2Button0,
+            modifier = KeyCode.Mouse1,
             readableName = "Camera Down",
             tooltip = "While holding right click, moves the camera Down",
             filterType = HotkeyFilterType.Camera
@@ -159,7 +149,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainRaise,
             defaultKeyCode = KeyCode.Z,
             savedKeyCode = KeyCode.Z,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Raise Terrain",
             tooltip = "Changes terrain mode to Raise the terrain",
             filterType = HotkeyFilterType.Terrain
@@ -170,7 +159,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainLower,
             defaultKeyCode = KeyCode.X,
             savedKeyCode = KeyCode.X,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Lower Terrain",
             tooltip = "Changes terrain mode to Lower the terrain",
             filterType = HotkeyFilterType.Terrain
@@ -181,7 +169,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainSmooth,
             defaultKeyCode = KeyCode.C,
             savedKeyCode = KeyCode.C,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Smooth Terrain",
             tooltip = "Changes terrain mode to Smooth the terrain",
             filterType = HotkeyFilterType.Terrain
@@ -192,7 +179,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainSetHeight,
             defaultKeyCode = KeyCode.V,
             savedKeyCode = KeyCode.V,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Set Terrain Height",
             tooltip = "Changes terrain mode to Set the height",
             filterType = HotkeyFilterType.Terrain
@@ -203,7 +189,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainPaint,
             defaultKeyCode = KeyCode.B,
             savedKeyCode = KeyCode.B,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Paint Terrain",
             tooltip = "Changes terrain mode to Paint the terrain",
             filterType = HotkeyFilterType.Terrain
@@ -214,7 +199,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainTree,
             defaultKeyCode = KeyCode.N,
             savedKeyCode = KeyCode.N,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Add Terrain Trees",
             tooltip = "Changes terrain mode to paint trees",
             filterType = HotkeyFilterType.Terrain
@@ -225,7 +209,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.TerrainFoliage,
             defaultKeyCode = KeyCode.M,
             savedKeyCode = KeyCode.M,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Add Terrain Foliage",
             tooltip = "Changes terrain mode to paint foliage",
             filterType = HotkeyFilterType.Terrain
@@ -238,7 +221,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.PrefabPosition,
             defaultKeyCode = KeyCode.Z,
             savedKeyCode = KeyCode.Z,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Position mode",
             tooltip = "Sets the prefab gizmo to edit the current object's Position",
             filterType = HotkeyFilterType.Prefab
@@ -249,7 +231,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.PrefabRotation,
             defaultKeyCode = KeyCode.X,
             savedKeyCode = KeyCode.X,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Rotation mode",
             tooltip = "Sets the prefab gizmo to edit the current object's Rotation",
             filterType = HotkeyFilterType.Prefab
@@ -260,7 +241,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.PrefabScale,
             defaultKeyCode = KeyCode.C,
             savedKeyCode = KeyCode.C,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Scale mode",
             tooltip = "Sets the prefab gizmo to edit the current object's Scale",
             filterType = HotkeyFilterType.Prefab
@@ -271,7 +251,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.PrefabDelete,
             defaultKeyCode = KeyCode.Backspace,
             savedKeyCode = KeyCode.Backspace,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Delete Object",
             tooltip = "Deletes the currently selected object",
             filterType = HotkeyFilterType.Prefab
@@ -282,7 +261,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.PrefabFocus,
             defaultKeyCode = KeyCode.Z,
             savedKeyCode = KeyCode.Z,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Focus",
             tooltip = "Moves the camera to focus on the currently selected object",
             filterType = HotkeyFilterType.Prefab
@@ -302,9 +280,9 @@ public class DefaultHotkeys : MonoBehaviour
         hotkeys.Add(new Hotkey()
         {
             hotkeyName = HotKeyName.PrefabMultiSelect,
-            defaultKeyCode = KeyCode.LeftShift,
-            savedKeyCode = KeyCode.LeftShift,
-            modifier = KeyCode.Joystick2Button0,
+            defaultKeyCode = KeyCode.Mouse0,
+            savedKeyCode = KeyCode.Mouse0,
+            modifier = KeyCode.LeftShift,
             readableName = "Multi Select",
             tooltip = "Allows the user to select multiple objects. Hold shift and left click multiple objects to edit them",
             filterType = HotkeyFilterType.Prefab
@@ -313,9 +291,9 @@ public class DefaultHotkeys : MonoBehaviour
         hotkeys.Add(new Hotkey()
         {
             hotkeyName = HotKeyName.PrefabSnap,
-            defaultKeyCode = KeyCode.LeftControl,
-            savedKeyCode = KeyCode.LeftControl,
-            modifier = KeyCode.Joystick2Button0,
+            defaultKeyCode = KeyCode.Mouse0,
+            savedKeyCode = KeyCode.Mouse0,
+            modifier = KeyCode.LeftControl,
             readableName = "Snap object",
             tooltip = "Holding CTRL while moving/rotation/scaling and the object will snap the object to the grid",
             filterType = HotkeyFilterType.Prefab
@@ -324,9 +302,9 @@ public class DefaultHotkeys : MonoBehaviour
         hotkeys.Add(new Hotkey()
         {
             hotkeyName = HotKeyName.PrefabVertexSnap,
-            defaultKeyCode = KeyCode.V,
-            savedKeyCode = KeyCode.V,
-            modifier = KeyCode.Joystick2Button0,
+            defaultKeyCode = KeyCode.Mouse0,
+            savedKeyCode = KeyCode.Mouse0,
+            modifier = KeyCode.V,
             readableName = "Vertex Snap",
             tooltip = "While holding V in position mode, you can snap a vertex of one object to another. Use this to snap objects together",
             filterType = HotkeyFilterType.Prefab
@@ -339,7 +317,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.EncounterFocus,
             defaultKeyCode = KeyCode.F,
             savedKeyCode = KeyCode.F,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Focus",
             tooltip = "Moves the camera to focus on the currently selected object",
             filterType = HotkeyFilterType.Encounter
@@ -350,7 +327,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.EncounterSelect,
             defaultKeyCode = KeyCode.Mouse0,
             savedKeyCode = KeyCode.Mouse0,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Select Character",
             tooltip = "Left click on a character to select them.",
             filterType = HotkeyFilterType.Encounter
@@ -361,7 +337,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.EncounterMove,
             defaultKeyCode = KeyCode.Mouse2,
             savedKeyCode = KeyCode.Mouse2,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Move Character",
             tooltip = "Press your mouse wheel to start moving a selected character",
             filterType = HotkeyFilterType.Encounter
@@ -372,7 +347,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.EncounterPlace,
             defaultKeyCode = KeyCode.Mouse0,
             savedKeyCode = KeyCode.Mouse0,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Place Character",
             tooltip = "Press left click to place a moved character",
             filterType = HotkeyFilterType.Encounter
@@ -383,7 +357,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.EncounterCancel,
             defaultKeyCode = KeyCode.Mouse1,
             savedKeyCode = KeyCode.Mouse1,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Cancel Character Place",
             tooltip = "Press right click to cancel the current player movement",
             filterType = HotkeyFilterType.Encounter
@@ -394,7 +367,6 @@ public class DefaultHotkeys : MonoBehaviour
             hotkeyName = HotKeyName.EncounterIgnoreSnap,
             defaultKeyCode = KeyCode.LeftControl,
             savedKeyCode = KeyCode.LeftControl,
-            modifier = KeyCode.Joystick2Button0,
             readableName = "Ignore Snapping",
             tooltip = "Hold control to move a player without snapping to the grid",
             filterType = HotkeyFilterType.Encounter

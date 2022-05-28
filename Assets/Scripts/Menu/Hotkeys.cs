@@ -23,6 +23,8 @@ public class Hotkey
     [SerializeField]
     public KeyCode modifier;
     [SerializeField]
+    public KeyCode secondModifier;
+    [SerializeField]
     public string readableName;
     [SerializeField]
     public string tooltip;
