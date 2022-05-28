@@ -38,4 +38,6 @@ public class TooltipUI : MonoBehaviour
     {
         content.SetActive(false);
     }
+
+    
 }
