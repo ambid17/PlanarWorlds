@@ -58,14 +58,42 @@ MonoBehaviour:
   - hotkeyName: 6
     defaultKeyCode: 119
     savedKeyCode: 119
-    modifier: 0
+    modifier: 324
     readableName: Camera Forward
     tooltip: Moves the camera forward while you hold right click
     filterType: 1
   - hotkeyName: 7
     defaultKeyCode: 115
     savedKeyCode: 115
-    modifier: 0
+    modifier: 324
     readableName: Camera Back
     tooltip: Moves the camera backward while you hold right click
+    filterType: 1
+  - hotkeyName: 10
+    defaultKeyCode: 97
+    savedKeyCode: 97
+    modifier: 324
+    readableName: Camera Left
+    tooltip: Moves the camera left while you hold right click
+    filterType: 1
+  - hotkeyName: 11
+    defaultKeyCode: 100
+    savedKeyCode: 100
+    modifier: 324
+    readableName: Camera Right
+    tooltip: Moves the camera right while you hold right click
+    filterType: 1
+  - hotkeyName: 8
+    defaultKeyCode: 101
+    savedKeyCode: 101
+    modifier: 324
+    readableName: Camera Up
+    tooltip: Moves the camera up while you hold right click
+    filterType: 1
+  - hotkeyName: 9
+    defaultKeyCode: 113
+    savedKeyCode: 113
+    modifier: 324
+    readableName: Camera Down
+    tooltip: Moves the camera down while you hold right click
     filterType: 1
