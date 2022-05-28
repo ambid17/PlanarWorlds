@@ -1,152 +1,119 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
-public class HotKeyManager : StaticMonoBehaviour<HotKeyManager> {
-    [SerializeField]
-    private Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>();
-    private Dictionary<string, KeyCode> defaults = new Dictionary<string, KeyCode>();
-    private Dictionary<string, string> tooltips = new Dictionary<string, string>();
-
-    public static HotKeyManager Instance;
-
+public class HotKeyManager : StaticMonoBehaviour<HotKeyManager>
+{
+    [SerializeField] private Hotkeys _hotKeys;
+    private Dictionary<HotKeyName, Hotkey> _hotKeyMapping;
     public event Action<KeyCode, KeyCode> onHotKeySet;   
 
     private void Start()
     {
-        InitDefaults();
-        LoadSavedHotkeys();
-        LoadTooltips();
+        LoadHotkeys();
+        PopulateMapping();
     }
 
-    public Dictionary<String, KeyCode> GetHotKeys()
+    private void OnApplicationQuit()
     {
-        return keys;
-    }
-	
-	public Dictionary<String, KeyCode> GetDefaultHotKeys() 
-	{
-		return defaults;
-	}
-
-    public Dictionary<string, string> GetTooltips()
-    {
-        return tooltips;
+        //SaveHotkeys();
     }
 
-    public void SetButtonForKey(string key, KeyCode keyCode)
+    void LoadHotkeys()
     {
+        string filePath = FilePathUtil.GetHotkeyFilePath();
 
-        KeyCode oldKeyCode = keys[key];
-        keys[key] = keyCode;
-        onHotKeySet?.Invoke(oldKeyCode, keys[key]);
-        PlayerPrefs.SetString(key, keyCode.ToString());
-    }
-
-    public KeyCode GetKeyFor(string action)
-    {
-        KeyCode keyCode = KeyCode.Alpha0; 
-        try
+        if (File.Exists(filePath))
         {
-            keyCode = keys[action];
-        }
-        catch
-        {
-            Debug.LogError($"Tried to get key {action} but it does not exist");
-        }
-        return keyCode;
-    }
-
-    public void LoadSavedHotkeys()
-    {
-        LoadSavedKey(HotkeyConstants.SelectPosition, HotkeyConstants.SelectPositionDefault);
-        LoadSavedKey(HotkeyConstants.SelectRotation, HotkeyConstants.SelectRotationDefault);
-        LoadSavedKey(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleDefault);
-        LoadSavedKey(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabDefault);
-        LoadSavedKey(HotkeyConstants.Focus, HotkeyConstants.FocusDefault);
-        LoadSavedKey(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateDefault);
-        LoadSavedKey(HotkeyConstants.ModifierKey, HotkeyConstants.ModifierKeyDefault);
-    }
-
-    public void LoadSavedKey(string keyName, string defaultValue)
-    {
-        string key = PlayerPrefs.GetString(keyName, defaultValue);
-
-        KeyCode keyCode;
-        if (Enum.TryParse(key, out keyCode))
-        {
-            keys.Add(keyName, keyCode);
+            Debug.Log("Loading saved hotkeys");
+            string fileData = File.ReadAllText(filePath);
+            _hotKeys = JsonUtility.FromJson<Hotkeys>(fileData);
         }
         else
         {
-            Debug.Log("Could not parse key code: " + keyName);
+            Debug.Log("No saved hotkeys, using defaults");
+            _hotKeys = DefaultHotkeys.GetDefaultHotkeys();
         }
+    }
+
+    void SaveHotkeys()
+    {
+        string filePath = FilePathUtil.GetHotkeyFilePath();
+        string fileData = JsonUtility.ToJson(_hotKeys);
+        File.WriteAllText(filePath, fileData);
+    }
+
+    void PopulateMapping()
+    {
+         _hotKeyMapping = new Dictionary<HotKeyName, Hotkey>();
+        
+        foreach (var hotKey in _hotKeys.hotkeys)
+        {
+            _hotKeyMapping.Add(hotKey.hotkeyName, hotKey);            
+        }
+    }
+    
+    
+    
+    public Hotkey[] GetHotKeys()
+    {
+        if (_hotKeys == null || _hotKeys.hotkeys == null || _hotKeys.hotkeys.Length == 0)
+        {
+            LoadHotkeys();
+        }
+        
+        return _hotKeys.hotkeys;
+    }
+
+    public void SetButtonForKey(HotKeyName keyName, KeyCode keyCode)
+    {
+        _hotKeyMapping[keyName].savedKeyCode = keyCode;
+    }
+
+    public KeyCode GetKeyFor(HotKeyName keyName)
+    {
+        if(_hotKeyMapping.TryGetValue(keyName, out var hotkey))
+        {
+            return hotkey.savedKeyCode;
+        }
+        
+        Debug.LogError($"No hotkey found with name {keyName}");
+        return KeyCode.Alpha0;
     }
 
     public void SetDefaults()
     {
-        keys = new Dictionary<string, KeyCode>(defaults);
-
-        foreach(KeyValuePair<String, KeyCode> entry in keys)
+        foreach(Hotkey hotkey in _hotKeys.hotkeys)
         {
-            Debug.Log("SetDefaults KVP: " + entry.Key + ": " + entry.Value); 
-            PlayerPrefs.SetString(entry.Key, entry.Value.ToString());
+            hotkey.savedKeyCode = hotkey.defaultKeyCode;
         }
     }
 
-    public void InitDefaults()
+    public static bool GetKeyDown(HotKeyName keyName)
     {
-        AddDefaultKey(HotkeyConstants.SelectPosition, HotkeyConstants.SelectPositionDefault);
-        AddDefaultKey(HotkeyConstants.SelectRotation, HotkeyConstants.SelectRotationDefault);
-        AddDefaultKey(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleDefault);
-        AddDefaultKey(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabDefault);
-        AddDefaultKey(HotkeyConstants.Focus, HotkeyConstants.FocusDefault);
-        AddDefaultKey(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateDefault);
+        return Input.GetKeyDown(Instance.GetKeyFor(keyName));
     }
 
-    public void AddDefaultKey(string keyName, string defaultValue)
+    public static bool GetKeyUp(HotKeyName keyName)
     {
-        KeyCode keyCode;
-        if (Enum.TryParse(defaultValue, out keyCode))
-        {
-            defaults.Add(keyName, keyCode);
-        }
-        else
-        {
-            Debug.Log("Could not parse default key code: " + keyName);
-        }
+        return Input.GetKeyUp(Instance.GetKeyFor(keyName));
     }
 
-    public void LoadTooltips()
+    public static bool GetKey(HotKeyName keyName)
     {
-        tooltips.Add(HotkeyConstants.SelectPosition, HotkeyConstants.SelectPositionTooltip);
-        tooltips.Add(HotkeyConstants.SelectRotation, HotkeyConstants.SelectRotationTooltip);
-        tooltips.Add(HotkeyConstants.SelectScale, HotkeyConstants.SelectScaleTooltip);
-        tooltips.Add(HotkeyConstants.DeletePrefab, HotkeyConstants.DeletePrefabTooltip);
-        tooltips.Add(HotkeyConstants.Focus, HotkeyConstants.FocusTooltip);
-        tooltips.Add(HotkeyConstants.Duplicate, HotkeyConstants.DuplicateTooltip);
+        return Input.GetKey(Instance.GetKeyFor(keyName));
     }
 
-
-
-    public static bool GetKeyDown(string keyName)
+    /// <summary>
+    /// Used when checking if "control + key" is being used
+    /// </summary>
+    /// <param name="keyName"></param>
+    /// <returns></returns>
+    public static bool GetModifiedKeyDown(HotKeyName keyName)
     {
-        return Input.GetKeyDown(HotKeyManager.GetInstance().GetKeyFor(keyName));
-    }
-
-    public static bool GetKeyUp(string keyName)
-    {
-        return Input.GetKeyUp(HotKeyManager.GetInstance().GetKeyFor(keyName));
-    }
-
-    public static bool GetKey(string keyName)
-    {
-        return Input.GetKey(HotKeyManager.GetInstance().GetKeyFor(keyName));
-    }
-
-    public static bool GetModifiedKeyDown(string keyName)
-    {
-        return Input.GetKey(HotKeyManager.GetInstance().GetKeyFor(HotkeyConstants.ModifierKey))
-            && Input.GetKeyDown(HotKeyManager.GetInstance().GetKeyFor(keyName));
+        return Input.GetKey(Instance.GetKeyFor(HotKeyName.ControlModifier))
+            && Input.GetKeyDown(Instance.GetKeyFor(keyName));
     }
 }

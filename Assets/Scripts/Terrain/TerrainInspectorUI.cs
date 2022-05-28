@@ -19,7 +19,6 @@ public class TerrainInspectorUI : MonoBehaviour
     public TMP_InputField brushHeightInput;
     public TMP_InputField brushStrengthInput;
 
-    public TMP_Text terrainToolText;
     public SliderManager brushSizeSlider;
     public SliderManager brushHeightSlider;
     public SliderManager brushStrengthSlider;
@@ -66,13 +65,13 @@ public class TerrainInspectorUI : MonoBehaviour
 
     private void SetupButtons()
     {
-        raiseButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Raise));
-        lowerButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Lower));
-        setHeightButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.SetHeight));
-        smoothButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Smooth));
-        paintButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Paint));
-        treeButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Trees));
-        foliageButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Foliage));
+        raiseButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Raise), "Raise Terrain");
+        lowerButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Lower), "Lower Terrain");
+        setHeightButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.SetHeight), "Set Terrain Height");
+        smoothButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Smooth), "Smooth Terrain");
+        paintButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Paint), "Paint Terrain");
+        treeButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Trees), "Paint Trees");
+        foliageButton.Setup(() => ChangeTerrainModificationMode(TerrainModificationMode.Foliage), "Paint Foliage");
 
     }
 
@@ -267,31 +266,6 @@ public class TerrainInspectorUI : MonoBehaviour
         foliageButton.Unselect();
 
         _terrainManager.terrainEditor.SwitchTerrainModificationMode(newMode);
-
-        switch (newMode)
-        {
-            case TerrainModificationMode.Foliage:
-                terrainToolText.text = "Foliage";
-                break;
-            case TerrainModificationMode.Lower:
-                terrainToolText.text = "Lower Terrain";
-                break;
-            case TerrainModificationMode.Raise:
-                terrainToolText.text = "Raise Terrain";
-                break;
-            case TerrainModificationMode.Trees:
-                terrainToolText.text = "Trees";
-                break;
-            case TerrainModificationMode.Smooth:
-                terrainToolText.text = "Smooth Terrain";
-                break;
-            case TerrainModificationMode.SetHeight:
-                terrainToolText.text = "Set Height";
-                break;
-            case TerrainModificationMode.Paint:
-                terrainToolText.text = "Paint Terrain";
-                break;
-        }
     }
 
     public void TerrainModificationModeChanged(TerrainModificationMode newMode)
