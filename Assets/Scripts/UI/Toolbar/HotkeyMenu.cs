@@ -9,6 +9,7 @@ public class HotkeyMenu : MonoBehaviour
 {
     [SerializeField] private GameObject _hotkeyItemPrefab;
     [SerializeField] private Transform _listViewContainer;
+    [SerializeField] private Button _closeButton;
 
     [SerializeField] private ImageTabButton _generalButton;
     [SerializeField] private ImageTabButton _cameraButton;
@@ -48,6 +49,13 @@ public class HotkeyMenu : MonoBehaviour
         _terrainButton.Setup(() =>OnFilterClicked(HotkeyFilterType.Terrain), "Terrain Hotkeys");
         _prefabButton.Setup(() =>OnFilterClicked(HotkeyFilterType.Prefab), "Prefab Hotkeys");
         _encounterButton.Setup(() =>OnFilterClicked(HotkeyFilterType.Encounter), "Encounter Hotkeys");
+        
+        _closeButton.onClick.AddListener(Close);
+    }
+    
+    private void Close()
+    {
+        gameObject.SetActive(false);
     }
 
     void OnFilterClicked(HotkeyFilterType buttonType)

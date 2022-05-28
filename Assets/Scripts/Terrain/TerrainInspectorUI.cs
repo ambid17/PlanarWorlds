@@ -19,7 +19,6 @@ public class TerrainInspectorUI : MonoBehaviour
     public TMP_InputField brushHeightInput;
     public TMP_InputField brushStrengthInput;
 
-    public TMP_Text terrainToolText;
     public SliderManager brushSizeSlider;
     public SliderManager brushHeightSlider;
     public SliderManager brushStrengthSlider;
@@ -267,31 +266,6 @@ public class TerrainInspectorUI : MonoBehaviour
         foliageButton.Unselect();
 
         _terrainManager.terrainEditor.SwitchTerrainModificationMode(newMode);
-
-        switch (newMode)
-        {
-            case TerrainModificationMode.Foliage:
-                terrainToolText.text = "Foliage";
-                break;
-            case TerrainModificationMode.Lower:
-                terrainToolText.text = "Lower Terrain";
-                break;
-            case TerrainModificationMode.Raise:
-                terrainToolText.text = "Raise Terrain";
-                break;
-            case TerrainModificationMode.Trees:
-                terrainToolText.text = "Trees";
-                break;
-            case TerrainModificationMode.Smooth:
-                terrainToolText.text = "Smooth Terrain";
-                break;
-            case TerrainModificationMode.SetHeight:
-                terrainToolText.text = "Set Height";
-                break;
-            case TerrainModificationMode.Paint:
-                terrainToolText.text = "Paint Terrain";
-                break;
-        }
     }
 
     public void TerrainModificationModeChanged(TerrainModificationMode newMode)
