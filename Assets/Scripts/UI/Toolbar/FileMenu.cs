@@ -35,8 +35,6 @@ public class FileMenu : MonoBehaviour
 
     private RectTransform _myRectTransform;
 
-
-
     void Start()
     {
         _campaignManager = CampaignManager.GetInstance();
@@ -54,10 +52,14 @@ public class FileMenu : MonoBehaviour
         _defaultPath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
         PopulateRecentCampaigns();
-        _campaignManager.OnRecentCampaignsUpdated += PopulateRecentCampaigns;
         overwriteSaveModal.WillOverwrite += Overwrite;
         overwriteSaveModal.CancelOverwrite += DontOverwrite;
         recentCampaignsDropdown.onValueChanged.AddListener(OnOpenRecent);
+    }
+
+    private void OnEnable()
+    {
+        PopulateRecentCampaigns();
     }
 
     private void Update()
@@ -81,11 +83,13 @@ public class FileMenu : MonoBehaviour
         List<string> options = new List<string>();
         options.Add(string.Empty);
 
-        foreach (CampaignAccess access in _campaignManager.recentCampaigns.accesses)
+        var dirInfo = new DirectoryInfo(FilePathUtil.GetSaveFolder());
+        var latestFiles = dirInfo.GetFiles("*.plane").OrderByDescending(file => file.LastWriteTime).Take(5);
+        foreach (FileInfo file in latestFiles)
         {
-            string fileName = Path.GetFileNameWithoutExtension(access.filePath);
+            string fileName = Path.GetFileNameWithoutExtension(file.FullName);
 
-            string itemText = $"{fileName} \n{access.filePath}";
+            string itemText = $"{fileName} \n{file.FullName}";
             options.Add(itemText);
         }
 
