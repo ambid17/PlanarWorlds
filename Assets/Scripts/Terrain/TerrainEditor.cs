@@ -392,11 +392,12 @@ public class TerrainEditor : MonoBehaviour
 
         int[,] details = _terrainData.GetDetailLayer(startingXIndex, startingYIndex, brushSize, brushSize, currentFoliageIndex);
 
+        int density = Mathf.RoundToInt(Mathf.Lerp(1, 16, brushStrength));
         for (int x = 0; x < brushSize; x++)
         {
             for (int y = 0; y < brushSize; y++)
             {
-                details[x, y] = currentFoliageIndex;
+                details[x, y] = density;
             }
         }
 

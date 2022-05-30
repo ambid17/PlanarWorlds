@@ -781,8 +781,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d3b4120970233418e0ed0e16295e18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recentCampaigns:
-    accesses: []
 --- !u!114 &797217224
 MonoBehaviour:
   m_ObjectHideFlags: 0
