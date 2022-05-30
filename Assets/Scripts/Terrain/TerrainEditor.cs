@@ -724,11 +724,16 @@ public class TerrainEditor : MonoBehaviour
         terrain.terrainData.terrainLayers = new TerrainLayer[0];
         terrain.terrainData.treeInstances = new TreeInstance[0];
 
-        float[,] heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
+        float[,] heights = new float[_terrainHeightMapResolution, _terrainHeightMapResolution];
         terrain.terrainData.SetHeights(0, 0, heights);
 
-        terrain.terrainData.detailPrototypes = new DetailPrototype[0];
-        
+        for (int i = 0; i < TerrainManager.Instance.foliagePrefabList.prefabs.Length; i++)
+        {
+            int[,] detailEmptyMap = new int[_terrainData.detailResolution, _terrainData.detailResolution];
+            _terrainData.SetDetailLayer(0, 0, i, detailEmptyMap);
+        }
+
+        terrain.Flush();
         
         SetupTerrain();
     }
