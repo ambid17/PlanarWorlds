@@ -1352,7 +1352,6 @@ MonoBehaviour:
   brushSizeInput: {fileID: 3430455889659619107}
   brushHeightInput: {fileID: 3430455889440044366}
   brushStrengthInput: {fileID: 3430455890005951584}
-  terrainToolText: {fileID: 0}
   brushSizeSlider: {fileID: 7602514147022891449}
   brushHeightSlider: {fileID: 7432309415060813571}
   brushStrengthSlider: {fileID: 3436107772326316773}
@@ -1893,7 +1892,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3430455889164954334}
-  - component: {fileID: 3430455889164954332}
   - component: {fileID: 3430455889164954333}
   m_Layer: 5
   m_Name: TreeContainer
@@ -1916,25 +1914,11 @@ RectTransform:
   m_Father: {fileID: 3430455888773504932}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 400, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 200, y: -189}
+  m_SizeDelta: {x: 400, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3430455889164954332
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3430455889164954335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
 --- !u!114 &3430455889164954333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3478,7 +3462,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3430455889829619801}
-  - component: {fileID: 3430455889829619802}
   - component: {fileID: 3430455889829619803}
   m_Layer: 5
   m_Name: FoliageContainer
@@ -3503,23 +3486,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 400, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3430455889829619802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3430455889829619812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
 --- !u!114 &3430455889829619803
 MonoBehaviour:
   m_ObjectHideFlags: 0
