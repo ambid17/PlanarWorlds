@@ -259,8 +259,8 @@ public class DefaultHotkeys : MonoBehaviour
         hotkeys.Add(new Hotkey()
         {
             hotkeyName = HotKeyName.PrefabFocus,
-            defaultKeyCode = KeyCode.Z,
-            savedKeyCode = KeyCode.Z,
+            defaultKeyCode = KeyCode.F,
+            savedKeyCode = KeyCode.F,
             readableName = "Focus",
             tooltip = "Moves the camera to focus on the currently selected object",
             filterType = HotkeyFilterType.Prefab
