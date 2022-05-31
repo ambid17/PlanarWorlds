@@ -9,18 +9,31 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private PrefabManager _prefabManager;
     private TerrainManager _terrainManager;
+    
+    
+    private bool _isSaved;
+    /// <summary>
+    /// This is defaulted to true so that we don't save a temp campaign every time we exit.
+    /// Everything that edits the campaign is responsible for calling CampaignModified() to inform we need to save
+    /// </summary>
+    public bool IsSaved => _isSaved;
 
     private void Start()
     {
         _prefabManager = PrefabManager.GetInstance();
         _terrainManager = TerrainManager.GetInstance();
+        _isSaved = true;
     }
 
     private void OnApplicationQuit()
     {
-        if (!CurrentDataIsSaved())
+        if(_currentCampaign == null && !_isSaved)
         {
             SaveTempCampaign();
+        }
+        else
+        {
+            SaveCampaign();
         }
     }
 
@@ -55,11 +68,18 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
         }
     }
 
+    public void CampaignModified()
+    {
+        _isSaved = false;
+    }
+    
     public void SaveCampaign()
     {
         _prefabManager.PopulateCampaign(_currentCampaign);
         _terrainManager.PopulateCampaign(_currentCampaign);
         _currentCampaign.Save();
+
+        _isSaved = true;
     }
 
     public void SaveCampaignAs(string filePath)
@@ -95,25 +115,6 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     {
         _terrainManager.ClearAllTerrain();
         _prefabManager.Clear();
-    }
-
-    public bool CurrentDataIsSaved()
-    {
-        bool isSaved = true;
-
-        if(_currentCampaign == null)
-        {
-            if(_prefabManager.prefabContainer.childCount > 0 || _terrainManager.TerrainNeedsSaved())
-            {
-                isSaved = false;
-            }
-        }
-        else
-        {
-            SaveCampaign();
-        }
-
-        return isSaved;
     }
     #endregion
 }

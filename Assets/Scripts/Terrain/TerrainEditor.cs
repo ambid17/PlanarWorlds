@@ -150,6 +150,12 @@ public class TerrainEditor : MonoBehaviour
                 _currentHitPoint = hit.point;
                 _isDragging = true;
                 _hasMouseMoved = true;
+                CampaignManager.Instance.CampaignModified();
+            }
+            else
+            {
+                // We didn't hit the terrain, don't modify
+                return;
             }
         }
         else // If we are in a drag, only raycast if the user has moved the mouse
@@ -163,6 +169,11 @@ public class TerrainEditor : MonoBehaviour
                     _currentHitPoint = hit.point;
                     _hasMouseMoved = true;
                     _mouseDragLastPosition = Input.mousePosition;
+                }
+                else
+                {
+                    _isDragging = false;
+                    return;
                 }
             }
             else
@@ -226,6 +237,14 @@ public class TerrainEditor : MonoBehaviour
         startingYIndex = Mathf.Max(0, startingYIndex);
         startingYIndex = Mathf.Min(_terrainHeightMapResolution, startingYIndex);
 
+        // Don't allow modification outside of the bounds
+        if (startingXIndex + brushSize > _terrainHeightMapResolution
+            || startingYIndex + brushSize > _terrainHeightMapResolution
+            || startingXIndex - brushSize < 0
+            || startingYIndex - brushSize < 0)
+        {
+            return;
+        }
 
         // Note: Terrain heights are 0-1, indexed as y,x
         // See: https://docs.unity3d.com/ScriptReference/TerrainData.GetHeights.html

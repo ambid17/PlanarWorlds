@@ -113,7 +113,7 @@ public class FileMenu : MonoBehaviour
         if (index == 0)
             return; // This is the empty item, it is only here as a placeholder
 
-        if (!_campaignManager.CurrentDataIsSaved())
+        if (!_campaignManager.IsSaved)
         {
             InformOfSave();
         }
@@ -170,7 +170,7 @@ public class FileMenu : MonoBehaviour
 
     private void Load(string[] paths)
     {
-        if (!_campaignManager.CurrentDataIsSaved())
+        if (!_campaignManager.IsSaved)
         {
             InformOfSave();
         }
@@ -208,7 +208,7 @@ public class FileMenu : MonoBehaviour
 
     private void New(string[] paths)
     {
-        if (!_campaignManager.CurrentDataIsSaved())
+        if (!_campaignManager.IsSaved)
         {
             InformOfSave();
         }

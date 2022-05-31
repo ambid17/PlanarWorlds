@@ -52,6 +52,8 @@ public class PrefabUI : MonoBehaviour
         GameObject instance = _prefabManager.CreatePrefabInstance(prefab, prefabType);
         
         instance.layer = Constants.PrefabPlacementLayer;
+        
+        CampaignManager.Instance.CampaignModified();
 
         _prefabGizmoManager.ForceSelectObject(instance);
     }
