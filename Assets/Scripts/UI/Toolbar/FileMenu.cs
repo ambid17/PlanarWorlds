@@ -10,11 +10,6 @@ using UnityEngine.EventSystems;
 using System;
 using System.Diagnostics;
 
-public enum OverwriteType
-{
-    Save, New
-}
-
 public class FileMenu : MonoBehaviour
 {
     public Button newButton;
@@ -42,7 +37,7 @@ public class FileMenu : MonoBehaviour
         _myRectTransform = GetComponent<RectTransform>();
 
         newButton.onClick.AddListener(OnNew);
-        openButton.onClick.AddListener(OnOpen);
+        openButton.onClick.AddListener(OnLoad);
         saveButton.onClick.AddListener(OnSave);
         saveAsButton.onClick.AddListener(OnSaveAs);
         openFolderButton.onClick.AddListener(OnOpenFolder);
@@ -52,8 +47,6 @@ public class FileMenu : MonoBehaviour
         _defaultPath = Path.Combine(Application.persistentDataPath, "Campaigns");
 
         PopulateRecentCampaigns();
-        overwriteSaveModal.WillOverwrite += Overwrite;
-        overwriteSaveModal.CancelOverwrite += DontOverwrite;
         recentCampaignsDropdown.onValueChanged.AddListener(OnOpenRecent);
     }
 
@@ -96,40 +89,75 @@ public class FileMenu : MonoBehaviour
         recentCampaignsDropdown.AddOptions(options);
     }
 
+    #region New
     public void OnNew()
     {
         _uiManager.isFileBrowserOpen = true;
+        
+        // This could be done a few ways:
+        // - Callbacks/events when yes/no is clicked
+        // - Using coroutines to wait for a result value on the modal to be set
+        // - Using async
+        // - Moving the logic to a NewButton that handles all of this there
+        // - State Machine
+        if (_campaignManager.CampaignNeedsSave())
+        {
+            tempSaveModal.Show();
+        }
+        
         FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
     }
+    
+    private void New(string[] paths)
+    {
+        string path = paths[0];
 
-    public void OnOpen()
+        
+        
+        if (File.Exists(path))
+        {
+            overwriteSaveModal.Show(path);
+        }
+        else
+        {
+            _campaignManager.NewCampaign(path);
+            UpdateCampaignNameText(path);
+        }
+
+        _uiManager.isFileBrowserOpen = false;
+        gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region Load
+    public void OnLoad()
     {
         _uiManager.isFileBrowserOpen = true;
         FileBrowser.ShowLoadDialog((paths) => { Load(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, string.Empty, "Open", "Open");
     }
-
-    private void OnOpenRecent(int index)
+    
+    private void Load(string[] paths)
     {
-        if (index == 0)
-            return; // This is the empty item, it is only here as a placeholder
+        string filePath = paths[0];
 
-        if (!_campaignManager.IsSaved)
-        {
-            InformOfSave();
-        }
-
-        // This is a shitty hack. I was too lazy to learn how to attach a script to the dropdown items
-        // Instead, I truncate the text field, and hide the file path on the next line
-        // It.... works i guess
-        string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
+        AskToSave();
+        
         _campaignManager.LoadCampaign(filePath);
-
-        string fileName = Path.GetFileNameWithoutExtension(filePath);
-        CampaignNameUpdated.Invoke(fileName);
-
+        UpdateCampaignNameText(filePath);
+        _uiManager.isFileBrowserOpen = false;
         gameObject.SetActive(false);
     }
 
+    private void AskToSave()
+    {
+        if (_campaignManager.CampaignNeedsSave())
+        {
+            tempSaveModal.Show();
+        }
+    }
+    #endregion
+
+    #region Save
     public void OnSave()
     {
         if (_campaignManager.CurrentCampaign != null)
@@ -137,13 +165,33 @@ public class FileMenu : MonoBehaviour
         else
             OnSaveAs();
     }
-
+    
     public void OnSaveAs()
     {
         _uiManager.isFileBrowserOpen = true;
         FileBrowser.ShowSaveDialog((paths) => { SaveAs(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save As", "Save As");
     }
+    
+    private void SaveAs(string[] paths)
+    {
+        string path = paths[0];
 
+        if (File.Exists(path))
+        {
+            overwriteSaveModal.Show(path);
+        }
+        else
+        {
+            _campaignManager.SaveCampaignAs(path);
+        }
+
+        UpdateCampaignNameText(path);
+        _uiManager.isFileBrowserOpen = false;
+        gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region Open Data Folder
     public void OnOpenFolder()
     {
 #if UNITY_STANDALONE_WIN
@@ -159,80 +207,26 @@ public class FileMenu : MonoBehaviour
         {
             UnityEngine.Debug.LogError($"Cannot open folder: \n{fileBrowserLocation} \nException\n{e.Message}");
         }
-        #endif
+#endif
     }
+    #endregion
 
-    private void InformOfSave()
+    #region Open Recent
+    private void OnOpenRecent(int index)
     {
-        string filePath = _campaignManager.SaveTempCampaign();
-        tempSaveModal.Show(filePath);
+        if (index == 0)
+            return; // This is the empty item, it is only here as a placeholder
+
+        // This is a shitty hack. I was too lazy to learn how to attach a script to the dropdown items
+        // Instead, I truncate the text field, and hide the file path on the next line
+        // It.... works i guess
+        string filePath = recentCampaignsDropdown.options[index].text.Split('\n').Last();
+        
+        Load(new []{filePath});
     }
+    #endregion
 
-    private void Load(string[] paths)
-    {
-        if (!_campaignManager.IsSaved)
-        {
-            InformOfSave();
-        }
-
-        _campaignManager.LoadCampaign(paths[0]);
-
-        string fileName = Path.GetFileNameWithoutExtension(paths[0]);
-        CampaignNameUpdated.Invoke(fileName);
-
-        _uiManager.isFileBrowserOpen = false;
-        gameObject.SetActive(false);
-    }
-
-    
-
-    private void SaveAs(string[] paths)
-    {
-        string path = paths[0];
-
-        if (File.Exists(path))
-        {
-            overwriteSaveModal.Show(path, OverwriteType.Save);
-        }
-        else
-        {
-            _campaignManager.SaveCampaignAs(paths[0]);
-
-            string fileName = Path.GetFileNameWithoutExtension(paths[0]);
-            CampaignNameUpdated.Invoke(fileName);
-        }
-
-        _uiManager.isFileBrowserOpen = false;
-        gameObject.SetActive(false);
-    }
-
-    private void New(string[] paths)
-    {
-        if (!_campaignManager.IsSaved)
-        {
-            InformOfSave();
-        }
-
-        string path = paths[0];
-
-        if (File.Exists(path))
-        {
-            overwriteSaveModal.Show(path, OverwriteType.New);
-        }
-        else
-        {
-            _campaignManager.NewCampaign(path);
-
-            string fileName = Path.GetFileNameWithoutExtension(paths[0]);
-            CampaignNameUpdated.Invoke(fileName);
-        }
-
-        _uiManager.isFileBrowserOpen = false;
-        gameObject.SetActive(false);
-    }
-
-    
-
+    #region Modals
     private void Overwrite(string path, OverwriteType type)
     {
         if(type == OverwriteType.New)
@@ -243,15 +237,12 @@ public class FileMenu : MonoBehaviour
         {
             _campaignManager.SaveCampaignAs(path);
         }
-
-        string fileName = Path.GetFileNameWithoutExtension(path);
-        CampaignNameUpdated.Invoke(fileName);
     }
 
-    private void DontOverwrite(string path)
+    private void UpdateCampaignNameText(string path)
     {
         string fileName = Path.GetFileNameWithoutExtension(path);
-        CampaignNameUpdated.Invoke(fileName);
+        CampaignNameUpdated?.Invoke(fileName);
     }
 
 
@@ -270,4 +261,5 @@ public class FileMenu : MonoBehaviour
 
         return $"Campaign{fileCounter}.plane";
     }
+    #endregion
 }

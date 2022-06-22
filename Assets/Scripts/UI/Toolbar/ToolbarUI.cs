@@ -79,7 +79,7 @@ public class ToolbarUI : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.O))
             {
-                fileMenu.OnOpen();
+                fileMenu.OnLoad();
             }
 
             if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.S))

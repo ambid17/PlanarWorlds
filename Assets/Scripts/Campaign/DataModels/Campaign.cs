@@ -76,7 +76,7 @@ public class Campaign
 
     // Find the next unused campaign name
     // i.e. : tempCampaign0, tempCampaign1, etc
-    public string SetTempFilePath()
+    public void SetTempFilePath()
     {
         string baseFilePath = FilePathUtil.GetSaveFolder();
 
@@ -90,7 +90,6 @@ public class Campaign
         }
 
         filePath = fullFilePath;
-        return fullFilePath;
     }
     #endregion
 }

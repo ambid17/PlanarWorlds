@@ -27,14 +27,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     private void OnApplicationQuit()
     {
-        if(_currentCampaign == null && !_isSaved)
-        {
-            SaveTempCampaign();
-        }
-        else
-        {
-            SaveCampaign();
-        }
+        SaveIfNecessary();
     }
 
     #region Campaign Utils
@@ -54,11 +47,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
 
     public void LoadCampaign(string path)
     {
-        if (_currentCampaign != null)
-        {
-            SaveCampaign();
-        }
-
+        Debug.Log($"Loading Campaign from: {path}");
         _currentCampaign = Campaign.LoadFromPath(path);
         if(_currentCampaign != null)
         {
@@ -66,6 +55,8 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             _prefabManager.LoadCampaign(_currentCampaign);
             _terrainManager.LoadCampaign(_currentCampaign);
         }
+        
+        _isSaved = true;
     }
 
     public void CampaignModified()
@@ -75,6 +66,7 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
     
     public void SaveCampaign()
     {
+        Debug.Log($"Saving Campaign to: {_currentCampaign.filePath}");
         _prefabManager.PopulateCampaign(_currentCampaign);
         _terrainManager.PopulateCampaign(_currentCampaign);
         _currentCampaign.Save();
@@ -96,17 +88,32 @@ public class CampaignManager : StaticMonoBehaviour<CampaignManager>
             _currentCampaign.filePath = filePath;
         }
             
-
         SaveCampaign();
     }
 
-    public string SaveTempCampaign()
+    /// <summary>
+    /// Returns whether or not a save happened
+    /// </summary>
+    /// <returns></returns>
+    public void SaveIfNecessary()
     {
-        _currentCampaign = new Campaign();
-        string filePath = _currentCampaign.SetTempFilePath();
-        SaveCampaign();
+        if(_currentCampaign == null)
+        {
+            if (!_isSaved)
+            {
+                _currentCampaign = new Campaign();
+                SaveCampaign();
+            }
+        }
+        else
+        {
+            SaveCampaign();
+        }
+    }
 
-        return filePath;
+    public bool CampaignNeedsSave()
+    {
+        return _isSaved;
     }
     #endregion
 
