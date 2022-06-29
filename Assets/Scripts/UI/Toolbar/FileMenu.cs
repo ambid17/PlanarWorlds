@@ -156,7 +156,7 @@ public class FileMenu : MonoBehaviour
     {
         if (_campaignManager.CampaignNeedsSave())
         {
-            tempSaveModal.Show();
+            //tempSaveModal.Show();
         }
     }
     #endregion
