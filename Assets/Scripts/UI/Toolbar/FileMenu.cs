@@ -95,24 +95,28 @@ public class FileMenu : MonoBehaviour
         _uiManager.isFileBrowserOpen = true;
         
         // This could be done a few ways:
-        // - Callbacks/events when yes/no is clicked
+        // X - Callbacks/events when yes/no is clicked
         // - Using coroutines to wait for a result value on the modal to be set
         // - Using async
         // - Moving the logic to a NewButton that handles all of this there
         // - State Machine
         if (_campaignManager.CampaignNeedsSave())
         {
-            tempSaveModal.Show();
+            tempSaveModal.Show((isYes) =>
+            {
+                if (isYes)
+                {
+                    FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
+                }
+            });
         }
         
-        FileBrowser.ShowSaveDialog((paths) => { New(paths); }, null, FileBrowser.PickMode.Files, false, _defaultPath, GetTempFileName(), "Save New", "Save New");
+        
     }
     
     private void New(string[] paths)
     {
         string path = paths[0];
-
-        
         
         if (File.Exists(path))
         {

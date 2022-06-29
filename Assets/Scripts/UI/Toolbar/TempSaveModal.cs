@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +8,9 @@ using Michsky.UI.ModernUIPack;
 
 public class TempSaveModal : ModalBase
 {
-    public void Show()
+    public void Show(Action<bool> callback)
     {
+        this.callback = callback;
         modalWindowManager.OpenWindow();
         modalWindowManager.titleText = "Notification";
         string filePath = CampaignManager.Instance.CurrentCampaign.filePath;
