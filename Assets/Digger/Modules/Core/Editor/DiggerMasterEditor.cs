@@ -724,11 +724,11 @@ namespace Digger.Modules.Core.Editor
 
         public static string GetReticleLabel(string label)
         {
-            if (GraphicsSettings.renderPipelineAsset == null) {
+            if (GraphicsSettings.defaultRenderPipeline == null) {
                 return label;
             }
 
-            if (GraphicsSettings.renderPipelineAsset.name.Contains("HDRenderPipeline") || GraphicsSettings.renderPipelineAsset.name.Contains("HDRP")) {
+            if (GraphicsSettings.defaultRenderPipeline.name.Contains("HDRenderPipeline") || GraphicsSettings.defaultRenderPipeline.name.Contains("HDRP")) {
                 return label + "HDRP";
             }
 
